@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Guru;
 use App\Models\JadwalPelajaran;
+use App\Models\JamPelajaran;
 use App\Models\MataPelajaran;
 use App\Models\Pengajaran;
 use App\Models\Semester;
@@ -254,6 +255,36 @@ class ApplicationTest extends TestCase
         $this->assertDatabaseHas('kelas', [
             'id' => $kelas->id,
             'nama' => $kelas->nama.' Revisi',
+        ]);
+    }
+
+    public function test_lesson_period_order_must_be_unique_but_can_be_kept_when_editing(): void
+    {
+        $this->actingAs(User::where('username', 'admin')->first());
+        $existing = JamPelajaran::orderBy('urutan')->firstOrFail();
+
+        Livewire::test('pages::resource', ['resource' => 'jam-pelajaran'])
+            ->set('form', [
+                'nama' => 'Jam Duplikat',
+                'jam_mulai' => '11:00',
+                'jam_selesai' => '11:40',
+                'urutan' => $existing->urutan,
+                'jenis' => 'pelajaran',
+                'status' => 'aktif',
+            ])
+            ->call('save')
+            ->assertHasErrors(['form.urutan' => 'unique']);
+
+        Livewire::test('pages::resource', ['resource' => 'jam-pelajaran'])
+            ->call('edit', $existing->id)
+            ->set('form.nama', $existing->nama.' Revisi')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('jam_pelajaran', [
+            'id' => $existing->id,
+            'nama' => $existing->nama.' Revisi',
+            'urutan' => $existing->urutan,
         ]);
     }
 }
