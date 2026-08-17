@@ -678,4 +678,48 @@ class ApplicationTest extends TestCase
             ->call('save')
             ->assertHasErrors(['form.tingkat']);
     }
+
+    public function test_teacher_and_student_forms_only_offer_accounts_with_the_matching_role(): void
+    {
+        $adminAccount = User::factory()->create(['name' => 'Calon Administrator']);
+        $adminAccount->assignRole('admin');
+        $teacherAccount = User::factory()->create(['name' => 'Calon Guru']);
+        $teacherAccount->assignRole('guru');
+        $studentAccount = User::factory()->create(['name' => 'Calon Siswa']);
+        $studentAccount->assignRole('siswa');
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        $teacherOptions = Livewire::test('pages::resource', ['resource' => 'guru'])->instance()->options('users');
+        $studentOptions = Livewire::test('pages::resource', ['resource' => 'siswa'])->instance()->options('users');
+
+        $this->assertArrayHasKey($teacherAccount->id, $teacherOptions);
+        $this->assertArrayNotHasKey($studentAccount->id, $teacherOptions);
+        $this->assertArrayNotHasKey($adminAccount->id, $teacherOptions);
+        $this->assertArrayHasKey($studentAccount->id, $studentOptions);
+        $this->assertArrayNotHasKey($teacherAccount->id, $studentOptions);
+        $this->assertArrayNotHasKey($adminAccount->id, $studentOptions);
+
+        Livewire::test('pages::resource', ['resource' => 'siswa'])
+            ->set('form', [
+                'user_id' => (string) $adminAccount->id,
+                'nama_lengkap' => 'Siswa Dengan Akun Salah',
+                'nis' => null,
+                'nisn' => null,
+                'jenis_kelamin' => null,
+                'tempat_lahir' => null,
+                'tanggal_lahir' => null,
+                'alamat' => null,
+                'status' => 'aktif',
+            ])
+            ->call('save')
+            ->assertHasErrors(['form.user_id']);
+
+        $existingStudent = Siswa::whereNotNull('user_id')->firstOrFail();
+        $studentOptionsWhileEditing = Livewire::test('pages::resource', ['resource' => 'siswa'])
+            ->call('edit', $existingStudent->id)
+            ->instance()
+            ->options('users');
+
+        $this->assertArrayHasKey($existingStudent->user_id, $studentOptionsWhileEditing);
+    }
 }
