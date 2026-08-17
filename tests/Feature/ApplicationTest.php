@@ -531,7 +531,7 @@ class ApplicationTest extends TestCase
             ->set('search', '')
             ->call('sortBy', 'nama_lengkap')
             ->assertSet('sort', 'nama_lengkap')
-            ->call('toggleColumn', 'nis')
+            ->call('toggleColumn', 'm1')
             ->assertDontSee('Data tidak dapat dimuat.')
             ->assertSee('Simpan Nilai');
     }

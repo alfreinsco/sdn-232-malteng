@@ -87,7 +87,7 @@ new class extends Component {
     {
         return auth()->user()->hasRole('siswa')
             ? ['mata_pelajaran', 'guru', 'm1', 'm2', 'm3', 'm4', 'rata_rata']
-            : ['nis', 'nisn', 'nama_lengkap', 'm1', 'm2', 'm3', 'm4', 'rata_rata'];
+            : ['nama_lengkap', 'm1', 'm2', 'm3', 'm4', 'rata_rata'];
     }
 
     protected function tableColumns(): array
@@ -105,8 +105,6 @@ new class extends Component {
         }
 
         return [
-            ['id' => 'nis', 'label' => 'NIS', 'sortable' => 'nis'],
-            ['id' => 'nisn', 'label' => 'NISN', 'sortable' => 'nisn'],
             ['id' => 'nama_lengkap', 'label' => 'Nama Siswa', 'sortable' => 'nama_lengkap'],
             ['id' => 'm1', 'label' => 'Minggu 1', 'sortable' => 'm1'],
             ['id' => 'm2', 'label' => 'Minggu 2', 'sortable' => 'm2'],
@@ -293,7 +291,7 @@ new class extends Component {
 };
 ?>
 
-<div>
+<div class="min-w-0 w-full">
     <div class="mb-6">
         <p class="text-sm font-semibold text-sky-700">Akademik</p>
         <h1 class="page-title">{{ auth()->user()->hasRole('siswa') ? 'Nilai Saya' : 'Nilai Siswa' }}</h1>
@@ -324,16 +322,16 @@ new class extends Component {
 
     <x-data-table.bulk-toolbar :count="$this->selectedCount($datasetTotal)" />
 
-    <form wire:submit="save">
+    <form wire:submit="save" class="block min-w-0 w-full">
         @can('nilai.create')
             @unless(auth()->user()->hasRole('siswa'))
                 <div class="mb-3 flex justify-end"><button type="submit" class="btn-primary" wire:loading.attr="disabled" @disabled(!$pengajaranId)><span wire:loading.remove wire:target="save">Simpan Nilai</span><span wire:loading wire:target="save">Menyimpan...</span></button></div>
             @endunless
         @endcan
 
-        <div class="table-shell">
-            <div class="table-scroll">
-                <table class="data-table min-w-[980px]">
+        <div class="table-shell w-full">
+            <div class="table-scroll w-full">
+                <table class="data-table w-full min-w-[820px]">
                     <thead><tr>
                         <th class="table-select-cell sticky left-0 z-30 w-14"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" wire:click="toggleSelectAllDataset" @checked($datasetTotal>0 && $this->selectedCount($datasetTotal)===$datasetTotal) x-data x-effect="$el.indeterminate = {{ $this->selectedCount($datasetTotal)>0 && $this->selectedCount($datasetTotal)<$datasetTotal ? 'true':'false' }}" aria-label="Pilih seluruh data nilai hasil filter"></th>
                         @foreach($tableColumns as $column)
@@ -352,7 +350,7 @@ new class extends Component {
                                     <td>
                                         @if(!auth()->user()->hasRole('siswa') && in_array($column['id'], ['m1','m2','m3','m4'], true))
                                             @php $week=(int)substr($column['id'],1); @endphp
-                                            @can('nilai.create')<input type="number" min="0" max="100" step="0.01" inputmode="decimal" wire:model.live.debounce.500ms="nilai.{{ $row->id }}.{{ $week }}" class="form-input w-24 tabular-nums" aria-label="Nilai {{ $row->nama_lengkap }} minggu {{ $week }}">@else{{ data_get($nilai, $row->id.'.'.$week)==='' ? '-' : data_get($nilai, $row->id.'.'.$week) }}@endcan
+                                            @can('nilai.create')<input type="number" min="0" max="100" step="0.01" inputmode="decimal" wire:model.live.debounce.500ms="nilai.{{ $row->id }}.{{ $week }}" class="form-input w-20 tabular-nums sm:w-24" aria-label="Nilai {{ $row->nama_lengkap }} minggu {{ $week }}">@else{{ data_get($nilai, $row->id.'.'.$week)==='' ? '-' : data_get($nilai, $row->id.'.'.$week) }}@endcan
                                             @error('nilai.'.$row->id.'.'.$week)<p class="form-error">Nilai harus 0–100.</p>@enderror
                                         @elseif($column['id']==='rata_rata')
                                             <span class="font-semibold tabular-nums">{{ auth()->user()->hasRole('siswa') ? ($row->rata_rata===null?'-':number_format((float)$row->rata_rata,2)) : $this->average($nilai[$row->id]??[]) }}</span>
