@@ -300,6 +300,20 @@ class ApplicationTest extends TestCase
             ->assertSee('Pelajaran');
     }
 
+    public function test_student_table_displays_identity_gender_and_birth_information(): void
+    {
+        $student = Siswa::latest('id')->firstOrFail();
+
+        $response = $this->actingAs(User::where('username', 'admin')->first())
+            ->get('/siswa');
+
+        $response->assertOk()
+            ->assertSeeInOrder(['Nama Lengkap', 'NIS', 'NISN', 'Jenis Kelamin', 'Tempat, Tanggal Lahir', 'Status'])
+            ->assertSee($student->nisn)
+            ->assertSee(ucfirst($student->jenis_kelamin))
+            ->assertSee($student->tempat_lahir.', '.$student->tanggal_lahir->translatedFormat('d F Y'));
+    }
+
     public function test_all_master_status_actions_toggle_without_deleting_records(): void
     {
         $admin = User::where('username', 'admin')->firstOrFail();
