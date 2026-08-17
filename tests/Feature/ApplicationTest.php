@@ -575,4 +575,41 @@ class ApplicationTest extends TestCase
             ->assertSee($teaching->guru->nama_lengkap)
             ->assertDontSee('Data tidak dapat dimuat.');
     }
+
+    public function test_academic_year_table_displays_start_and_end_dates(): void
+    {
+        $year = TahunAjaran::firstOrFail();
+
+        $this->actingAs(User::where('username', 'admin')->firstOrFail())
+            ->get('/tahun-ajaran')
+            ->assertOk()
+            ->assertSeeInOrder(['Nama', 'Tanggal Mulai', 'Tanggal Selesai', 'Status'])
+            ->assertSee($year->tanggal_mulai->translatedFormat('d F Y'))
+            ->assertSee($year->tanggal_selesai->translatedFormat('d F Y'));
+    }
+
+    public function test_academic_year_edit_modal_hydrates_date_inputs(): void
+    {
+        $year = TahunAjaran::firstOrFail();
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::test('pages::resource', ['resource' => 'tahun-ajaran'])
+            ->call('edit', $year->id)
+            ->assertSet('showForm', true)
+            ->assertSet('form.tanggal_mulai', $year->tanggal_mulai->format('Y-m-d'))
+            ->assertSet('form.tanggal_selesai', $year->tanggal_selesai->format('Y-m-d'));
+    }
+
+    public function test_semester_table_displays_academic_year_and_end_date(): void
+    {
+        $semester = Semester::with('tahunAjaran')->firstOrFail();
+
+        $this->actingAs(User::where('username', 'admin')->firstOrFail())
+            ->get('/semester')
+            ->assertOk()
+            ->assertSeeInOrder(['Tahun Ajaran', 'Semester', 'Tanggal Mulai', 'Tanggal Selesai', 'Status'])
+            ->assertSee($semester->tahunAjaran->nama)
+            ->assertSee($semester->tanggal_selesai->translatedFormat('d F Y'))
+            ->assertDontSee('Data tidak dapat dimuat.');
+    }
 }
