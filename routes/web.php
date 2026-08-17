@@ -19,6 +19,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::livewire('/guru', 'pages::resource')->defaults('resource', 'guru')->middleware('permission:guru.view')->name('guru.index');
     Route::livewire('/siswa', 'pages::resource')->defaults('resource', 'siswa')->middleware('permission:siswa.view')->name('siswa.index');
     Route::livewire('/kelas', 'pages::resource')->defaults('resource', 'kelas')->middleware('permission:kelas.view')->name('kelas.index');
+    Route::livewire('/kelas/{kelas}/siswa', 'pages::kelas-siswa')->middleware('permission:kelas.view')->name('kelas.siswa.index');
     Route::livewire('/mata-pelajaran', 'pages::resource')->defaults('resource', 'mata-pelajaran')->middleware('permission:mata-pelajaran.view')->name('mata-pelajaran.index');
     Route::livewire('/jam-pelajaran', 'pages::resource')->defaults('resource', 'jam-pelajaran')->middleware('permission:jam-pelajaran.view')->name('jam-pelajaran.index');
     Route::livewire('/pengajaran', 'pages::resource')->defaults('resource', 'pengajaran')->middleware('permission:pengajaran.view')->name('pengajaran.index');

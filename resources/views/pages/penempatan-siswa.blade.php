@@ -1,7 +1,7 @@
 <?php
 
 use App\Livewire\Concerns\WithDataTable;
-use App\Models\{Kelas, Siswa, TahunAjaran};
+use App\Models\{Kelas, Siswa, SiswaKelas, TahunAjaran};
 use App\Services\PenempatanSiswaKelas;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -9,15 +9,23 @@ use Livewire\Component;
 new class extends Component {
     use WithDataTable;
 
-    #[Url(as: 'tahun')]
+    #[Url(as: 'tahun', keep: true)]
     public string $tahunId = '';
 
     #[Url(as: 'kelas')]
     public string $kelasId = '';
 
+    #[Url(as: 'status_kelas')]
+    public string $statusKelas = '';
+
     public function mount(): void
     {
-        $this->tahunId = (string) ($this->tahunId ?: TahunAjaran::aktif()->value('id') ?? '');
+        if (! request()->query->has('tahun')) {
+            $this->tahunId = (string) (TahunAjaran::aktif()->value('id') ?? '');
+        }
+        if (! in_array($this->statusKelas, ['', 'sudah', 'belum'], true)) {
+            $this->statusKelas = '';
+        }
         $this->initializeDataTable();
     }
 
@@ -32,15 +40,21 @@ new class extends Component {
         $this->clearSelection();
     }
 
+    public function updatedStatusKelas(): void
+    {
+        $this->datasetChanged();
+    }
+
     public function resetTableFilters(): void
     {
         $this->tahunId = (string) (TahunAjaran::aktif()->value('id') ?? '');
         $this->kelasId = '';
+        $this->statusKelas = '';
     }
 
     protected function tableSortableColumns(): array
     {
-        return ['nis', 'nisn', 'nama_lengkap', 'jenis_kelamin', 'status'];
+        return ['nis', 'nisn', 'nama_lengkap', 'jenis_kelamin', 'kelas_nama', 'status'];
     }
 
     protected function tableColumns(): array
@@ -50,18 +64,47 @@ new class extends Component {
             ['id' => 'nisn', 'label' => 'NISN', 'sortable' => 'nisn'],
             ['id' => 'nama_lengkap', 'label' => 'Nama Siswa', 'sortable' => 'nama_lengkap'],
             ['id' => 'jenis_kelamin', 'label' => 'Jenis Kelamin', 'sortable' => 'jenis_kelamin'],
+            ['id' => 'kelas_nama', 'label' => 'Kelas Saat Ini', 'sortable' => 'kelas_nama'],
             ['id' => 'status', 'label' => 'Status', 'sortable' => 'status', 'hideable' => false],
         ];
     }
 
     private function tableQuery()
     {
+        $placements = SiswaKelas::query()
+            ->select('siswa_kelas.siswa_id', 'siswa_kelas.kelas_id')
+            ->join('kelas as kelas_tahun', 'kelas_tahun.id', '=', 'siswa_kelas.kelas_id')
+            ->where('siswa_kelas.status', 'aktif')
+            ->when($this->tahunId, fn ($query) => $query->where('kelas_tahun.tahun_ajaran_id', $this->tahunId), fn ($query) => $query->whereRaw('1 = 0'));
+
         return Siswa::query()
-            ->where('status', 'aktif')
+            ->select('siswa.*', 'kelas_penempatan.nama as kelas_nama', 'kelas_penempatan.id as kelas_penempatan_id')
+            ->leftJoinSub($placements, 'penempatan_tahun', fn ($join) => $join->on('penempatan_tahun.siswa_id', '=', 'siswa.id'))
+            ->leftJoin('kelas as kelas_penempatan', 'kelas_penempatan.id', '=', 'penempatan_tahun.kelas_id')
+            ->where('siswa.status', 'aktif')
+            ->when($this->statusKelas === 'sudah', fn ($query) => $query->whereNotNull('kelas_penempatan.id'))
+            ->when($this->statusKelas === 'belum', fn ($query) => $query->whereNull('kelas_penempatan.id'))
             ->when($this->search, fn ($query) => $query->where(fn ($nested) => $nested
-                ->where('nama_lengkap', 'like', '%'.$this->search.'%')
-                ->orWhere('nis', 'like', '%'.$this->search.'%')
-                ->orWhere('nisn', 'like', '%'.$this->search.'%')));
+                ->where('siswa.nama_lengkap', 'like', '%'.$this->search.'%')
+                ->orWhere('siswa.nis', 'like', '%'.$this->search.'%')
+                ->orWhere('siswa.nisn', 'like', '%'.$this->search.'%')
+                ->orWhere('kelas_penempatan.nama', 'like', '%'.$this->search.'%')));
+    }
+
+    private function applyTableSort($query)
+    {
+        $columns = [
+            'nis' => 'siswa.nis',
+            'nisn' => 'siswa.nisn',
+            'nama_lengkap' => 'siswa.nama_lengkap',
+            'jenis_kelamin' => 'siswa.jenis_kelamin',
+            'kelas_nama' => 'kelas_penempatan.nama',
+            'status' => 'siswa.status',
+        ];
+
+        return $this->sort !== ''
+            ? $query->orderBy($columns[$this->sort], $this->direction)
+            : $query->orderBy('siswa.nama_lengkap');
     }
 
     public function save(): void
@@ -87,13 +130,13 @@ new class extends Component {
         $service = app(PenempatanSiswaKelas::class);
         $processed = 0;
         $this->applySelection($this->tableQuery())
-            ->orderBy('id')
+            ->orderBy('siswa.id')
             ->chunkById(100, function ($students) use ($kelas, $service, &$processed): void {
                 foreach ($students as $student) {
                     $service->handle($student, $kelas);
                     $processed++;
                 }
-            });
+            }, 'siswa.id', 'id');
 
         $this->clearSelection();
         $this->dispatch('notify', type: 'success', message: $processed.' siswa berhasil ditempatkan ke kelas '.$kelas->nama.'.');
@@ -106,9 +149,7 @@ new class extends Component {
         try {
             $query = $this->tableQuery();
             $total = (clone $query)->count();
-            $students = $this->sort !== ''
-                ? $query->orderBy($this->sort, $this->direction)->paginate($this->perPage)
-                : $query->orderBy('nama_lengkap')->paginate($this->perPage);
+            $students = $this->applyTableSort($query)->paginate($this->perPage);
         } catch (\Throwable $exception) {
             report($exception);
             $error = 'Terjadi kesalahan saat mengambil data siswa.';
@@ -147,9 +188,10 @@ new class extends Component {
         </div>
     </div>
 
-    <div class="filters card mb-4 grid gap-3 p-4 md:grid-cols-2">
+    <div class="filters card mb-4 grid gap-3 p-4 md:grid-cols-3">
         <div><label class="form-label">Tahun Ajaran</label><x-searchable-select model="tahunId" :value="$tahunId" :options="$tahun->pluck('nama','id')->all()" placeholder="Pilih tahun ajaran" search-placeholder="Cari tahun ajaran..." /></div>
         <div><label class="form-label">Kelas Tujuan</label><x-searchable-select model="kelasId" :value="$kelasId" :options="$kelas->pluck('nama','id')->all()" placeholder="Pilih kelas" search-placeholder="Cari kelas..." /></div>
+        <div><label class="form-label">Status Penempatan</label><x-searchable-select model="statusKelas" :value="$statusKelas" :options="['sudah'=>'Sudah memiliki kelas','belum'=>'Belum memiliki kelas']" placeholder="Semua siswa" search-placeholder="Cari status penempatan..." /></div>
     </div>
 
     <x-data-table.bulk-toolbar :count="$this->selectedCount($datasetTotal)">
@@ -162,10 +204,10 @@ new class extends Component {
             @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<th><button type="button" wire:click="sortBy('{{ $column['sortable'] }}')" class="inline-flex min-h-11 items-center gap-1">{{ $column['label'] }} <span aria-hidden="true">{{ $sort===$column['sortable']?($direction==='asc'?'↑':'↓'):'↕' }}</span></button></th>@endforeach
             <th class="table-action-cell sticky right-0 z-20">Aksi</th>
         </tr></thead><tbody>
-            @foreach($siswa as $student)@php $selected=$this->isRowSelected($student->id);@endphp<tr class="{{ $selected?'is-selected':'' }}" wire:key="placement-row-{{$student->id}}" wire:loading.remove><td class="table-select-cell sticky left-0 z-10"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" @checked($selected) wire:click="toggleRowSelection({{$student->id}})" aria-label="Pilih {{$student->nama_lengkap}}"></td>
-            @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<td>@if($column['id']==='status')<span class="badge-active">Aktif</span>@elseif($column['id']==='jenis_kelamin'){{ ucfirst($student->jenis_kelamin) }}@else{{ data_get($student,$column['id'])??'-' }}@endif</td>@endforeach
+            @foreach($siswa as $student)@php $selected=$this->isRowSelected($student->id);@endphp<tr class="{{ $selected?'is-selected':($student->kelas_penempatan_id?'is-assigned':'') }}" wire:key="placement-row-{{$student->id}}" wire:loading.remove><td class="table-select-cell sticky left-0 z-10"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" @checked($selected) wire:click="toggleRowSelection({{$student->id}})" aria-label="Pilih {{$student->nama_lengkap}}"></td>
+            @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<td>@if($column['id']==='status')<span class="badge-active">Aktif</span>@elseif($column['id']==='jenis_kelamin'){{ $student->jenis_kelamin?ucfirst($student->jenis_kelamin):'-' }}@elseif($column['id']==='kelas_nama')@if($student->kelas_nama)<span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800">{{ $student->kelas_nama }}</span>@else<span class="text-slate-400">Belum memiliki kelas</span>@endif @else{{ data_get($student,$column['id'])??'-' }}@endif</td>@endforeach
             <td class="table-action-cell sticky right-0 z-10"><button type="button" wire:click="toggleRowSelection({{$student->id}})" class="btn-secondary">{{ $selected?'Batalkan':'Pilih' }}</button></td></tr>@endforeach
-            <x-data-table.states :columns="count($visibleColumnIds)+2" :empty="$siswa->isEmpty()" :filtered="filled($search)" :error="$tableError" />
+            <x-data-table.states :columns="count($visibleColumnIds)+2" :empty="$siswa->isEmpty()" :filtered="filled($search)||filled($statusKelas)" :error="$tableError" />
         </tbody></table></div>
         <x-data-table.pagination :paginator="$siswa" :per-page="$perPage" />
     </div>

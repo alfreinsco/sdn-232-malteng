@@ -14,6 +14,7 @@ use App\Models\TahunAjaran;
 use App\Models\User;
 use App\Services\AktivasiSemester;
 use App\Services\AktivasiTahunAjaran;
+use App\Services\PenempatanSiswaKelas;
 use App\Services\PenyimpananNilaiMassal;
 use App\Services\ValidasiJadwal;
 use Database\Seeders\DatabaseSeeder;
@@ -721,5 +722,129 @@ class ApplicationTest extends TestCase
             ->options('users');
 
         $this->assertArrayHasKey($existingStudent->user_id, $studentOptionsWhileEditing);
+    }
+
+    public function test_class_table_links_to_a_separate_class_roster_page(): void
+    {
+        $class = Kelas::query()
+            ->whereHas('siswaKelas', fn ($query) => $query->where('status', 'aktif'))
+            ->with(['tahunAjaran', 'siswaKelas' => fn ($query) => $query->where('status', 'aktif')->with('siswa')])
+            ->firstOrFail();
+        $student = $class->siswaKelas->first()->siswa;
+        $admin = User::where('username', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->get('/kelas')
+            ->assertOk()
+            ->assertSee('Lihat Siswa')
+            ->assertSee(route('kelas.siswa.index', $class));
+
+        $this->actingAs($admin)->get(route('kelas.siswa.index', $class))
+            ->assertOk()
+            ->assertSee('Siswa Kelas '.$class->nama)
+            ->assertSee($class->tahunAjaran->nama)
+            ->assertSee($student->nama_lengkap)
+            ->assertSee('Tambah Siswa')
+            ->assertDontSee('Data tidak dapat dimuat.');
+    }
+
+    public function test_admin_can_add_and_remove_a_student_from_the_class_roster_without_deleting_student_data(): void
+    {
+        $class = Kelas::firstOrFail();
+        $student = Siswa::factory()->create();
+        $studentCount = Siswa::count();
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::test('pages::kelas-siswa', ['kelas' => $class])
+            ->call('openAdd')
+            ->set('siswaId', (string) $student->id)
+            ->call('addStudent')
+            ->assertHasNoErrors()
+            ->assertSee($student->nama_lengkap);
+
+        $this->assertDatabaseHas('siswa_kelas', [
+            'siswa_id' => $student->id,
+            'kelas_id' => $class->id,
+            'status' => 'aktif',
+        ]);
+
+        Livewire::test('pages::kelas-siswa', ['kelas' => $class])
+            ->call('removeStudent', $student->id)
+            ->assertHasNoErrors()
+            ->assertDontSee($student->nama_lengkap);
+
+        $this->assertDatabaseHas('siswa_kelas', [
+            'siswa_id' => $student->id,
+            'kelas_id' => $class->id,
+            'status' => 'nonaktif',
+        ]);
+        $this->assertDatabaseHas('siswa', ['id' => $student->id]);
+        $this->assertSame($studentCount, Siswa::count());
+    }
+
+    public function test_read_only_roles_can_view_but_cannot_manage_a_class_roster(): void
+    {
+        $class = Kelas::firstOrFail();
+        $teacher = User::where('username', 'guru1')->firstOrFail();
+
+        $this->actingAs($teacher)->get(route('kelas.siswa.index', $class))
+            ->assertOk()
+            ->assertDontSee('Tambah Siswa')
+            ->assertDontSee('Hapus dari Kelas');
+
+        Livewire::actingAs($teacher)
+            ->test('pages::kelas-siswa', ['kelas' => $class])
+            ->call('openAdd')
+            ->assertForbidden();
+    }
+
+    public function test_class_table_displays_the_active_student_count(): void
+    {
+        $class = Kelas::create([
+            'tahun_ajaran_id' => TahunAjaran::aktif()->value('id'),
+            'nama' => 'Kelas Pengujian Jumlah',
+            'tingkat' => 6,
+            'wali_kelas_id' => null,
+            'status' => 'aktif',
+        ]);
+        $students = Siswa::factory()->count(2)->create();
+        foreach ($students as $student) {
+            app(PenempatanSiswaKelas::class)->handle($student, $class);
+        }
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        $component = Livewire::test('pages::resource', ['resource' => 'kelas'])
+            ->assertSeeInOrder(['Tahun Ajaran', 'Nama Kelas', 'Tingkat', 'Wali Kelas', 'Jumlah Siswa', 'Status'])
+            ->assertSee($class->nama)
+            ->assertDontSee('Data tidak dapat dimuat.');
+
+        $row = collect($component->instance()->with()['items']->items())->firstWhere('id', $class->id);
+        $this->assertNotNull($row);
+        $this->assertSame(2, $row->jumlah_siswa);
+    }
+
+    public function test_student_placement_table_marks_current_assignments_and_filters_assigned_status(): void
+    {
+        $class = Kelas::query()
+            ->where('tahun_ajaran_id', TahunAjaran::aktif()->value('id'))
+            ->whereHas('siswaKelas', fn ($query) => $query->where('status', 'aktif'))
+            ->firstOrFail();
+        $assignedStudent = $class->siswaKelas()->where('status', 'aktif')->with('siswa')->firstOrFail()->siswa;
+        $unassignedStudent = Siswa::factory()->create(['nama_lengkap' => 'Siswa Belum Ditempatkan']);
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::test('pages::penempatan-siswa')
+            ->set('perPage', 100)
+            ->assertSee('Kelas Saat Ini')
+            ->assertSee($assignedStudent->nama_lengkap)
+            ->assertSee($class->nama)
+            ->assertSee('is-assigned', false)
+            ->set('statusKelas', 'sudah')
+            ->assertSee($assignedStudent->nama_lengkap)
+            ->assertDontSee($unassignedStudent->nama_lengkap)
+            ->set('statusKelas', 'belum')
+            ->assertSee($unassignedStudent->nama_lengkap)
+            ->assertDontSee($assignedStudent->nama_lengkap)
+            ->assertSee('Belum memiliki kelas')
+            ->assertDontSee('Data tidak dapat dimuat.');
     }
 }
