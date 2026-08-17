@@ -16,9 +16,7 @@
     </style>
 </head>
 <body>
-    @if($sekolah?->logo && is_file(public_path('storage/'.$sekolah->logo)))
-        <img class="logo" src="{{ public_path('storage/'.$sekolah->logo) }}" alt="Logo sekolah">
-    @endif
+    <img class="logo" src="{{ $sekolah?->logo && is_file(public_path('storage/'.$sekolah->logo)) ? public_path('storage/'.$sekolah->logo) : public_path('logo-malteng.png') }}" alt="Logo sekolah">
     <h1>{{ strtoupper($sekolah?->nama_sekolah ?? 'SD Negeri 232 Maluku Tengah') }}</h1>
     <p>{{ $sekolah?->alamat }}</p>
     <h2>LAPORAN {{ strtoupper($jenis) }} {{ $jenis === 'nilai' ? 'TUGAS SISWA' : '' }}</h2>

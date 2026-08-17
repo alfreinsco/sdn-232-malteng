@@ -4,7 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Masuk — SDN 232 MALTENG</title>@vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta name="theme-color" content="#0369a1">
+    <title>Masuk — SDN 232 MALTENG</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="min-h-dvh bg-slate-950 text-slate-900">
@@ -13,7 +19,10 @@
             class="relative hidden overflow-hidden bg-sky-700 p-12 text-white lg:flex lg:flex-col lg:justify-between">
             <div class="absolute inset-0 opacity-20 pattern-grid"></div>
             <div class="relative flex items-center gap-3">
-                <div class="grid size-12 place-items-center rounded-xl bg-white font-bold text-sky-700">232</div>
+                <div class="grid size-14 place-items-center">
+                    <img src="{{ asset('logo-malteng.png') }}" alt="Logo Kabupaten Maluku Tengah"
+                        width="42" height="52" class="h-full w-full object-contain">
+                </div>
                 <div>
                     <p class="font-semibold">SD Negeri 232</p>
                     <p class="text-sm text-sky-100">Maluku Tengah</p>
@@ -32,7 +41,9 @@
         <section class="flex items-center justify-center bg-slate-50 p-5 sm:p-10">
             <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-9">
                 <div class="mb-8 lg:hidden">
-                    <div class="mb-4 grid size-12 place-items-center rounded-xl bg-sky-600 font-bold text-white">232
+                    <div class="mb-4 grid size-16 place-items-center">
+                        <img src="{{ asset('logo-malteng.png') }}" alt="Logo Kabupaten Maluku Tengah"
+                            width="48" height="58" class="h-full w-full object-contain">
                     </div>
                 </div>
                 <p class="text-sm font-semibold text-sky-700">Selamat datang</p>

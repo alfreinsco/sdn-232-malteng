@@ -5,7 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#0284c7">
     <title>{{ $title ?? 'SDN 232 MALTENG' }} — {{ config('app.name') }}</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon-192x192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -18,7 +24,9 @@
             class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform duration-200 lg:sticky lg:top-0 lg:h-dvh lg:w-auto lg:translate-x-0"
             :class="sidebarOpen && 'translate-x-0'" aria-label="Navigasi utama">
             <div class="flex h-20 items-center gap-3 border-b border-slate-100 px-5">
-                <div class="grid size-11 place-items-center rounded-xl bg-sky-600 text-sm font-bold text-white">232
+                <div class="grid size-12 shrink-0 place-items-center">
+                    <img src="{{ asset('logo-malteng.png') }}" alt="Logo Kabupaten Maluku Tengah"
+                        width="40" height="48" class="h-full w-full object-contain">
                 </div>
                 <div class="min-w-0">
                     <p class="font-semibold text-slate-950">SDN 232 MALTENG</p>

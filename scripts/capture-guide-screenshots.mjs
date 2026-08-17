@@ -173,6 +173,7 @@ await command('Page.enable');
 await command('Runtime.enable');
 await command('Network.enable');
 await setViewport(1440, 1000);
+await command('Network.clearBrowserCookies');
 await navigate('/login');
 await screenshot('00-login');
 
