@@ -230,54 +230,73 @@ new class extends Component {
 };
 ?>
 
-<div>
+@php
+    $semesterLabel = $semesterId ? ($semesters[$semesterId] ?? 'Semester tidak ditemukan') : 'Semua semester';
+    $classLabel = $kelasId ? ($classes[$kelasId] ?? 'Kelas tidak ditemukan') : 'Semua kelas';
+    $teacherLabel = $guruId ? ($teachers[$guruId] ?? 'Guru tidak ditemukan') : 'Semua guru';
+    $subjectLabel = $mapelId ? ($subjects[$mapelId] ?? 'Mata pelajaran tidak ditemukan') : 'Semua mata pelajaran';
+    $studentLabel = $siswaId ? ($students[$siswaId] ?? 'Siswa tidak ditemukan') : 'Semua siswa';
+    $periodLabel = $jenis === 'jadwal' ? ($hari ? ucfirst($hari) : 'Semua hari') : ($months[$bulan] ?? '-');
+@endphp
+
+<div class="min-w-0 w-full">
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div><p class="text-sm font-semibold text-sky-700">Laporan</p><h1 class="page-title">Laporan {{ ucfirst($jenis) }}</h1><p class="page-subtitle">Preview web siap cetak dan unduh PDF.</p></div>
-        <div class="print-hidden flex gap-2"><button type="button" onclick="window.print()" class="btn-secondary">Cetak</button><a href="{{ route('laporan.pdf',['jenis'=>$jenis,'semester_id'=>$semesterId,'kelas_id'=>$kelasId,'guru_id'=>$guruId,'mapel_id'=>$mapelId,'siswa_id'=>$siswaId,'hari'=>$hari,'bulan'=>$bulan]) }}" class="btn-primary">Unduh PDF</a></div>
+        <div><p class="text-sm font-semibold text-sky-700">Laporan Akademik</p><h1 class="page-title">Laporan {{ ucfirst($jenis) }}</h1><p class="page-subtitle">Tinjau data, sesuaikan periode, kemudian cetak atau unduh sebagai PDF.</p></div>
+        <div class="print-hidden flex flex-wrap gap-2">
+            <button type="button" onclick="window.print()" class="btn-secondary gap-2"><svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 8V4h10v4M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z"/></svg>Cetak</button>
+            <a href="{{ route('laporan.pdf',['jenis'=>$jenis,'semester_id'=>$semesterId,'kelas_id'=>$kelasId,'guru_id'=>$guruId,'mapel_id'=>$mapelId,'siswa_id'=>$siswaId,'hari'=>$hari,'bulan'=>$bulan]) }}" class="btn-primary gap-2"><svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"/></svg>Unduh PDF</a>
+        </div>
     </div>
 
-    <div class="print-hidden mb-4 grid gap-3 lg:grid-cols-[minmax(18rem,1fr)_auto]">
-        <div class="card p-4"><label class="form-label" for="report-search">Pencarian Utama</label><input id="report-search" type="search" wire:model.live.debounce.400ms="search" class="form-input" placeholder="Cari data laporan..."></div>
-        <div class="card flex flex-wrap items-end gap-3 p-4"><button type="button" wire:click="resetTableState" class="btn-secondary">Reset Filter</button><x-data-table.column-toggle :columns="$tableColumns" :visible="$visibleColumnIds" /></div>
+    <div class="filters card print-hidden mb-5 overflow-visible">
+        <div class="flex flex-col gap-3 border-b border-slate-200 p-4 lg:flex-row lg:items-end">
+            <div class="min-w-0 flex-1"><label class="form-label" for="report-search">Pencarian Utama</label><div class="relative"><svg viewBox="0 0 24 24" class="pointer-events-none absolute left-3 top-3 size-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="report-search" type="search" wire:model.live.debounce.400ms="search" class="form-input pl-10" placeholder="Cari {{ $jenis === 'jadwal' ? 'kelas, mata pelajaran, atau guru' : 'siswa, mata pelajaran, atau guru' }}..."></div></div>
+            <div class="flex flex-wrap gap-2"><button type="button" wire:click="resetTableState" class="btn-secondary gap-2"><svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4v6h6M20 20v-6h-6M5.5 15a7 7 0 0 0 11.9 2M18.5 9A7 7 0 0 0 6.6 7"/></svg>Reset Filter</button><x-data-table.column-toggle :columns="$tableColumns" :visible="$visibleColumnIds" /></div>
+        </div>
+        <div class="grid gap-4 p-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div><label class="form-label">Semester</label><x-searchable-select model="semesterId" :value="$semesterId" :options="$semesters" placeholder="Semua semester" search-placeholder="Cari semester..." /></div>
+            <div><label class="form-label">Kelas</label><x-searchable-select model="kelasId" :value="$kelasId" :options="$classes" placeholder="Semua kelas" search-placeholder="Cari kelas..." /></div>
+            @unless(auth()->user()->hasAnyRole(['guru','siswa']))<div><label class="form-label">Guru</label><x-searchable-select model="guruId" :value="$guruId" :options="$teachers" placeholder="Semua guru" search-placeholder="Cari guru..." /></div>@endunless
+            @if($jenis==='jadwal')
+                <div><label class="form-label">Hari</label><x-searchable-select model="hari" :value="$hari" :options="$days" placeholder="Semua hari" search-placeholder="Cari hari..." /></div>
+            @else
+                <div><label class="form-label">Mata Pelajaran</label><x-searchable-select model="mapelId" :value="$mapelId" :options="$subjects" placeholder="Semua mata pelajaran" search-placeholder="Cari mata pelajaran..." /></div>
+                <div><label class="form-label">Bulan</label><x-searchable-select model="bulan" :value="$bulan" :options="$months" placeholder="Pilih bulan" search-placeholder="Cari bulan..." /></div>
+                @unless(auth()->user()->hasRole('siswa'))<div><label class="form-label">Siswa</label><x-searchable-select model="siswaId" :value="$siswaId" :options="$students" placeholder="Semua siswa" search-placeholder="Cari siswa..." /></div>@endunless
+            @endif
+        </div>
     </div>
 
-    <div class="filters card print-hidden mb-4 grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div><label class="form-label">Semester</label><x-searchable-select model="semesterId" :value="$semesterId" :options="$semesters" placeholder="Semua semester" search-placeholder="Cari semester..." /></div>
-        <div><label class="form-label">Kelas</label><x-searchable-select model="kelasId" :value="$kelasId" :options="$classes" placeholder="Semua kelas" search-placeholder="Cari kelas..." /></div>
-        @unless(auth()->user()->hasAnyRole(['guru','siswa']))<div><label class="form-label">Guru</label><x-searchable-select model="guruId" :value="$guruId" :options="$teachers" placeholder="Semua guru" search-placeholder="Cari guru..." /></div>@endunless
-        @if($jenis==='jadwal')
-            <div><label class="form-label">Hari</label><x-searchable-select model="hari" :value="$hari" :options="$days" placeholder="Semua hari" search-placeholder="Cari hari..." /></div>
-        @else
-            <div><label class="form-label">Mata Pelajaran</label><x-searchable-select model="mapelId" :value="$mapelId" :options="$subjects" placeholder="Semua mata pelajaran" search-placeholder="Cari mata pelajaran..." /></div>
-            <div><label class="form-label">Bulan</label><x-searchable-select model="bulan" :value="$bulan" :options="$months" placeholder="Pilih bulan" search-placeholder="Cari bulan..." /></div>
-            @unless(auth()->user()->hasRole('siswa'))<div><label class="form-label">Siswa</label><x-searchable-select model="siswaId" :value="$siswaId" :options="$students" placeholder="Semua siswa" search-placeholder="Cari siswa..." /></div>@endunless
-        @endif
-    </div>
-
-    <x-data-table.bulk-toolbar :count="$this->selectedCount($datasetTotal)" />
-
-    <section class="card overflow-hidden">
-        <div class="border-b p-6 text-center"><h2 class="font-semibold uppercase text-slate-950">{{ $sekolah?->nama_sekolah ?? 'SD Negeri 232 Maluku Tengah' }}</h2>@if($sekolah?->alamat)<p class="mt-1 text-sm text-slate-500">{{ $sekolah->alamat }}</p>@endif<p class="mt-2 text-lg font-bold uppercase">Laporan {{ ucfirst($jenis) }} {{ $jenis==='nilai'?'Tugas Siswa':'' }}</p><p class="mt-2 text-sm text-slate-500">Dicetak {{ now()->translatedFormat('d F Y H:i') }} WIT</p></div>
-        <div class="table-scroll"><table class="data-table min-w-[900px]"><thead><tr>
-            <th class="table-select-cell print-hidden sticky left-0 z-30 w-14"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" wire:click="toggleSelectAllDataset" @checked($datasetTotal>0&&$this->selectedCount($datasetTotal)===$datasetTotal) x-data x-effect="$el.indeterminate = {{ $this->selectedCount($datasetTotal)>0&&$this->selectedCount($datasetTotal)<$datasetTotal?'true':'false' }}" aria-label="Pilih seluruh baris laporan"></th>
-            @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<th><button type="button" wire:click="sortBy('{{ $column['sortable'] }}')" class="print-hidden inline-flex min-h-11 items-center gap-1 text-left"><span>{{ $column['label'] }}</span><span aria-hidden="true">{{ $sort===$column['sortable']?($direction==='asc'?'↑':'↓'):'↕' }}</span></button><span class="hidden print:inline">{{ $column['label'] }}</span></th>@endforeach
-            <th class="table-action-cell print-hidden sticky right-0 z-30">Aksi</th>
+    <section class="report-sheet overflow-hidden">
+        <header class="report-heading">
+            <div class="flex min-w-0 items-center gap-4 text-left"><img src="{{ $sekolah?->logo ? Storage::url($sekolah->logo) : asset('logo-malteng.png') }}" alt="Logo {{ $sekolah?->nama_sekolah ?? 'SD Negeri 232 Maluku Tengah' }}" width="56" height="68" class="h-16 w-14 shrink-0 object-contain"><div class="min-w-0"><p class="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">Dokumen Akademik Sekolah</p><h2 class="mt-1 text-lg font-bold uppercase leading-tight text-slate-950 sm:text-xl">{{ $sekolah?->nama_sekolah ?? 'SD Negeri 232 Maluku Tengah' }}</h2>@if($sekolah?->alamat)<p class="mt-1 text-sm leading-5 text-slate-500">{{ $sekolah->alamat }}</p>@endif</div></div>
+            <div class="mt-5 flex flex-col gap-1 border-t border-slate-200 pt-5 text-left sm:flex-row sm:items-end sm:justify-between"><div><p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Jenis Laporan</p><h3 class="mt-1 text-xl font-bold text-slate-950">Laporan {{ ucfirst($jenis) }} {{ $jenis==='nilai'?'Tugas Siswa':'' }}</h3></div><p class="mt-2 text-xs text-slate-500 sm:mt-0">Diperbarui {{ now()->translatedFormat('d F Y, H:i') }} WIT</p></div>
+            <dl class="report-meta-grid">
+                <div><dt>Semester</dt><dd>{{ $semesterLabel }}</dd></div>
+                <div><dt>Kelas</dt><dd>{{ $classLabel }}</dd></div>
+                <div><dt>{{ $jenis === 'jadwal' ? 'Guru' : 'Mata Pelajaran' }}</dt><dd>{{ $jenis === 'jadwal' ? $teacherLabel : $subjectLabel }}</dd></div>
+                <div><dt>{{ $jenis === 'jadwal' ? 'Hari' : 'Bulan' }}</dt><dd>{{ $periodLabel }}</dd></div>
+                @if($jenis === 'nilai' && $siswaId)<div><dt>Siswa</dt><dd>{{ $studentLabel }}</dd></div>@endif
+            </dl>
+        </header>
+        <div class="table-scroll report-table-scroll w-full"><table class="data-table report-table w-full min-w-full"><thead><tr>
+            @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<th aria-sort="{{ $sort===$column['sortable']?($direction==='asc'?'ascending':'descending'):'none' }}"><button type="button" wire:click="sortBy('{{ $column['sortable'] }}')" class="print-hidden inline-flex min-h-11 items-center gap-1.5 text-left"><span>{{ $column['label'] }}</span><span class="text-sky-200" aria-hidden="true">{{ $sort===$column['sortable']?($direction==='asc'?'↑':'↓'):'↕' }}</span></button><span class="hidden print:inline">{{ $column['label'] }}</span></th>@endforeach
         </tr></thead><tbody>
             @foreach($rows as $row)
-                @php $selected=$this->isRowSelected($row->getKey()); @endphp
-                <tr class="{{ $selected?'is-selected':'' }}" wire:key="report-row-{{ $row->getKey() }}" wire:loading.remove>
-                    <td class="table-select-cell print-hidden sticky left-0 z-20"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" @checked($selected) wire:click="toggleRowSelection({{ $row->getKey() }})" aria-label="Pilih baris laporan"></td>
+                <tr wire:key="report-row-{{ $row->getKey() }}" wire:loading.remove>
                     @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<td>
-                        @if($column['id']==='hari')<span class="font-semibold capitalize">{{ $row->hari }}</span>
-                        @elseif($column['id']==='jam')<span class="tabular-nums">{{ substr($row->jam_mulai,0,5) }}–{{ substr($row->jam_selesai,0,5) }}</span>
-                        @elseif(in_array($column['id'],['m1','m2','m3','m4'],true)){{ $row->{$column['id']}===null?'-':number_format((float)$row->{$column['id']},0) }}
-                        @elseif($column['id']==='rata_rata')<span class="font-semibold tabular-nums">{{ $row->rata_rata===null?'-':number_format((float)$row->rata_rata,2) }}</span>
-                        @else{{ filled($row->{$column['id']})?$row->{$column['id']}:'-' }}@endif
+                        @if($column['id']==='hari')<span class="report-day-badge capitalize">{{ $row->hari }}</span>
+                        @elseif($column['id']==='jam')<span class="inline-flex flex-col tabular-nums"><strong class="text-slate-900">{{ substr($row->jam_mulai,0,5) }}</strong><span class="text-xs text-slate-500">s.d. {{ substr($row->jam_selesai,0,5) }}</span></span>
+                        @elseif($column['id']==='kelas')<span class="report-class-badge">{{ $row->kelas }}</span>
+                        @elseif(in_array($column['id'],['nama_siswa','mata_pelajaran'],true))<span class="font-semibold text-slate-900">{{ $row->{$column['id']} }}</span>
+                        @elseif($column['id']==='identitas')<span class="font-medium tabular-nums text-slate-700">{{ $row->identitas }}</span>
+                        @elseif(in_array($column['id'],['m1','m2','m3','m4'],true))<span class="report-score">{{ $row->{$column['id']}===null?'-':number_format((float)$row->{$column['id']},0) }}</span>
+                        @elseif($column['id']==='rata_rata')<span class="report-average">{{ $row->rata_rata===null?'-':number_format((float)$row->rata_rata,2) }}</span>
+                        @else<span class="text-slate-700">{{ filled($row->{$column['id']})?$row->{$column['id']}:'-' }}</span>@endif
                     </td>@endforeach
-                    <td class="table-action-cell print-hidden sticky right-0 z-20"><span class="text-slate-400">—</span></td>
                 </tr>
             @endforeach
-            <x-data-table.states :columns="count($visibleColumnIds)+2" :empty="$rows->isEmpty()" :filtered="filled($search)||filled($semesterId)||filled($kelasId)||filled($guruId)||filled($mapelId)||filled($hari)||filled($siswaId)" :error="$tableError" />
+            <x-data-table.states :columns="count($visibleColumnIds)" :empty="$rows->isEmpty()" :filtered="filled($search)||filled($semesterId)||filled($kelasId)||filled($guruId)||filled($mapelId)||filled($hari)||filled($siswaId)" :error="$tableError" />
         </tbody></table></div>
         <div class="print-hidden"><x-data-table.pagination :paginator="$rows" :per-page="$perPage" /></div>
     </section>

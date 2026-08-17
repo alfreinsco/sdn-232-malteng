@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\MataPelajaran;
 use App\Models\NilaiTugas;
 use App\Models\PengaturanSekolah;
+use App\Models\Semester;
+use App\Models\Siswa;
 use App\Services\GenerateLaporan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -38,6 +43,13 @@ class ReportController extends Controller
             'rows' => $rows,
             'sekolah' => PengaturanSekolah::first(),
             'filter' => $filter,
+            'filterLabels' => [
+                'semester' => isset($filter['semester_id']) ? Semester::with('tahunAjaran')->find($filter['semester_id']) : null,
+                'kelas' => isset($filter['kelas_id']) ? Kelas::find($filter['kelas_id']) : null,
+                'guru' => isset($filter['guru_id']) ? Guru::find($filter['guru_id']) : null,
+                'mapel' => isset($filter['mapel_id']) ? MataPelajaran::find($filter['mapel_id']) : null,
+                'siswa' => isset($filter['siswa_id']) ? Siswa::find($filter['siswa_id']) : null,
+            ],
         ])->setPaper('a4', $jenis === 'nilai' ? 'landscape' : 'portrait')
             ->download('laporan-'.$jenis.'-'.now()->format('Ymd').'.pdf');
     }

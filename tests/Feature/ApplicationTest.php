@@ -535,4 +535,17 @@ class ApplicationTest extends TestCase
             ->assertDontSee('Data tidak dapat dimuat.')
             ->assertSee('Simpan Nilai');
     }
+
+    public function test_report_tables_are_read_only_and_use_the_full_content_width(): void
+    {
+        $admin = User::where('username', 'admin')->firstOrFail();
+
+        foreach (['/laporan/jadwal', '/laporan/nilai'] as $uri) {
+            $this->actingAs($admin)->get($uri)
+                ->assertOk()
+                ->assertSee('report-table w-full min-w-full', false)
+                ->assertDontSee('Pilih seluruh baris laporan')
+                ->assertDontSee('Pilih baris laporan');
+        }
+    }
 }
