@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
         PengaturanSekolah::create(['nama_sekolah' => 'SD Negeri 232 Maluku Tengah', 'npsn' => '60100000', 'alamat' => 'Kabupaten Maluku Tengah, Maluku', 'kepala_sekolah_user_id' => $kepala->id]);
         $kelas = collect(['I A', 'II A', 'III A', 'IV A', 'V A', 'VI A'])->map(fn ($nama, $i) => Kelas::create(['tahun_ajaran_id' => $tahun->id, 'nama' => $nama, 'tingkat' => $i + 1, 'wali_kelas_id' => $guru[$i]->id, 'status' => 'aktif']));
         $mapel = collect(['Pendidikan Agama', 'Pendidikan Pancasila', 'Bahasa Indonesia', 'Matematika', 'IPAS', 'Seni Budaya', 'PJOK', 'Bahasa Inggris', 'Muatan Lokal', 'Literasi'])->map(fn ($nama, $i) => MataPelajaran::create(['kode' => 'MP-'.str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT), 'nama' => $nama, 'status' => 'aktif']));
-        $jam = collect([['Jam 1', '07:30', '08:10', 'pelajaran'], ['Jam 2', '08:10', '08:50', 'pelajaran'], ['Istirahat', '08:50', '09:10', 'istirahat'], ['Jam 3', '09:10', '09:50', 'pelajaran'], ['Jam 4', '09:50', '10:30', 'pelajaran']])->map(fn ($r, $i) => JamPelajaran::create(['nama' => $r[0], 'jam_mulai' => $r[1], 'jam_selesai' => $r[2], 'urutan' => $i + 1, 'jenis' => $r[3], 'status' => 'aktif']));
+        $jam = collect([['Jam ke 1', '07:30', '08:10', 'pelajaran'], ['Jam ke 2', '08:10', '08:50', 'pelajaran'], ['Istirahat', '08:50', '09:10', 'istirahat'], ['Jam ke 3', '09:10', '09:50', 'pelajaran'], ['Jam ke 4', '09:50', '10:30', 'pelajaran']])->map(fn ($r, $i) => JamPelajaran::create(['nama' => $r[0], 'jam_mulai' => $r[1], 'jam_selesai' => $r[2], 'urutan' => $i + 1, 'jenis' => $r[3], 'status' => 'aktif']));
         foreach (range(1, 30) as $i) {
             $s = Siswa::factory()->create();
             if ($i === 1) {

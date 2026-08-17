@@ -259,34 +259,37 @@ class ApplicationTest extends TestCase
         ]);
     }
 
-    public function test_lesson_period_order_must_be_unique_but_can_be_kept_when_editing(): void
+    public function test_lesson_period_order_is_assigned_automatically_and_can_be_reordered(): void
     {
         $this->actingAs(User::where('username', 'admin')->first());
-        $existing = JamPelajaran::orderBy('urutan')->firstOrFail();
+        $lastOrder = (int) JamPelajaran::max('urutan');
 
         Livewire::test('pages::resource', ['resource' => 'jam-pelajaran'])
+            ->call('openCreate')
+            ->assertDontSee('id="field-urutan"', false)
             ->set('form', [
-                'nama' => 'Jam Duplikat',
+                'nama' => 'Jam Tambahan',
                 'jam_mulai' => '11:00',
                 'jam_selesai' => '11:40',
-                'urutan' => $existing->urutan,
                 'jenis' => 'pelajaran',
                 'status' => 'aktif',
             ])
             ->call('save')
-            ->assertHasErrors(['form.urutan' => 'unique']);
-
-        Livewire::test('pages::resource', ['resource' => 'jam-pelajaran'])
-            ->call('edit', $existing->id)
-            ->set('form.nama', $existing->nama.' Revisi')
-            ->call('save')
             ->assertHasNoErrors();
 
-        $this->assertDatabaseHas('jam_pelajaran', [
-            'id' => $existing->id,
-            'nama' => $existing->nama.' Revisi',
-            'urutan' => $existing->urutan,
-        ]);
+        $created = JamPelajaran::where('nama', 'Jam Tambahan')->firstOrFail();
+        $this->assertSame($lastOrder + 1, $created->urutan);
+
+        $originalIds = JamPelajaran::orderBy('urutan')->pluck('id')->all();
+        $reversedIds = array_reverse($originalIds);
+
+        Livewire::test('pages::resource', ['resource' => 'jam-pelajaran'])
+            ->set('perPage', 250)
+            ->call('reorderJamPelajaran', $reversedIds)
+            ->assertHasNoErrors();
+
+        $this->assertSame($reversedIds, JamPelajaran::orderBy('urutan')->pluck('id')->all());
+        $this->assertSame(range(1, count($reversedIds)), JamPelajaran::orderBy('urutan')->pluck('urutan')->all());
     }
 
     public function test_lesson_period_table_displays_time_and_type_columns(): void
@@ -297,7 +300,9 @@ class ApplicationTest extends TestCase
         $response->assertOk()
             ->assertSeeInOrder(['Urutan', 'Nama', 'Jam Mulai', 'Jam Selesai', 'Jenis', 'Status'])
             ->assertSee('07:30')
-            ->assertSee('Pelajaran');
+            ->assertSee('Pelajaran')
+            ->assertSee('Seret pegangan pada kolom Urutan')
+            ->assertSee('draggable="true"', false);
     }
 
     public function test_student_table_displays_identity_gender_and_birth_information(): void
