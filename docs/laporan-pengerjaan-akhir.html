@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Laporan Penyelesaian Pengerjaan dan Demonstrasi Tahap Akhir</title>
+  <style>
+    @page { size: A4; margin: 18mm 17mm 20mm 22mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #172033; font: 10.5pt/1.55 Arial, sans-serif; }
+    .cover { min-height: 255mm; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; page-break-after: always; }
+    .cover img { width: 92px; height: auto; margin: 20px 0; }
+    .eyebrow { color: #0369a1; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    h1 { max-width: 650px; margin: 10px auto; color: #0c4a6e; font-size: 24pt; line-height: 1.2; }
+    .subtitle { max-width: 580px; font-size: 13pt; }
+    .meta { margin-top: 30px; padding: 14px 22px; border: 1px solid #bae6fd; border-radius: 10px; background: #f0f9ff; }
+    .status { display: inline-block; margin-top: 14px; padding: 6px 12px; color: #166534; background: #dcfce7; border-radius: 999px; font-weight: 700; }
+    h2 { margin: 22px 0 8px; padding-bottom: 5px; color: #075985; font-size: 15pt; border-bottom: 2px solid #bae6fd; page-break-after: avoid; }
+    p { margin: 5px 0 10px; text-align: justify; }
+    ul, ol { margin-top: 6px; padding-left: 22px; }
+    li { margin: 3px 0; }
+    table { width: 100%; margin: 10px 0 14px; border-collapse: collapse; font-size: 9.4pt; page-break-inside: auto; }
+    tr { page-break-inside: avoid; }
+    th { color: white; background: #0369a1; text-align: left; }
+    th, td { padding: 7px 8px; border: 1px solid #cbd5e1; vertical-align: top; }
+    tbody tr:nth-child(even) { background: #f8fafc; }
+    code { padding: 1px 4px; background: #eef2f7; border-radius: 3px; font-size: 9pt; }
+    .note { padding: 10px 12px; border-left: 4px solid #0ea5e9; background: #f0f9ff; }
+    .sign td { height: 55px; }
+    .footer-note { margin-top: 20px; color: #475569; font-size: 9pt; }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div class="eyebrow">Laporan Proyek</div>
+    <h1>Penyelesaian Pengerjaan dan Demonstrasi Tahap Akhir</h1>
+    <div class="subtitle">Sistem Informasi Jadwal Pelajaran dan Nilai Siswa Berbasis Web<br><strong>SD Negeri 232 Maluku Tengah</strong></div>
+    <img src="../public/logo-malteng.png" alt="Logo Maluku Tengah">
+    <div class="meta"><strong>Ditujukan kepada:</strong> Awati Fujihani Lessy<br><strong>Tanggal laporan:</strong> 18 Agustus 2026</div>
+    <div class="status">Selesai secara teknis - siap demonstrasi akhir</div>
+  </section>
+
+  <h2>1. Tujuan Dokumen</h2>
+  <p>Dokumen ini mencatat hasil penyelesaian pengembangan aplikasi berdasarkan ruang lingkup Proposal Penawaran Pengembangan Sistem Informasi. Laporan digunakan sebagai bahan demonstrasi tahap akhir, pemeriksaan bersama client, pencatatan revisi minor apabila ada, dan serah terima setelah hasil demonstrasi diterima.</p>
+
+  <h2>2. Ringkasan Hasil</h2>
+  <p>Aplikasi telah mengintegrasikan pengelolaan data akademik, jadwal pelajaran, nilai tugas Minggu 1-4, monitoring, laporan, print, dan PDF dalam satu sistem berbasis web. Hak akses dibedakan untuk Admin, Guru, Siswa, dan Kepala Sekolah melalui autentikasi serta authorization server-side.</p>
+  <p class="note">Status implementasi internal telah mencapai kondisi siap demonstrasi akhir. Penerimaan final tetap dilakukan melalui pemeriksaan dan persetujuan client; laporan ini tidak menggantikan berita acara penerimaan.</p>
+
+  <h2>3. Ruang Lingkup yang Diselesaikan</h2>
+  <table><thead><tr><th>Kelompok</th><th>Hasil Implementasi</th><th>Status</th></tr></thead><tbody>
+    <tr><td>Autentikasi</td><td>Login, logout, akun nonaktif ditolak, registrasi publik dinonaktifkan</td><td>Selesai</td></tr>
+    <tr><td>Hak akses</td><td>Role Admin, Guru, Siswa, Kepala Sekolah dan permission tiap modul</td><td>Selesai</td></tr>
+    <tr><td>Master akademik</td><td>Pengguna, guru, siswa, kelas, mata pelajaran, jam pelajaran</td><td>Selesai</td></tr>
+    <tr><td>Periode akademik</td><td>Tahun ajaran, semester, periode aktif, histori periode</td><td>Selesai</td></tr>
+    <tr><td>Penempatan siswa</td><td>Penempatan siswa ke kelas dan histori per tahun ajaran</td><td>Selesai</td></tr>
+    <tr><td>Pengajaran</td><td>Relasi guru, kelas, mata pelajaran, dan semester</td><td>Selesai</td></tr>
+    <tr><td>Jadwal</td><td>CRUD, filter, tampilan mingguan, validasi bentrok kelas/guru/duplikat</td><td>Selesai</td></tr>
+    <tr><td>Nilai</td><td>Input massal, M1-M4, bulan, 0-100/NULL, rata-rata nilai terisi</td><td>Selesai</td></tr>
+    <tr><td>Dashboard</td><td>Dashboard berbeda sesuai role dan informasi periode aktif</td><td>Selesai</td></tr>
+    <tr><td>Monitoring</td><td>Monitoring jadwal dan nilai untuk Admin/Kepala Sekolah</td><td>Selesai</td></tr>
+    <tr><td>Laporan</td><td>Laporan jadwal dan nilai dengan filter, print, serta PDF</td><td>Selesai</td></tr>
+    <tr><td>Pengaturan</td><td>Identitas sekolah, logo, kepala sekolah, dan profil pengguna</td><td>Selesai</td></tr>
+    <tr><td>Antarmuka</td><td>Responsif desktop/mobile, sidebar mobile, loading dan empty state</td><td>Selesai</td></tr>
+    <tr><td>Dokumentasi</td><td>ERD, database, role, alur, deployment, test, panduan, presentasi</td><td>Selesai</td></tr>
+  </tbody></table>
+
+  <h2>4. Ketentuan Bisnis Penting</h2>
+  <ul>
+    <li>Kelas dan guru tidak dapat memiliki jadwal ganda pada waktu yang sama; jadwal identik juga ditolak.</li>
+    <li>Guru hanya mengelola nilai pada pengajarannya, sedangkan siswa hanya memperoleh data miliknya.</li>
+    <li>Nilai 0 sah, kolom kosong disimpan sebagai NULL, dan rata-rata hanya menghitung nilai yang tersedia.</li>
+    <li>Riwayat kelas dan data akademik periode lama tetap dapat dibaca.</li>
+  </ul>
+
+  <h2>5. Teknologi dan Arsitektur</h2>
+  <table><thead><tr><th>Komponen</th><th>Implementasi</th></tr></thead><tbody>
+    <tr><td>Backend</td><td>PHP 8.4 dan Laravel 13</td></tr>
+    <tr><td>Antarmuka</td><td>Livewire 4, Blade, Tailwind CSS 4</td></tr>
+    <tr><td>Basis data</td><td>MySQL; SQLite in-memory hanya untuk test terisolasi</td></tr>
+    <tr><td>Hak akses</td><td>Spatie Laravel Permission</td></tr>
+    <tr><td>PDF / build / test</td><td>DomPDF, Vite 8, PHPUnit 12</td></tr>
+  </tbody></table>
+
+  <h2>6. Verifikasi Teknis Terakhir</h2>
+  <p>Verifikasi ulang dilakukan pada 18 Agustus 2026.</p>
+  <table><thead><tr><th>Pemeriksaan</th><th>Perintah</th><th>Hasil</th></tr></thead><tbody>
+    <tr><td>Automated test</td><td><code>php artisan test</code></td><td>Lulus: 18 test, 76 assertion</td></tr>
+    <tr><td>Production build</td><td><code>npm run build</code></td><td>Berhasil tanpa error</td></tr>
+    <tr><td>Pemeriksaan route</td><td><code>php artisan route:list</code></td><td>Route terdaftar dan dilindungi middleware</td></tr>
+    <tr><td>Dokumen skripsi</td><td>Pemeriksaan struktur dan render</td><td>Valid, 50 halaman</td></tr>
+  </tbody></table>
+  <p>Automated test mencakup autentikasi, akun nonaktif, registrasi publik, authorization, aktivasi periode, pengajaran duplikat, bentrok jadwal, batas nilai, nilai kosong, siswa di luar kelas, akses nilai siswa, dan endpoint PDF. Pemeriksaan penerimaan pengguna tetap dilakukan bersama client pada demonstrasi akhir.</p>
+
+  <h2>7. Materi Demonstrasi Akhir</h2>
+  <ol>
+    <li>Login menggunakan empat role serta dashboard masing-masing.</li>
+    <li>Master data, periode akademik, penempatan siswa, dan pengajaran.</li>
+    <li>Jadwal dan simulasi penolakan bentrok.</li>
+    <li>Input nilai massal M1-M4 serta perhitungan rata-rata.</li>
+    <li>Akses Guru, Siswa, dan monitoring Kepala Sekolah.</li>
+    <li>Filter laporan, print, PDF, pengaturan sekolah, dan tampilan mobile.</li>
+  </ol>
+
+  <h2>8. Dokumen dan Berkas Serah Terima</h2>
+  <ul>
+    <li>Source code, migration, seeder, factory, data demo, dan <code>.env.example</code>.</li>
+    <li>ERD, dokumentasi database/role/alur/deployment, serta dokumen pengujian.</li>
+    <li>Buku panduan, screenshot, PowerPoint, PDF presentasi, dan naskah presentasi.</li>
+    <li>Draf skripsi Word beserta pratinjau PDF.</li>
+  </ul>
+
+  <h2>9. Hal yang Diperiksa Bersama Client</h2>
+  <ul>
+    <li>Kesesuaian identitas sekolah, data demo, alur tiap role, dan laporan.</li>
+    <li>Deployment pada domain/hosting apabila akses tersedia.</li>
+    <li>Daftar revisi minor dalam batas ruang lingkup proposal.</li>
+  </ul>
+
+  <h2>10. Catatan Penerimaan</h2>
+  <p>Secara teknis aplikasi telah siap untuk demonstrasi akhir. Status diterima/serah terima ditetapkan setelah client menyelesaikan pemeriksaan. Perubahan fitur besar di luar ruang lingkup awal dibicarakan sebagai pekerjaan tambahan sesuai ketentuan proposal.</p>
+  <table class="sign"><thead><tr><th>Pihak</th><th>Nama</th><th>Tanggal</th><th>Tanda Tangan</th></tr></thead><tbody>
+    <tr><td>Client/Penerima</td><td></td><td></td><td></td></tr>
+    <tr><td>Pengembang</td><td></td><td></td><td></td></tr>
+  </tbody></table>
+  <p class="footer-note"><strong>Catatan/revisi minor:</strong><br><br>....................................................................................................................................................<br><br>....................................................................................................................................................</p>
+</body>
+</html>

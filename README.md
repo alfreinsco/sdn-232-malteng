@@ -74,6 +74,8 @@ Kemudian jalankan `php artisan optimize`, arahkan document root web server ke `p
 
 ## Dokumentasi
 
+- `docs/laporan-pengerjaan-akhir.pdf` — laporan penyelesaian dan bahan penerimaan demonstrasi tahap akhir
+- `docs/laporan-pengerjaan-akhir.md` — sumber laporan pengerjaan akhir yang dapat disunting
 - `docs/skripsi-lengkap-awati-fujihani-lessy.docx` — draf skripsi lengkap yang dapat diedit di Microsoft Word
 - `docs/skripsi-preview-awati-fujihani-lessy.pdf` — pratinjau tata letak skripsi untuk pemeriksaan dan pencetakan
 - `docs/presentasi-aplikasi-sisd232.pptx` — slide PowerPoint presentasi aplikasi
