@@ -156,7 +156,8 @@
                     </a>
                 </div>
             </header>
-            <main id="main-content" class="mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8" tabindex="-1">{{ $slot }}
+            <main id="main-content" class="relative mx-auto max-w-[1600px] p-4 pb-10 sm:p-6 sm:pb-12 lg:p-8 lg:pb-14" tabindex="-1">
+                <div class="content-stage">{{ $slot }}</div>
             </main>
         </div>
     </div>

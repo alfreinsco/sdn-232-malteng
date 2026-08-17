@@ -31,13 +31,13 @@ new class extends Component {
 };
 ?>
 <div>
-    <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <div class="content-hero mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="relative z-10">
             <p class="text-sm font-semibold text-sky-700">{{ now()->translatedFormat('l, d F Y') }}</p>
             <h1 class="page-title mt-1">Selamat datang, {{ auth()->user()->name }}</h1>
             <p class="page-subtitle">Ringkasan kegiatan akademik sekolah hari ini.</p>
         </div>
-        <div class="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm"><span class="text-slate-500">Periode
+        <div class="relative z-10 rounded-xl border border-sky-200 bg-sky-50/90 px-4 py-3 text-sm"><span class="text-slate-500">Periode
                 aktif</span>
             <p class="font-semibold text-sky-800">{{ $tahun?->nama ?? 'Belum diatur' }} ·
                 {{ ucfirst($semester?->nama ?? '-') }}</p>
@@ -45,7 +45,7 @@ new class extends Component {
     </div>
     <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         @foreach ($cards as $card)
-            <article class="card card-body relative overflow-hidden">
+            <article class="card metric-card card-body">
                 <div class="absolute -right-4 -top-8 size-24 rounded-full bg-sky-50"></div>
                 <p class="relative text-sm font-medium text-slate-500">{{ $card['label'] }}</p>
                 <p class="relative mt-3 text-3xl font-semibold tabular-nums text-slate-950">{{ $card['value'] }}</p>
