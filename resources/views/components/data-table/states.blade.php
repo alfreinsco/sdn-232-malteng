@@ -1,6 +1,6 @@
 @props(['columns', 'empty', 'filtered' => false, 'error' => null])
 
-<tr wire:loading.table-row>
+<tr class="hidden" wire:loading.class.remove="hidden">
     <td colspan="{{ $columns }}" class="p-0">
         <div class="space-y-3 p-5" aria-label="Memuat data">
             @foreach (range(1, 5) as $row)
