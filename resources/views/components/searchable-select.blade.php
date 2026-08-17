@@ -17,7 +17,7 @@
     ])->values()->all();
 @endphp
 
-<div class="relative" wire:key="searchable-select-{{ str($model)->slug() }}-{{ md5((string) $value) }}"
+<div class="relative" wire:key="searchable-select-{{ str($model)->slug() }}-{{ md5((string) $value.'|'.json_encode($normalizedOptions)) }}"
     x-data="{
         open: false,
         query: '',

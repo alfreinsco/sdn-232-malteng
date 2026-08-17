@@ -232,6 +232,7 @@ class ApplicationTest extends TestCase
             ->assertHasErrors(['form.nama']);
 
         Livewire::test('pages::resource', ['resource' => 'pengajaran'])
+            ->set('pengajaranTahunAjaranId', (string) $pengajaran->semester->tahun_ajaran_id)
             ->set('form', [
                 'semester_id' => (string) $pengajaran->semester_id,
                 'kelas_id' => (string) $pengajaran->kelas_id,
@@ -580,6 +581,55 @@ class ApplicationTest extends TestCase
             ->assertSee($teaching->mataPelajaran->nama)
             ->assertSee($teaching->guru->nama_lengkap)
             ->assertDontSee('Data tidak dapat dimuat.');
+    }
+
+    public function test_teaching_form_requires_semester_and_class_from_selected_academic_year(): void
+    {
+        $teaching = Pengajaran::with(['semester', 'kelas'])->firstOrFail();
+        $otherYear = TahunAjaran::create([
+            'nama' => '2030/2031',
+            'tanggal_mulai' => '2030-07-01',
+            'tanggal_selesai' => '2031-06-30',
+            'status' => 'nonaktif',
+        ]);
+
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        $component = Livewire::test('pages::resource', ['resource' => 'pengajaran'])
+            ->call('openCreate')
+            ->assertSee('Pilih tahun ajaran dahulu...')
+            ->assertSee('Pilih tahun ajaran terlebih dahulu')
+            ->set('pengajaranTahunAjaranId', (string) $otherYear->id);
+
+        $component->set('form', [
+                'semester_id' => (string) $teaching->semester_id,
+                'kelas_id' => (string) $teaching->kelas_id,
+                'mata_pelajaran_id' => (string) $teaching->mata_pelajaran_id,
+                'guru_id' => (string) $teaching->guru_id,
+                'status' => 'aktif',
+            ])
+            ->call('save')
+            ->assertHasErrors(['form.semester_id']);
+    }
+
+    public function test_teaching_filters_are_persisted_and_applied(): void
+    {
+        $teaching = Pengajaran::with(['semester', 'kelas', 'mataPelajaran'])->firstOrFail();
+
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::withQueryParams([
+            'tahun_ajaran' => (string) $teaching->semester->tahun_ajaran_id,
+            'semester' => (string) $teaching->semester_id,
+            'kelas' => (string) $teaching->kelas_id,
+            'mata_pelajaran' => (string) $teaching->mata_pelajaran_id,
+        ])->test('pages::resource', ['resource' => 'pengajaran'])
+            ->assertSet('tahunAjaranId', (string) $teaching->semester->tahun_ajaran_id)
+            ->assertSet('semesterId', (string) $teaching->semester_id)
+            ->assertSet('kelasId', (string) $teaching->kelas_id)
+            ->assertSet('mataPelajaranId', (string) $teaching->mata_pelajaran_id)
+            ->assertSee($teaching->kelas->nama)
+            ->assertSee($teaching->mataPelajaran->nama);
     }
 
     public function test_academic_year_table_displays_start_and_end_dates(): void
