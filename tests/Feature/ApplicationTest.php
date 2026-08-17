@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Guru;
 use App\Models\JadwalPelajaran;
 use App\Models\JamPelajaran;
+use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\Pengajaran;
 use App\Models\Semester;
@@ -297,5 +298,58 @@ class ApplicationTest extends TestCase
             ->assertSeeInOrder(['Urutan', 'Nama', 'Jam Mulai', 'Jam Selesai', 'Jenis', 'Status'])
             ->assertSee('07:30')
             ->assertSee('Pelajaran');
+    }
+
+    public function test_all_master_status_actions_toggle_without_deleting_records(): void
+    {
+        $admin = User::where('username', 'admin')->firstOrFail();
+        $this->actingAs($admin);
+
+        $targets = [
+            'tahun-ajaran' => TahunAjaran::where('status', 'aktif')->firstOrFail(),
+            'semester' => Semester::where('status', 'aktif')->firstOrFail(),
+            'guru' => Guru::where('status', 'aktif')->firstOrFail(),
+            'siswa' => Siswa::where('status', 'aktif')->firstOrFail(),
+            'kelas' => Kelas::where('status', 'aktif')->firstOrFail(),
+            'mata-pelajaran' => MataPelajaran::where('status', 'aktif')->firstOrFail(),
+            'jam-pelajaran' => JamPelajaran::where('status', 'aktif')->firstOrFail(),
+            'pengajaran' => Pengajaran::where('status', 'aktif')->firstOrFail(),
+            'pengguna' => User::where('username', 'guru2')->firstOrFail(),
+        ];
+
+        foreach ($targets as $resource => $item) {
+            $item->refresh();
+            $originalStatus = $item->status;
+            $targetStatus = $originalStatus === 'aktif' ? 'nonaktif' : 'aktif';
+            $table = $item->getTable();
+            $count = $item->newQuery()->count();
+
+            Livewire::test('pages::resource', ['resource' => $resource])
+                ->call('toggleStatus', $item->id)
+                ->assertHasNoErrors();
+
+            $this->assertDatabaseCount($table, $count);
+            $this->assertDatabaseHas($table, ['id' => $item->id, 'status' => $targetStatus]);
+
+            Livewire::test('pages::resource', ['resource' => $resource])
+                ->call('toggleStatus', $item->id)
+                ->assertHasNoErrors();
+
+            $this->assertDatabaseCount($table, $count);
+            $this->assertDatabaseHas($table, ['id' => $item->id, 'status' => $originalStatus]);
+        }
+    }
+
+    public function test_admin_cannot_deactivate_the_account_currently_in_use(): void
+    {
+        $admin = User::where('username', 'admin')->firstOrFail();
+        $this->actingAs($admin);
+
+        Livewire::test('pages::resource', ['resource' => 'pengguna'])
+            ->call('toggleStatus', $admin->id)
+            ->assertHasNoErrors()
+            ->assertDispatched('notify');
+
+        $this->assertDatabaseHas('users', ['id' => $admin->id, 'status' => 'aktif']);
     }
 }

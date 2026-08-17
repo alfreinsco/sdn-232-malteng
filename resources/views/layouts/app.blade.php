@@ -101,9 +101,17 @@
             </main>
         </div>
     </div>
+    <div x-data="{ show: false, type: 'success', message: '', timer: null }"
+        @notify.window="type = $event.detail.type; message = $event.detail.message; show = true; clearTimeout(timer); timer = setTimeout(() => show = false, type === 'error' ? 6000 : 4000)"
+        x-show="show" x-transition x-cloak class="toast" :class="type" :role="type === 'error' ? 'alert' : 'status'"
+        x-text="message"></div>
     @if (session('success'))
         <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" class="toast success" role="status">
             {{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 6000)" class="toast error" role="alert">
+            {{ session('error') }}</div>
     @endif
 </body>
 
