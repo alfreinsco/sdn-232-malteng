@@ -612,4 +612,17 @@ class ApplicationTest extends TestCase
             ->assertSee($semester->tanggal_selesai->translatedFormat('d F Y'))
             ->assertDontSee('Data tidak dapat dimuat.');
     }
+
+    public function test_class_table_displays_academic_year_and_homeroom_teacher(): void
+    {
+        $class = Kelas::with(['tahunAjaran', 'waliKelas'])->firstOrFail();
+
+        $this->actingAs(User::where('username', 'admin')->firstOrFail())
+            ->get('/kelas')
+            ->assertOk()
+            ->assertSeeInOrder(['Tahun Ajaran', 'Nama Kelas', 'Tingkat', 'Wali Kelas', 'Status'])
+            ->assertSee($class->tahunAjaran->nama)
+            ->assertSee($class->waliKelas?->nama_lengkap ?? 'Belum ditentukan')
+            ->assertDontSee('Data tidak dapat dimuat.');
+    }
 }
