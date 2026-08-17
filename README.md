@@ -74,6 +74,9 @@ Kemudian jalankan `php artisan optimize`, arahkan document root web server ke `p
 
 ## Dokumentasi
 
+- `docs/presentasi-aplikasi-sisd232.pptx` — slide PowerPoint presentasi aplikasi
+- `docs/presentasi-aplikasi-sisd232.pdf` — versi PDF presentasi
+- `docs/naskah-presentasi.md` — naskah pembicara dan urutan demonstrasi
 - `docs/buku-panduan-penggunaan.pdf` — buku panduan siap dibagikan/cetak
 - `docs/buku-panduan-penggunaan.html` — buku panduan untuk dibuka di browser
 - `docs/buku-panduan-penggunaan.md` — sumber buku panduan
