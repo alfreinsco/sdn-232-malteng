@@ -74,6 +74,8 @@ Kemudian jalankan `php artisan optimize`, arahkan document root web server ke `p
 
 ## Dokumentasi
 
+- `docs/skripsi-lengkap-awati-fujihani-lessy.docx` — draf skripsi lengkap yang dapat diedit di Microsoft Word
+- `docs/skripsi-preview-awati-fujihani-lessy.pdf` — pratinjau tata letak skripsi untuk pemeriksaan dan pencetakan
 - `docs/presentasi-aplikasi-sisd232.pptx` — slide PowerPoint presentasi aplikasi
 - `docs/presentasi-aplikasi-sisd232.pdf` — versi PDF presentasi
 - `docs/naskah-presentasi.md` — naskah pembicara dan urutan demonstrasi

@@ -315,16 +315,14 @@ def add_bullets(items, numbered=False):
 
 
 def add_chapter(number, title):
-    doc.add_page_break()
     p = doc.add_paragraph(style="Heading 1")
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.paragraph_format.space_after = Pt(0)
+    p.paragraph_format.page_break_before = True
+    p.paragraph_format.space_after = Pt(18)
     run = p.add_run(f"BAB {number}")
     apply_run_font(run, 14, True)
-    p2 = doc.add_paragraph()
-    p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p2.paragraph_format.space_after = Pt(18)
-    run2 = p2.add_run(title.upper())
+    run.add_break()
+    run2 = p.add_run(title.upper())
     apply_run_font(run2, 14, True)
 
 
