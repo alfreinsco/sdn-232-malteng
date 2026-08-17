@@ -7,6 +7,7 @@ use App\Models\JadwalPelajaran;
 use App\Models\JamPelajaran;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
+use App\Models\PengaturanSekolah;
 use App\Models\Pengajaran;
 use App\Models\Semester;
 use App\Models\Siswa;
@@ -20,6 +21,9 @@ use App\Services\ValidasiJadwal;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -145,6 +149,58 @@ class ApplicationTest extends TestCase
         foreach (['/tahun-ajaran', '/semester', '/guru', '/siswa', '/kelas', '/mata-pelajaran', '/jam-pelajaran', '/pengajaran', '/pengguna', '/penempatan-siswa', '/jadwal-pelajaran', '/nilai-siswa', '/laporan/jadwal', '/laporan/nilai', '/pengaturan-sekolah', '/profil'] as $uri) {
             $this->get($uri)->assertOk();
         }
+    }
+
+    public function test_profile_page_renders_and_both_profile_forms_still_work(): void
+    {
+        $admin = User::where('username', 'admin')->firstOrFail();
+        $this->actingAs($admin);
+
+        Livewire::test('pages::profil')
+            ->assertSee('Informasi Profil')
+            ->assertSee('Keamanan Password')
+            ->assertSee('Administrator')
+            ->set('name', 'Administrator Sekolah')
+            ->set('email', 'administrator@sd232.test')
+            ->call('saveProfile')
+            ->assertHasNoErrors()
+            ->set('current_password', 'Sekolah232!')
+            ->set('password', 'PasswordBaru232!')
+            ->set('password_confirmation', 'PasswordBaru232!')
+            ->call('savePassword')
+            ->assertHasNoErrors();
+
+        $admin->refresh();
+        $this->assertSame('Administrator Sekolah', $admin->name);
+        $this->assertSame('administrator@sd232.test', $admin->email);
+        $this->assertTrue(Hash::check('PasswordBaru232!', $admin->password));
+    }
+
+    public function test_school_settings_page_renders_and_updates_identity_with_logo(): void
+    {
+        Storage::fake('public');
+        $admin = User::where('username', 'admin')->firstOrFail();
+        $headmaster = User::role('kepala_sekolah')->firstOrFail();
+        $this->actingAs($admin);
+
+        Livewire::test('pages::pengaturan')
+            ->assertSee('Identitas dan Kontak')
+            ->assertSee('Logo Sekolah')
+            ->assertSee('Pimpinan Sekolah')
+            ->set('form.nama_sekolah', 'SD Negeri 232 Maluku Tengah')
+            ->set('form.npsn', '60100001')
+            ->set('form.telepon', '0914000000')
+            ->set('form.email', 'sekolah@sd232.test')
+            ->set('form.alamat', 'Maluku Tengah, Maluku')
+            ->set('form.kepala_sekolah_user_id', (string) $headmaster->id)
+            ->set('logo', UploadedFile::fake()->image('logo-sekolah.png', 300, 300))
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $setting = PengaturanSekolah::firstOrFail();
+        $this->assertSame('60100001', $setting->npsn);
+        $this->assertSame($headmaster->id, $setting->kepala_sekolah_user_id);
+        Storage::disk('public')->assertExists($setting->logo);
     }
 
     public function test_only_one_academic_year_can_be_active(): void
