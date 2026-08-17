@@ -53,11 +53,11 @@
 <body class="min-h-dvh bg-slate-50 bg-[radial-gradient(circle_at_top_right,_rgba(14,165,233,0.08),_transparent_30rem)] text-slate-800 antialiased"
     x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
     <a href="#main-content" class="skip-link">Lewati ke konten utama</a>
-    <div class="min-h-dvh lg:grid lg:grid-cols-[18rem_minmax(0,1fr)]">
+    <div class="min-h-dvh w-full max-w-full overflow-x-clip lg:grid lg:h-dvh lg:min-h-0 lg:grid-cols-[18rem_minmax(0,1fr)] lg:overflow-hidden">
         <div x-show="sidebarOpen" x-transition.opacity x-cloak class="fixed inset-0 z-40 bg-slate-950/55 backdrop-blur-[2px] lg:hidden"
             @click="sidebarOpen=false" aria-hidden="true"></div>
         <aside id="sidebar"
-            class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-slate-200/80 bg-white transition-transform duration-200 ease-out lg:sticky lg:top-0 lg:h-dvh lg:w-auto lg:translate-x-0 print:hidden"
+            class="fixed inset-y-0 left-0 z-50 flex w-[min(18rem,calc(100vw-1rem))] max-w-full -translate-x-full flex-col border-r border-slate-200/80 bg-white transition-transform duration-200 ease-out lg:sticky lg:top-0 lg:h-dvh lg:w-auto lg:translate-x-0 print:hidden"
             :class="sidebarOpen && 'translate-x-0'" :aria-hidden="(!sidebarOpen && window.innerWidth < 1024).toString()" aria-label="Navigasi utama">
             <div class="relative overflow-hidden border-b border-sky-100 px-5 pb-5 pt-4">
                 <div class="pointer-events-none absolute -right-10 -top-16 size-40 rounded-full bg-sky-100/70 blur-2xl" aria-hidden="true"></div>
@@ -134,9 +134,9 @@
                 </form>
             </div>
         </aside>
-        <div class="min-w-0">
+        <div class="w-full min-w-0 max-w-full lg:flex lg:h-dvh lg:min-h-0 lg:flex-col lg:overflow-hidden">
             <header
-                class="sticky top-0 z-30 flex min-h-[4.5rem] items-center gap-3 border-b border-slate-200/80 bg-white/90 px-4 backdrop-blur-xl lg:px-8 print:hidden">
+                class="sticky top-0 z-30 flex min-h-[4.5rem] w-full min-w-0 max-w-full items-center gap-3 border-b border-slate-200/80 bg-white/90 px-4 backdrop-blur-xl lg:shrink-0 lg:px-8 print:hidden">
                 <button type="button" class="grid size-11 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 lg:hidden"
                     @click="sidebarOpen=true" :aria-expanded="sidebarOpen.toString()" aria-controls="sidebar" aria-label="Buka menu">
                     <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
@@ -156,7 +156,7 @@
                     </a>
                 </div>
             </header>
-            <main id="main-content" class="relative mx-auto max-w-[1600px] p-4 pb-10 sm:p-6 sm:pb-12 lg:p-8 lg:pb-14" tabindex="-1">
+            <main id="main-content" class="relative mx-auto w-full min-w-0 max-w-[1600px] p-4 pb-10 sm:p-6 sm:pb-12 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:p-8 lg:pb-10" tabindex="-1">
                 <div class="content-stage">{{ $slot }}</div>
             </main>
         </div>

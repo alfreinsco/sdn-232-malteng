@@ -68,7 +68,7 @@
         <svg class="size-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" /></svg>
     </button>
     <div x-show="open" x-transition x-cloak
-        class="absolute z-50 mt-2 w-full min-w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+        class="absolute z-50 mt-2 w-full min-w-0 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
         <input x-ref="search" x-model="query" type="search" class="form-input mb-2"
             placeholder="{{ $searchPlaceholder }}" autocomplete="off"
             @keydown.arrow-down.prevent="move(1)" @keydown.arrow-up.prevent="move(-1)"

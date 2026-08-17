@@ -62,7 +62,7 @@ new class extends Component {
     </div>
 
     <section class="content-hero mb-6" aria-labelledby="profile-summary-title">
-        <div class="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div class="relative z-10 flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
             <div class="flex min-w-0 items-center gap-4 sm:gap-5">
                 <div class="grid size-16 shrink-0 place-items-center rounded-2xl bg-sky-600 text-xl font-bold text-white shadow-lg shadow-sky-200 sm:size-20 sm:text-2xl" aria-hidden="true">
                     {{ $initials ?: 'U' }}
@@ -77,7 +77,7 @@ new class extends Component {
                 </div>
             </div>
 
-            <dl class="grid gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:min-w-[28rem]">
+            <dl class="grid w-full min-w-0 max-w-full gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-2 xl:w-auto xl:min-w-[28rem]">
                 <div class="bg-white/95 px-4 py-3">
                     <dt class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Username</dt>
                     <dd class="mt-1 truncate text-sm font-semibold text-slate-800">{{ $user->username }}</dd>

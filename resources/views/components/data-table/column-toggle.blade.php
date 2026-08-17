@@ -5,7 +5,7 @@
         aria-label="Atur visibilitas kolom" title="Atur visibilitas kolom" :aria-expanded="open">
         <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v14H4zM9 5v14M15 5v14" /></svg>
     </button>
-    <div x-show="open" x-transition x-cloak class="absolute right-0 z-40 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+    <div x-show="open" x-transition x-cloak class="absolute right-0 z-40 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
         <p class="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Tampilkan Kolom</p>
         @foreach ($columns as $column)
             @if ($column['hideable'] ?? true)
