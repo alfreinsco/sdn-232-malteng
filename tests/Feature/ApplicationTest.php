@@ -625,4 +625,52 @@ class ApplicationTest extends TestCase
             ->assertSee($class->waliKelas?->nama_lengkap ?? 'Belum ditentukan')
             ->assertDontSee('Data tidak dapat dimuat.');
     }
+
+    public function test_class_table_defaults_to_active_year_and_supports_year_and_level_filters(): void
+    {
+        $activeYear = TahunAjaran::aktif()->firstOrFail();
+        $inactiveYear = TahunAjaran::create([
+            'nama' => '2025/2026',
+            'tanggal_mulai' => '2025-07-01',
+            'tanggal_selesai' => '2026-06-30',
+            'status' => 'nonaktif',
+        ]);
+        $historicalClass = Kelas::create([
+            'tahun_ajaran_id' => $inactiveYear->id,
+            'nama' => 'VI Historis',
+            'tingkat' => 6,
+            'wali_kelas_id' => null,
+            'status' => 'nonaktif',
+        ]);
+        $activeClass = Kelas::where('tahun_ajaran_id', $activeYear->id)->firstOrFail();
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::test('pages::resource', ['resource' => 'kelas'])
+            ->assertSet('tahunAjaranId', (string) $activeYear->id)
+            ->assertSee($activeClass->nama)
+            ->assertDontSee($historicalClass->nama)
+            ->set('tahunAjaranId', (string) $inactiveYear->id)
+            ->set('tingkat', '6')
+            ->assertSee($historicalClass->nama)
+            ->assertDontSee('Data tidak dapat dimuat.');
+    }
+
+    public function test_class_form_uses_searchable_homeroom_teacher_and_limits_level_to_one_through_six(): void
+    {
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::test('pages::resource', ['resource' => 'kelas'])
+            ->call('openCreate')
+            ->assertSee('Cari wali kelas...')
+            ->assertSeeInOrder(['1', '2', '3', '4', '5', '6'])
+            ->set('form', [
+                'tahun_ajaran_id' => (string) TahunAjaran::aktif()->value('id'),
+                'nama' => 'Kelas Tidak Valid',
+                'tingkat' => '7',
+                'wali_kelas_id' => null,
+                'status' => 'aktif',
+            ])
+            ->call('save')
+            ->assertHasErrors(['form.tingkat']);
+    }
 }
