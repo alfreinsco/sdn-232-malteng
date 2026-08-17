@@ -287,4 +287,15 @@ class ApplicationTest extends TestCase
             'urutan' => $existing->urutan,
         ]);
     }
+
+    public function test_lesson_period_table_displays_time_and_type_columns(): void
+    {
+        $response = $this->actingAs(User::where('username', 'admin')->first())
+            ->get('/jam-pelajaran');
+
+        $response->assertOk()
+            ->assertSeeInOrder(['Urutan', 'Nama', 'Jam Mulai', 'Jam Selesai', 'Jenis', 'Status'])
+            ->assertSee('07:30')
+            ->assertSee('Pelajaran');
+    }
 }
