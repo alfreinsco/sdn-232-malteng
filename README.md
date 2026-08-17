@@ -74,6 +74,10 @@ Kemudian jalankan `php artisan optimize`, arahkan document root web server ke `p
 
 ## Dokumentasi
 
+- `docs/buku-panduan-penggunaan.pdf` — buku panduan siap dibagikan/cetak
+- `docs/buku-panduan-penggunaan.html` — buku panduan untuk dibuka di browser
+- `docs/buku-panduan-penggunaan.md` — sumber buku panduan
+- `docs/screenshots/` — screenshot seluruh halaman utama dan tampilan mobile
 - `docs/requirement.md`
 - `docs/erd.dbml`
 - `docs/database.md`

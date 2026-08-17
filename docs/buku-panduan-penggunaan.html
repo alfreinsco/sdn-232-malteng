@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buku Panduan Penggunaan - SISD 232</title>
+    <style>
+        @page { size: A4; margin: 16mm 15mm 18mm; }
+        :root { color-scheme: light; --ink: #172033; --muted: #52647f; --line: #d9e2ec; --sky: #0284c7; --soft: #f0f9ff; }
+        * { box-sizing: border-box; }
+        body { margin: 0 auto; max-width: 980px; color: var(--ink); background: white; font: 15px/1.65 Arial, sans-serif; }
+        h1, h2, h3 { color: #0f172a; line-height: 1.25; }
+        h1 { margin: 2rem 0 1rem; padding-bottom: .55rem; border-bottom: 3px solid #38bdf8; font-size: 2rem; }
+        h2 { margin-top: 1.8rem; font-size: 1.45rem; }
+        h3 { margin-top: 1.4rem; font-size: 1.15rem; }
+        p, li { color: #334155; }
+        a { color: #0369a1; }
+        img { display: block; max-width: 100%; height: auto; margin: 1rem auto 1.5rem; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 5px 18px rgba(15, 23, 42, .08); }
+        table { width: 100%; margin: 1rem 0 1.5rem; border-collapse: collapse; font-size: .92rem; }
+        th, td { padding: .55rem .65rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+        th { background: #e0f2fe; color: #0c4a6e; }
+        blockquote { margin: 1rem 0; padding: .7rem 1rem; border-left: 4px solid #0ea5e9; background: var(--soft); }
+        blockquote p { margin: 0; }
+        code { padding: .1rem .3rem; border-radius: 4px; background: #e2e8f0; }
+        hr { margin: 2rem 0; border: 0; border-top: 1px solid var(--line); }
+        body > h1:first-child { margin-top: 10vh; padding: 2rem; border: 0; border-radius: 18px; color: white; background: linear-gradient(135deg, #0369a1, #0ea5e9); font-size: 2.4rem; text-align: center; }
+        body > h1:first-child + h2 { text-align: center; }
+        @media print {
+            body { max-width: none; font-size: 10.5pt; }
+            h1 { break-before: page; }
+            body > h1:first-child { break-before: auto; }
+            h2, h3 { break-after: avoid; }
+            img, table, blockquote { break-inside: avoid; }
+            img { max-height: 225mm; object-fit: contain; box-shadow: none; }
+            a { color: inherit; text-decoration: none; }
+        }
+    </style>
+</head>
+<body><h1>Buku Panduan Penggunaan Aplikasi</h1>
+<h2>Sistem Informasi Jadwal Pelajaran dan Nilai Siswa</h2>
+<p><strong>SD Negeri 232 Maluku Tengah</strong><br />
+Versi panduan: 1.0<br />
+Bahasa: Indonesia</p>
+<hr />
+<h2>Tentang panduan ini</h2>
+<p>Panduan ini ditujukan untuk Admin, Guru, Siswa, Kepala Sekolah, dan pengguna yang belum terbiasa menggunakan aplikasi komputer. Setiap bagian menggunakan langkah singkat, istilah sederhana, dan gambar halaman yang sebenarnya.</p>
+<blockquote>
+<p><strong>Catatan penting:</strong> tampilan nama siswa, guru, dan nilai pada gambar berasal dari data contoh. Data sekolah yang sebenarnya akan mengikuti data yang dimasukkan oleh Admin.</p>
+</blockquote>
+<h2>Daftar isi</h2>
+<ol>
+<li>Mengenal jenis pengguna</li>
+<li>Masuk dan keluar aplikasi</li>
+<li>Mengenal tampilan aplikasi</li>
+<li>Panduan Admin</li>
+<li>Panduan Guru</li>
+<li>Panduan Siswa</li>
+<li>Panduan Kepala Sekolah</li>
+<li>Menggunakan aplikasi di telepon genggam</li>
+<li>Mencetak dan mengunduh PDF</li>
+<li>Pesan kesalahan dan cara mengatasinya</li>
+<li>Kebiasaan penggunaan yang aman</li>
+<li>Tanya jawab singkat</li>
+</ol>
+<hr />
+<h1>1. Mengenal jenis pengguna</h1>
+<p>Setiap akun hanya melihat menu yang sesuai dengan tugasnya.</p>
+<table>
+<thead>
+<tr>
+<th>Pengguna</th>
+<th>Kegunaan utama</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Admin</strong></td>
+<td>Mengatur pengguna, guru, siswa, kelas, mata pelajaran, periode akademik, jadwal, nilai, laporan, dan identitas sekolah.</td>
+</tr>
+<tr>
+<td><strong>Guru</strong></td>
+<td>Melihat jadwal mengajar, mengisi nilai Minggu 1–4, melihat riwayat, dan mencetak laporan nilai kelas yang diajar.</td>
+</tr>
+<tr>
+<td><strong>Siswa</strong></td>
+<td>Melihat jadwal kelas dan nilai milik sendiri.</td>
+</tr>
+<tr>
+<td><strong>Kepala Sekolah</strong></td>
+<td>Memantau data, jadwal, nilai, statistik, dan laporan tanpa mengubah master data.</td>
+</tr>
+</tbody>
+</table>
+<p>Jika suatu menu tidak terlihat, kemungkinan akun memang tidak memiliki izin untuk menu tersebut. Hubungi Admin jika peran akun tidak sesuai.</p>
+<hr />
+<h1>2. Masuk dan keluar aplikasi</h1>
+<h2>2.1 Masuk</h2>
+<p><img src="screenshots/00-login.png" alt="Halaman masuk" /></p>
+<ol>
+<li>Buka alamat aplikasi yang diberikan sekolah.</li>
+<li>Isi <strong>Username atau Email</strong>.</li>
+<li>Isi <strong>Password</strong>.</li>
+<li>Tekan tombol <strong>Masuk</strong>.</li>
+<li>Setelah berhasil, aplikasi membuka Dashboard sesuai jenis akun.</li>
+</ol>
+<p>Jika gagal masuk:</p>
+<ul>
+<li>periksa huruf besar dan kecil pada password;</li>
+<li>pastikan tidak ada spasi tambahan;</li>
+<li>pastikan akun masih aktif;</li>
+<li>hubungi Admin untuk mengatur ulang password.</li>
+</ul>
+<h2>2.2 Keluar</h2>
+<ol>
+<li>Lihat bagian bawah menu sebelah kiri.</li>
+<li>Tekan <strong>Keluar</strong>.</li>
+<li>Pastikan halaman kembali ke halaman masuk.</li>
+</ol>
+<p>Selalu keluar jika menggunakan komputer bersama.</p>
+<hr />
+<h1>3. Mengenal tampilan aplikasi</h1>
+<p>Bagian utama aplikasi terdiri dari:</p>
+<ul>
+<li><strong>Menu samping:</strong> berpindah ke halaman lain.</li>
+<li><strong>Bagian isi:</strong> menampilkan dashboard, tabel, formulir, atau laporan.</li>
+<li><strong>Pencarian:</strong> mencari data berdasarkan nama atau nomor identitas.</li>
+<li><strong>Filter:</strong> membatasi data berdasarkan status, kelas, periode, guru, atau bulan.</li>
+<li><strong>Tombol Tambah/Ubah:</strong> membuka formulir data.</li>
+<li><strong>Tombol Nonaktifkan:</strong> menghentikan penggunaan data tanpa merusak riwayat.</li>
+<li><strong>Pagination:</strong> berpindah halaman jika data sangat banyak.</li>
+</ul>
+<h2>Arti status</h2>
+<ul>
+<li><strong>Aktif:</strong> data atau akun masih digunakan.</li>
+<li><strong>Nonaktif:</strong> data disimpan sebagai riwayat, tetapi tidak digunakan untuk kegiatan baru.</li>
+</ul>
+<h2>Arti nilai kosong</h2>
+<p>Kolom nilai kosong berarti <strong>belum dinilai</strong>. Nilai kosong tidak sama dengan nilai nol.</p>
+<hr />
+<h1>4. Panduan Admin</h1>
+<h2>4.1 Dashboard Admin</h2>
+<p><img src="screenshots/admin-dashboard.png" alt="Dashboard Admin" /></p>
+<p>Dashboard menampilkan jumlah guru, siswa, kelas, mata pelajaran, jadwal, nilai yang sudah diisi, periode aktif, dan jadwal hari ini. Gunakan tombol <strong>Input Nilai</strong> sebagai jalan cepat ke halaman nilai.</p>
+<h2>4.2 Mengelola Tahun Ajaran</h2>
+<p><img src="screenshots/admin-tahun-ajaran.png" alt="Data tahun ajaran" /></p>
+<ol>
+<li>Buka <strong>Master Data → Tahun Ajaran</strong>.</li>
+<li>Tekan <strong>Tambah Tahun Ajaran</strong>.</li>
+<li>Isi nama, misalnya <code>2026/2027</code>.</li>
+<li>Isi tanggal mulai dan selesai.</li>
+<li>Pilih status, kemudian tekan <strong>Simpan</strong>.</li>
+</ol>
+<p>Saat tahun ajaran baru diaktifkan, tahun ajaran aktif sebelumnya otomatis dinonaktifkan. Data lama tetap dapat dibaca.</p>
+<h2>4.3 Mengelola Semester</h2>
+<p><img src="screenshots/admin-semester.png" alt="Data semester" /></p>
+<ol>
+<li>Buka <strong>Master Data → Semester</strong>.</li>
+<li>Pilih tahun ajaran.</li>
+<li>Pilih <strong>Ganjil</strong> atau <strong>Genap</strong>.</li>
+<li>Isi tanggal mulai dan selesai.</li>
+<li>Simpan data.</li>
+</ol>
+<p>Semester hanya dapat diaktifkan jika tahun ajarannya aktif.</p>
+<h2>4.4 Mengelola Kelas</h2>
+<p><img src="screenshots/admin-kelas.png" alt="Data kelas" /></p>
+<ol>
+<li>Buka <strong>Master Data → Kelas</strong>.</li>
+<li>Tekan <strong>Tambah Kelas</strong>.</li>
+<li>Pilih tahun ajaran.</li>
+<li>Isi nama kelas, misalnya <code>VI A</code>.</li>
+<li>Isi tingkat dan pilih wali kelas jika sudah diketahui.</li>
+<li>Tekan <strong>Simpan</strong>.</li>
+</ol>
+<p>Nama kelas tidak boleh sama dalam tahun ajaran yang sama.</p>
+<h2>4.5 Mengelola Mata Pelajaran</h2>
+<p><img src="screenshots/admin-mata-pelajaran.png" alt="Data mata pelajaran" /></p>
+<ol>
+<li>Buka <strong>Master Data → Mata Pelajaran</strong>.</li>
+<li>Isi kode jika sekolah menggunakannya.</li>
+<li>Isi nama mata pelajaran.</li>
+<li>Pilih status dan simpan.</li>
+</ol>
+<p>Gunakan kotak pencarian untuk menemukan mata pelajaran berdasarkan kode atau nama.</p>
+<h2>4.6 Mengelola Jam Pelajaran</h2>
+<p><img src="screenshots/admin-jam-pelajaran.png" alt="Data jam pelajaran" /></p>
+<ol>
+<li>Buka <strong>Master Data → Jam Pelajaran</strong>.</li>
+<li>Isi nama, jam mulai, jam selesai, dan urutan.</li>
+<li>Pilih jenis <strong>Pelajaran</strong> atau <strong>Istirahat</strong>.</li>
+<li>Simpan.</li>
+</ol>
+<p>Jam selesai harus lebih besar daripada jam mulai.</p>
+<h2>4.7 Mengelola Guru</h2>
+<p><img src="screenshots/admin-guru.png" alt="Daftar guru" /></p>
+<p>Gunakan pencarian untuk mencari nama, NIP, atau NUPTK. Gunakan filter status untuk menampilkan guru aktif atau nonaktif.</p>
+<p><img src="screenshots/admin-form-tambah-guru.png" alt="Form tambah guru" /></p>
+<ol>
+<li>Tekan <strong>Tambah Guru</strong>.</li>
+<li>Pilih akun pengguna jika akun guru sudah dibuat. Bagian ini boleh dikosongkan sementara.</li>
+<li>Isi nama lengkap.</li>
+<li>Isi NIP/NUPTK jika tersedia.</li>
+<li>Lengkapi jenis kelamin, tempat lahir, tanggal lahir, telepon, dan alamat.</li>
+<li>Tekan <strong>Simpan</strong>.</li>
+</ol>
+<p>NIP dan NUPTK tidak wajib, tetapi tidak boleh digunakan oleh dua guru.</p>
+<h2>4.8 Mengelola Siswa</h2>
+<p><img src="screenshots/admin-siswa.png" alt="Daftar siswa" /></p>
+<ol>
+<li>Buka <strong>Master Data → Siswa</strong>.</li>
+<li>Tekan <strong>Tambah Siswa</strong>.</li>
+<li>Hubungkan akun jika siswa membutuhkan akses login.</li>
+<li>Isi nama lengkap, NIS/NISN jika tersedia, dan biodata.</li>
+<li>Simpan.</li>
+</ol>
+<p>Siswa yang sudah memiliki nilai sebaiknya dinonaktifkan, bukan dihapus, agar riwayat tetap tersedia.</p>
+<h2>4.9 Menempatkan Siswa ke Kelas</h2>
+<p><img src="screenshots/admin-penempatan-siswa.png" alt="Penempatan siswa" /></p>
+<ol>
+<li>Buka <strong>Master Data → Penempatan Siswa</strong>.</li>
+<li>Pilih tahun ajaran.</li>
+<li>Pilih kelas tujuan.</li>
+<li>Cari siswa bila diperlukan.</li>
+<li>Centang satu atau beberapa siswa.</li>
+<li>Tekan <strong>Tempatkan Siswa</strong>.</li>
+</ol>
+<p>Satu siswa tidak dapat memiliki dua kelas aktif dalam tahun ajaran yang sama. Ketika siswa naik kelas, buat penempatan pada tahun ajaran baru agar riwayat kelas lama tetap tersimpan.</p>
+<h2>4.10 Mengatur Pengajaran</h2>
+<p><img src="screenshots/admin-pengajaran.png" alt="Data pengajaran" /></p>
+<p>Pengajaran adalah hubungan antara semester, kelas, mata pelajaran, dan guru.</p>
+<ol>
+<li>Buka <strong>Akademik → Pengajaran</strong>.</li>
+<li>Tekan <strong>Tambah Pengajaran</strong>.</li>
+<li>Pilih semester, kelas, mata pelajaran, dan guru.</li>
+<li>Simpan.</li>
+</ol>
+<p>Pengajaran yang sama tidak dapat dibuat dua kali.</p>
+<h2>4.11 Mengatur Jadwal Pelajaran</h2>
+<p><img src="screenshots/admin-jadwal-pelajaran.png" alt="Jadwal pelajaran Admin" /></p>
+<ol>
+<li>Buka <strong>Akademik → Jadwal Pelajaran</strong>.</li>
+<li>Pilih pengajaran yang sudah dibuat.</li>
+<li>Pilih hari dan jam pelajaran.</li>
+<li>Simpan.</li>
+</ol>
+<p>Aplikasi otomatis menolak:</p>
+<ul>
+<li>dua pelajaran pada kelas yang sama di waktu yang sama;</li>
+<li>satu guru mengajar dua kelas pada waktu yang sama;</li>
+<li>jadwal yang benar-benar sama.</li>
+</ul>
+<p>Jika muncul pesan <strong>Jadwal bentrok</strong>, ubah hari, jam, kelas, atau guru.</p>
+<h2>4.12 Memantau Nilai</h2>
+<p><img src="screenshots/admin-nilai-siswa.png" alt="Monitoring nilai Admin" /></p>
+<p>Admin dapat memilih pengajaran dan bulan untuk melihat nilai Minggu 1–4. Gunakan halaman ini untuk memastikan pengisian nilai berjalan, bukan untuk menggantikan tanggung jawab guru.</p>
+<h2>4.13 Mengelola Pengguna</h2>
+<p><img src="screenshots/admin-pengguna.png" alt="Manajemen pengguna" /></p>
+<ol>
+<li>Buka <strong>Manajemen → Pengguna</strong>.</li>
+<li>Tekan <strong>Tambah Pengguna</strong>.</li>
+<li>Isi nama, username, email bila digunakan, role, password, dan status.</li>
+<li>Simpan.</li>
+</ol>
+<p>Username harus unik. Saat mengubah pengguna, password boleh dikosongkan jika tidak ingin diganti. Admin dapat memasukkan password baru untuk melakukan reset password.</p>
+<h2>4.14 Pengaturan Sekolah</h2>
+<p><img src="screenshots/admin-pengaturan-sekolah.png" alt="Pengaturan sekolah" /></p>
+<p>Isi nama sekolah, NPSN, alamat, telepon, email, kepala sekolah, dan logo. Data ini digunakan pada laporan dan PDF.</p>
+<p>Untuk logo:</p>
+<ul>
+<li>gunakan gambar JPG, JPEG, atau PNG;</li>
+<li>gunakan gambar yang jelas;</li>
+<li>jangan memakai file yang terlalu besar;</li>
+<li>tekan <strong>Simpan</strong> setelah memilih file.</li>
+</ul>
+<h2>4.15 Laporan Jadwal</h2>
+<p><img src="screenshots/admin-laporan-jadwal.png" alt="Laporan jadwal Admin" /></p>
+<ol>
+<li>Buka <strong>Laporan → Laporan Jadwal</strong>.</li>
+<li>Pilih semester, kelas, guru, atau hari jika diperlukan.</li>
+<li>Periksa preview.</li>
+<li>Tekan <strong>Cetak</strong> atau <strong>Unduh PDF</strong>.</li>
+</ol>
+<h2>4.16 Laporan Nilai</h2>
+<p><img src="screenshots/admin-laporan-nilai.png" alt="Laporan nilai Admin" /></p>
+<p>Pilih semester, kelas, guru, mata pelajaran, bulan, atau siswa. Filter dapat dikombinasikan untuk menghasilkan laporan yang lebih khusus.</p>
+<h2>4.17 Profil Admin</h2>
+<p><img src="screenshots/admin-profil.png" alt="Profil Admin" /></p>
+<p>Pada halaman Profil, pengguna dapat memperbarui nama/email yang diizinkan serta mengganti password. Penggantian password meminta password saat ini untuk mencegah penyalahgunaan.</p>
+<hr />
+<h1>5. Panduan Guru</h1>
+<h2>5.1 Dashboard Guru</h2>
+<p><img src="screenshots/guru-dashboard.png" alt="Dashboard Guru" /></p>
+<p>Dashboard Guru menampilkan periode aktif, jadwal hari ini, jumlah kelas dan mata pelajaran yang diajar, serta jalan cepat untuk mengisi nilai.</p>
+<h2>5.2 Melihat Jadwal Mengajar</h2>
+<p><img src="screenshots/guru-jadwal-mengajar.png" alt="Jadwal mengajar Guru" /></p>
+<p>Buka <strong>Akademik → Jadwal Mengajar</strong>. Guru hanya melihat jadwal miliknya. Gunakan filter hari atau semester untuk mempersempit tampilan.</p>
+<h2>5.3 Mengisi Nilai Minggu 1–4</h2>
+<p><img src="screenshots/guru-input-nilai.png" alt="Halaman awal input nilai" /></p>
+<ol>
+<li>Buka <strong>Akademik → Input &amp; Riwayat Nilai</strong>.</li>
+<li>Pilih kelas, mata pelajaran, dan pengajaran.</li>
+<li>Pilih bulan.</li>
+<li>Daftar seluruh siswa akan muncul.</li>
+</ol>
+<p><img src="screenshots/guru-input-nilai-terisi.png" alt="Input nilai yang sudah terisi" /></p>
+<ol start="5">
+<li>Isi nilai pada kolom <strong>Minggu 1</strong>, <strong>Minggu 2</strong>, <strong>Minggu 3</strong>, dan <strong>Minggu 4</strong>.</li>
+<li>Gunakan tombol <code>Tab</code> pada keyboard untuk berpindah cepat ke kolom berikutnya.</li>
+<li>Nilai harus berada antara 0 dan 100.</li>
+<li>Kosongkan kolom jika siswa belum dinilai. Jangan mengisi nol untuk menandai nilai yang belum ada.</li>
+<li>Periksa rata-rata yang dihitung otomatis.</li>
+<li>Tekan <strong>Simpan Nilai</strong> satu kali dan tunggu pesan berhasil.</li>
+</ol>
+<p>Guru hanya dapat mengubah nilai pada kelas dan mata pelajaran yang menjadi tanggung jawabnya.</p>
+<h2>5.4 Laporan Nilai Guru</h2>
+<p><img src="screenshots/guru-laporan-nilai.png" alt="Laporan nilai Guru" /></p>
+<p>Guru dapat menyaring laporan berdasarkan semester, kelas, mata pelajaran, bulan, dan siswa dalam pengajaran miliknya. Gunakan <strong>Cetak</strong> atau <strong>Unduh PDF</strong> untuk menyimpan laporan.</p>
+<h2>5.5 Profil Guru</h2>
+<p><img src="screenshots/guru-profil.png" alt="Profil Guru" /></p>
+<p>Gunakan halaman Profil untuk memperbarui informasi akun dan mengganti password sendiri.</p>
+<hr />
+<h1>6. Panduan Siswa</h1>
+<h2>6.1 Dashboard Siswa</h2>
+<p><img src="screenshots/siswa-dashboard.png" alt="Dashboard Siswa" /></p>
+<p>Dashboard menampilkan nama siswa, kelas aktif, periode akademik, jadwal hari ini, dan ringkasan nilai.</p>
+<h2>6.2 Melihat Jadwal Pelajaran</h2>
+<p><img src="screenshots/siswa-jadwal-pelajaran.png" alt="Jadwal pelajaran Siswa" /></p>
+<p>Buka <strong>Akademik → Jadwal Pelajaran</strong>. Jadwal yang muncul berasal dari kelas aktif siswa. Siswa tidak dapat mengubah jadwal.</p>
+<h2>6.3 Melihat Nilai Sendiri</h2>
+<p><img src="screenshots/siswa-nilai-saya.png" alt="Nilai Saya" /></p>
+<ol>
+<li>Buka <strong>Akademik → Nilai Saya</strong>.</li>
+<li>Pilih bulan.</li>
+<li>Lihat nilai M1 sampai M4 dan rata-rata setiap mata pelajaran.</li>
+</ol>
+<p>Tanda <code>-</code> berarti nilai belum tersedia. Siswa hanya dapat melihat nilainya sendiri.</p>
+<h2>6.4 Mengunduh Laporan Nilai</h2>
+<p><img src="screenshots/siswa-laporan-nilai.png" alt="Laporan nilai Siswa" /></p>
+<p>Pilih periode atau bulan, lalu gunakan <strong>Cetak</strong> atau <strong>Unduh PDF</strong>. Sistem otomatis membatasi laporan pada siswa yang sedang masuk.</p>
+<h2>6.5 Profil Siswa</h2>
+<p><img src="screenshots/siswa-profil.png" alt="Profil Siswa" /></p>
+<p>Siswa dapat memperbarui bagian profil yang diizinkan dan mengganti password dengan memasukkan password saat ini.</p>
+<hr />
+<h1>7. Panduan Kepala Sekolah</h1>
+<h2>7.1 Dashboard Monitoring</h2>
+<p><img src="screenshots/kepala-dashboard.png" alt="Dashboard Kepala Sekolah" /></p>
+<p>Dashboard memberikan ringkasan jumlah guru, siswa, kelas, mata pelajaran, jadwal, dan pengisian nilai.</p>
+<h2>7.2 Monitoring Jadwal</h2>
+<p><img src="screenshots/kepala-monitoring-jadwal.png" alt="Monitoring jadwal" /></p>
+<p>Gunakan filter semester, kelas, guru, hari, dan mata pelajaran untuk memeriksa pelaksanaan jadwal tanpa mengubah data.</p>
+<h2>7.3 Monitoring Nilai</h2>
+<p><img src="screenshots/kepala-monitoring-nilai.png" alt="Monitoring nilai" /></p>
+<p>Pilih periode, kelas, mata pelajaran, guru, bulan, atau siswa untuk memantau kelengkapan nilai Minggu 1–4.</p>
+<h2>7.4 Laporan Jadwal</h2>
+<p><img src="screenshots/kepala-laporan-jadwal.png" alt="Laporan jadwal Kepala Sekolah" /></p>
+<p>Atur filter sesuai kebutuhan, periksa preview, kemudian cetak atau unduh PDF.</p>
+<h2>7.5 Laporan Nilai</h2>
+<p><img src="screenshots/kepala-laporan-nilai.png" alt="Laporan nilai Kepala Sekolah" /></p>
+<p>Laporan dapat digunakan untuk melihat nilai per kelas, siswa, guru, atau mata pelajaran. Kepala Sekolah memiliki akses baca dan tidak mengubah nilai.</p>
+<h2>7.6 Profil Kepala Sekolah</h2>
+<p><img src="screenshots/kepala-profil.png" alt="Profil Kepala Sekolah" /></p>
+<p>Gunakan halaman Profil untuk memperbarui akun dan mengganti password.</p>
+<hr />
+<h1>8. Menggunakan aplikasi di telepon genggam</h1>
+<h2>8.1 Membuka menu</h2>
+<p>Tekan tombol bergambar tiga garis di kiri atas. Menu akan muncul dari sisi kiri.</p>
+<p><img src="screenshots/mobile-admin-menu.png" alt="Menu Admin di telepon genggam" /></p>
+<p>Tekan tanda <code>×</code> atau area gelap di luar menu untuk menutupnya.</p>
+<h2>8.2 Tampilan Guru</h2>
+<p><img src="screenshots/mobile-guru-dashboard.png" alt="Dashboard Guru mobile" /></p>
+<p><img src="screenshots/mobile-guru-jadwal-mengajar.png" alt="Jadwal Guru mobile" /></p>
+<p>Pada tabel yang lebar, geser tabel ke kiri atau kanan dengan jari.</p>
+<p><img src="screenshots/mobile-guru-input-nilai-terisi.png" alt="Input nilai Guru mobile" /></p>
+<p>Nama siswa tetap berada di sisi kiri. Geser tabel ke samping untuk membuka Minggu 2, Minggu 3, Minggu 4, dan rata-rata.</p>
+<h2>8.3 Tampilan Siswa</h2>
+<p><img src="screenshots/mobile-siswa-dashboard.png" alt="Dashboard Siswa mobile" /></p>
+<p><img src="screenshots/mobile-siswa-jadwal-pelajaran.png" alt="Jadwal Siswa mobile" /></p>
+<p><img src="screenshots/mobile-siswa-nilai-saya.png" alt="Nilai Siswa mobile" /></p>
+<p>Gunakan telepon dalam posisi mendatar jika ingin melihat lebih banyak kolom sekaligus.</p>
+<hr />
+<h1>9. Mencetak dan mengunduh PDF</h1>
+<h2>Mencetak</h2>
+<ol>
+<li>Buka halaman laporan.</li>
+<li>Atur filter sampai data yang diperlukan tampil.</li>
+<li>Tekan <strong>Cetak</strong>.</li>
+<li>Pilih printer dan ukuran kertas A4.</li>
+<li>Periksa preview sebelum mencetak.</li>
+</ol>
+<p>Menu, tombol, filter, dan pagination otomatis disembunyikan pada hasil cetak.</p>
+<h2>Mengunduh PDF</h2>
+<ol>
+<li>Buka halaman laporan.</li>
+<li>Atur filter.</li>
+<li>Tekan <strong>Unduh PDF</strong>.</li>
+<li>File akan tersimpan pada folder unduhan perangkat.</li>
+</ol>
+<p>Untuk laporan nilai yang lebar, PDF menggunakan posisi kertas mendatar agar tabel tidak terpotong.</p>
+<hr />
+<h1>10. Pesan kesalahan dan cara mengatasinya</h1>
+<table>
+<thead>
+<tr>
+<th>Pesan/keadaan</th>
+<th>Arti</th>
+<th>Tindakan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data wajib diisi</td>
+<td>Ada bagian formulir yang masih kosong.</td>
+<td>Isi kolom yang ditandai, lalu simpan kembali.</td>
+</tr>
+<tr>
+<td>Data sudah digunakan</td>
+<td>Nomor atau kombinasi data sudah ada.</td>
+<td>Periksa data lama atau gunakan nilai yang berbeda.</td>
+</tr>
+<tr>
+<td>Jadwal bentrok</td>
+<td>Kelas atau guru sudah memiliki jadwal pada waktu tersebut.</td>
+<td>Pilih hari, jam, guru, atau kelas lain.</td>
+</tr>
+<tr>
+<td>Akses ditolak / 403</td>
+<td>Akun tidak memiliki izin.</td>
+<td>Kembali ke Dashboard atau hubungi Admin.</td>
+</tr>
+<tr>
+<td>Halaman tidak ditemukan / 404</td>
+<td>Alamat salah atau halaman sudah tidak tersedia.</td>
+<td>Gunakan menu aplikasi, jangan mengetik alamat secara manual.</td>
+</tr>
+<tr>
+<td>Halaman kedaluwarsa / 419</td>
+<td>Sesi terlalu lama tidak digunakan.</td>
+<td>Muat ulang halaman dan masuk kembali.</td>
+</tr>
+<tr>
+<td>Nilai harus 0–100</td>
+<td>Angka berada di luar batas.</td>
+<td>Ganti dengan angka 0 sampai 100 atau kosongkan jika belum dinilai.</td>
+</tr>
+<tr>
+<td>Tombol tidak dapat ditekan</td>
+<td>Pilihan wajib belum ditentukan atau proses sedang berjalan.</td>
+<td>Lengkapi pilihan dan tunggu proses selesai.</td>
+</tr>
+</tbody>
+</table>
+<p>Jangan menekan tombol simpan berulang kali ketika tulisan <strong>Menyimpan...</strong> sedang tampil.</p>
+<hr />
+<h1>11. Kebiasaan penggunaan yang aman</h1>
+<ul>
+<li>Jangan membagikan password kepada orang lain.</li>
+<li>Gunakan password yang tidak mudah ditebak.</li>
+<li>Keluar setelah selesai menggunakan komputer bersama.</li>
+<li>Jangan mengirim foto halaman nilai ke pihak yang tidak berkepentingan.</li>
+<li>Periksa kembali kelas, mata pelajaran, bulan, dan minggu sebelum menyimpan nilai.</li>
+<li>Admin sebaiknya menonaktifkan akun pengguna yang tidak lagi bertugas.</li>
+<li>Lakukan pencadangan database secara berkala sesuai panduan deployment.</li>
+</ul>
+<hr />
+<h1>12. Tanya jawab singkat</h1>
+<h2>Mengapa saya tidak melihat menu Admin?</h2>
+<p>Akun Anda bukan akun Admin atau belum memiliki izin yang sesuai.</p>
+<h2>Mengapa siswa belum muncul saat guru mengisi nilai?</h2>
+<p>Pastikan pengajaran sudah dipilih dan siswa sudah ditempatkan pada kelas tersebut di tahun ajaran yang sesuai.</p>
+<h2>Apakah nilai nol boleh diisi?</h2>
+<p>Ya. Nilai <code>0</code> adalah nilai yang sah. Kosongkan kolom jika siswa belum dinilai.</p>
+<h2>Bagaimana memperbaiki nilai yang salah?</h2>
+<p>Guru membuka pengajaran dan bulan yang sama, memperbaiki angka, lalu menekan <strong>Simpan Nilai</strong>.</p>
+<h2>Mengapa jadwal tidak dapat disimpan?</h2>
+<p>Kemungkinan terdapat bentrok kelas, bentrok guru, atau jadwal yang sama sudah tersedia.</p>
+<h2>Bagaimana siswa naik kelas?</h2>
+<p>Admin membuat atau memilih kelas pada tahun ajaran baru, lalu menempatkan siswa melalui halaman <strong>Penempatan Siswa</strong>. Jangan menghapus riwayat kelas lama.</p>
+<h2>Bagaimana mengganti password yang lupa?</h2>
+<p>Hubungi Admin. Admin dapat menetapkan password baru melalui halaman Pengguna tanpa melihat password lama.</p>
+<h2>Siapa yang dapat melihat nilai seluruh siswa?</h2>
+<p>Admin dan Kepala Sekolah dapat melakukan monitoring. Guru hanya melihat kelas yang diajar, sedangkan siswa hanya melihat nilai sendiri.</p>
+<hr />
+<h2>Bantuan</h2>
+<p>Jika masalah belum selesai, catat:</p>
+<ol>
+<li>nama halaman;</li>
+<li>waktu kejadian;</li>
+<li>tindakan yang dilakukan;</li>
+<li>pesan kesalahan yang tampil;</li>
+<li>screenshot jika memungkinkan.</li>
+</ol>
+<p>Sampaikan catatan tersebut kepada Admin atau pengelola teknis aplikasi.</p>
+
+</body>
+</html>
