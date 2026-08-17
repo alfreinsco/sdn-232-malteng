@@ -77,6 +77,7 @@ Kemudian jalankan `php artisan optimize`, arahkan document root web server ke `p
 - `docs/presentasi-aplikasi-sisd232.pptx` — slide PowerPoint presentasi aplikasi
 - `docs/presentasi-aplikasi-sisd232.pdf` — versi PDF presentasi
 - `docs/naskah-presentasi.md` — naskah pembicara dan urutan demonstrasi
+- `docs/black-box-testing.pdf` — dokumen skenario black box testing siap cetak
 - `docs/buku-panduan-penggunaan.pdf` — buku panduan siap dibagikan/cetak
 - `docs/buku-panduan-penggunaan.html` — buku panduan untuk dibuka di browser
 - `docs/buku-panduan-penggunaan.md` — sumber buku panduan
