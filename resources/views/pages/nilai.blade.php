@@ -320,8 +320,6 @@ new class extends Component {
         <div><label class="form-label">Bulan</label><x-searchable-select model="bulan" :value="$bulan" :options="collect(range(1,12))->mapWithKeys(fn($month)=>[$month=>\Carbon\Carbon::create()->month($month)->translatedFormat('F')])->all()" placeholder="Pilih bulan" search-placeholder="Cari bulan..." /></div>
     </div>
 
-    <x-data-table.bulk-toolbar :count="$this->selectedCount($datasetTotal)" />
-
     <form wire:submit="save" class="block min-w-0 w-full">
         @can('nilai.create')
             @unless(auth()->user()->hasRole('siswa'))
@@ -333,18 +331,14 @@ new class extends Component {
             <div class="table-scroll w-full">
                 <table class="data-table w-full min-w-[820px]">
                     <thead><tr>
-                        <th class="table-select-cell sticky left-0 z-30 w-14"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" wire:click="toggleSelectAllDataset" @checked($datasetTotal>0 && $this->selectedCount($datasetTotal)===$datasetTotal) x-data x-effect="$el.indeterminate = {{ $this->selectedCount($datasetTotal)>0 && $this->selectedCount($datasetTotal)<$datasetTotal ? 'true':'false' }}" aria-label="Pilih seluruh data nilai hasil filter"></th>
                         @foreach($tableColumns as $column)
                             @continue(!in_array($column['id'], $visibleColumnIds, true))
                             <th><button type="button" wire:click="sortBy('{{ $column['sortable'] }}')" class="inline-flex min-h-11 items-center gap-1 text-left"><span>{{ $column['label'] }}</span><span aria-hidden="true">{{ $sort===$column['sortable'] ? ($direction==='asc'?'↑':'↓') : '↕' }}</span></button></th>
                         @endforeach
-                        <th class="table-action-cell sticky right-0 z-30">Aksi</th>
                     </tr></thead>
                     <tbody>
                         @foreach($rows as $row)
-                            @php $selected=$this->isRowSelected($row->getKey()); @endphp
-                            <tr class="{{ $selected?'is-selected':'' }}" wire:key="grade-row-{{ $row->getKey() }}" wire:loading.remove>
-                                <td class="table-select-cell sticky left-0 z-20"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" @checked($selected) wire:click="toggleRowSelection({{ $row->getKey() }})" aria-label="Pilih baris nilai"></td>
+                            <tr wire:key="grade-row-{{ $row->getKey() }}" wire:loading.remove>
                                 @foreach($tableColumns as $column)
                                     @continue(!in_array($column['id'], $visibleColumnIds, true))
                                     <td>
@@ -361,10 +355,9 @@ new class extends Component {
                                         @endif
                                     </td>
                                 @endforeach
-                                <td class="table-action-cell sticky right-0 z-20"><span class="text-slate-400">—</span></td>
                             </tr>
                         @endforeach
-                        <x-data-table.states :columns="count($visibleColumnIds)+2" :empty="$rows->isEmpty()" :filtered="filled($search)||filled($pengajaranId)||filled($tahunId)||filled($semesterId)||filled($mapelId)" :error="$tableError" />
+                        <x-data-table.states :columns="count($visibleColumnIds)" :empty="$rows->isEmpty()" :filtered="filled($search)||filled($pengajaranId)||filled($tahunId)||filled($semesterId)||filled($mapelId)" :error="$tableError" />
                     </tbody>
                 </table>
             </div>

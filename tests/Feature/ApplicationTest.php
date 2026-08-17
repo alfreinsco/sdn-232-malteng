@@ -548,4 +548,31 @@ class ApplicationTest extends TestCase
                 ->assertDontSee('Pilih baris laporan');
         }
     }
+
+    public function test_grade_tables_do_not_render_selection_or_action_columns(): void
+    {
+        foreach (['admin', 'siswa'] as $username) {
+            $this->actingAs(User::where('username', $username)->firstOrFail())
+                ->get('/nilai-siswa')
+                ->assertOk()
+                ->assertDontSee('Pilih seluruh data nilai hasil filter')
+                ->assertDontSee('Pilih baris nilai')
+                ->assertDontSee('>Aksi<', false);
+        }
+    }
+
+    public function test_teaching_table_displays_semester_class_subject_and_teacher_columns(): void
+    {
+        $teaching = Pengajaran::with(['semester.tahunAjaran', 'kelas', 'mataPelajaran', 'guru'])->firstOrFail();
+
+        $this->actingAs(User::where('username', 'admin')->firstOrFail())
+            ->get('/pengajaran')
+            ->assertOk()
+            ->assertSeeInOrder(['Semester', 'Kelas', 'Mata Pelajaran', 'Guru', 'Status'])
+            ->assertSee($teaching->semester->tahunAjaran->nama.' · '.ucfirst($teaching->semester->nama))
+            ->assertSee($teaching->kelas->nama)
+            ->assertSee($teaching->mataPelajaran->nama)
+            ->assertSee($teaching->guru->nama_lengkap)
+            ->assertDontSee('Data tidak dapat dimuat.');
+    }
 }
