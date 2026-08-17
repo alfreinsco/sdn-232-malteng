@@ -507,6 +507,36 @@ class ApplicationTest extends TestCase
         $this->assertGreaterThanOrEqual(1, $matchingCount);
     }
 
+    public function test_schedule_form_is_scoped_by_academic_year_semester_and_class(): void
+    {
+        $schedule = JadwalPelajaran::with(['pengajaran.semester', 'pengajaran.kelas', 'pengajaran.mataPelajaran', 'pengajaran.guru'])->firstOrFail();
+        $teaching = $schedule->pengajaran;
+        $otherClass = Kelas::where('tahun_ajaran_id', $teaching->semester->tahun_ajaran_id)
+            ->whereKeyNot($teaching->kelas_id)
+            ->firstOrFail();
+
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::test('pages::jadwal')
+            ->call('openCreate')
+            ->assertSee('Pilih tahun ajaran dahulu...')
+            ->assertSee('Pilih semester dan kelas terlebih dahulu')
+            ->call('edit', $schedule->id)
+            ->assertSet('formTahunAjaranId', (string) $teaching->semester->tahun_ajaran_id)
+            ->assertSet('formSemesterId', (string) $teaching->semester_id)
+            ->assertSet('formKelasId', (string) $teaching->kelas_id)
+            ->assertSet('form.pengajaran_id', $teaching->id)
+            ->assertSee($teaching->mataPelajaran->nama)
+            ->assertSee($teaching->guru->nama_lengkap)
+            ->call('save')
+            ->assertHasNoErrors()
+            ->call('edit', $schedule->id)
+            ->set('formKelasId', (string) $otherClass->id)
+            ->set('form.pengajaran_id', (string) $teaching->id)
+            ->call('save')
+            ->assertHasErrors(['form.pengajaran_id']);
+    }
+
     public function test_role_scoped_operational_tables_render_without_leaking_or_query_errors(): void
     {
         $pages = [
