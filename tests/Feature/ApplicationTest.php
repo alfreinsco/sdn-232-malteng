@@ -366,4 +366,173 @@ class ApplicationTest extends TestCase
 
         $this->assertDatabaseHas('users', ['id' => $admin->id, 'status' => 'aktif']);
     }
+
+    public function test_table_select_all_covers_filtered_dataset_across_pages_and_supports_exclusions(): void
+    {
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+        $total = Siswa::where('status', 'aktif')->count();
+        $excluded = Siswa::where('status', 'aktif')->firstOrFail();
+
+        $table = Livewire::test('pages::resource', ['resource' => 'siswa'])
+            ->set('status', 'aktif')
+            ->set('perPage', 1)
+            ->call('toggleSelectAllDataset')
+            ->assertSet('selectionMode', 'all')
+            ->assertSet('selectedIds', []);
+
+        $this->assertSame($total, $table->instance()->selectedCount($total));
+
+        $table->call('toggleRowSelection', $excluded->id)
+            ->assertSet('excludedIds', [$excluded->id])
+            ->call('sortBy', 'nama_lengkap')
+            ->assertSet('selectionMode', 'all');
+
+        $this->assertSame($total - 1, $table->instance()->selectedCount($total));
+
+        $table->set('search', 'nama-yang-tidak-ada')
+            ->assertSet('selectionMode', 'explicit')
+            ->assertSet('excludedIds', []);
+    }
+
+    public function test_table_sort_cycles_and_url_state_is_hydrated_and_sanitized(): void
+    {
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::withQueryParams([
+            'search' => 'Ani',
+            'sort' => 'nama_lengkap',
+            'direction' => 'desc',
+            'per_page' => 25,
+            'visible_columns' => 'nama_lengkap,nisn',
+        ])->test('pages::resource', ['resource' => 'siswa'])
+            ->assertSet('search', 'Ani')
+            ->assertSet('sort', 'nama_lengkap')
+            ->assertSet('direction', 'desc')
+            ->assertSet('perPage', 25)
+            ->assertSet('visibleColumns', 'nama_lengkap,nisn')
+            ->call('sortBy', 'nama_lengkap')
+            ->assertSet('sort', '')
+            ->assertSet('direction', '')
+            ->call('sortBy', 'nama_lengkap')
+            ->assertSet('direction', 'asc')
+            ->call('sortBy', 'nama_lengkap')
+            ->assertSet('direction', 'desc');
+
+        Livewire::withQueryParams([
+            'sort' => 'kolom_tidak_valid',
+            'direction' => 'turun',
+            'per_page' => 999,
+            'visible_columns' => 'kolom_tidak_valid',
+        ])->test('pages::resource', ['resource' => 'siswa'])
+            ->assertSet('sort', '')
+            ->assertSet('direction', '')
+            ->assertSet('perPage', 250)
+            ->assertSet('visibleColumns', 'nama_lengkap,nis,nisn,jenis_kelamin,tempat_tanggal_lahir,status');
+    }
+
+    public function test_bulk_status_action_affects_all_filtered_pages_without_deleting_rows(): void
+    {
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+        $before = Siswa::count();
+        $excluded = Siswa::where('status', 'aktif')->firstOrFail();
+
+        Livewire::test('pages::resource', ['resource' => 'siswa'])
+            ->set('status', 'aktif')
+            ->set('perPage', 1)
+            ->call('toggleSelectAllDataset')
+            ->call('toggleRowSelection', $excluded->id)
+            ->call('bulkSetStatus', 'nonaktif')
+            ->assertSet('selectionMode', 'explicit');
+
+        $this->assertDatabaseCount('siswa', $before);
+        $this->assertDatabaseHas('siswa', ['id' => $excluded->id, 'status' => 'aktif']);
+        $this->assertSame(1, Siswa::where('status', 'aktif')->count());
+    }
+
+    public function test_all_operational_tables_render_reusable_controls_without_error_state(): void
+    {
+        $admin = User::where('username', 'admin')->firstOrFail();
+
+        foreach (['/siswa', '/penempatan-siswa', '/jadwal-pelajaran', '/nilai-siswa', '/laporan/jadwal', '/laporan/nilai'] as $uri) {
+            $this->actingAs($admin)->get($uri)
+                ->assertOk()
+                ->assertSee('Pencarian Utama')
+                ->assertSee('Reset Filter')
+                ->assertSee('Atur visibilitas kolom')
+                ->assertDontSee('Data tidak dapat dimuat.');
+        }
+    }
+
+    public function test_custom_per_page_and_page_input_are_clamped_to_safe_bounds(): void
+    {
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+
+        Livewire::test('pages::resource', ['resource' => 'siswa'])
+            ->set('perPage', 0)
+            ->assertSet('perPage', 1)
+            ->set('perPage', 999)
+            ->assertSet('perPage', 250)
+            ->call('goToTablePage', -10, 5)
+            ->assertSet('paginators.page', 1)
+            ->call('goToTablePage', 99, 5)
+            ->assertSet('paginators.page', 5);
+    }
+
+    public function test_schedule_bulk_delete_honors_global_selection_exclusions(): void
+    {
+        $this->actingAs(User::where('username', 'admin')->firstOrFail());
+        $schedule = JadwalPelajaran::with('pengajaran.semester')->firstOrFail();
+        $matching = JadwalPelajaran::where('hari', $schedule->hari)
+            ->whereHas('pengajaran', fn ($query) => $query->where('semester_id', $schedule->pengajaran->semester_id));
+        $matchingCount = $matching->count();
+
+        Livewire::test('pages::jadwal')
+            ->set('semesterId', (string) $schedule->pengajaran->semester_id)
+            ->set('hari', $schedule->hari)
+            ->set('perPage', 1)
+            ->call('toggleSelectAllDataset')
+            ->call('toggleRowSelection', $schedule->id)
+            ->call('bulkDelete')
+            ->assertSet('selectionMode', 'explicit');
+
+        $this->assertDatabaseHas('jadwal_pelajaran', ['id' => $schedule->id]);
+        $this->assertSame(1, $matching->count());
+        $this->assertGreaterThanOrEqual(1, $matchingCount);
+    }
+
+    public function test_role_scoped_operational_tables_render_without_leaking_or_query_errors(): void
+    {
+        $pages = [
+            'guru1' => ['/jadwal-pelajaran', '/nilai-siswa', '/laporan/jadwal', '/laporan/nilai'],
+            'siswa' => ['/jadwal-pelajaran', '/nilai-siswa'],
+            'kepala' => ['/jadwal-pelajaran', '/nilai-siswa', '/laporan/jadwal', '/laporan/nilai'],
+        ];
+
+        foreach ($pages as $username => $uris) {
+            $user = User::where('username', $username)->firstOrFail();
+
+            foreach ($uris as $uri) {
+                $this->actingAs($user)->get($uri)
+                    ->assertOk()
+                    ->assertDontSee('Data tidak dapat dimuat.');
+            }
+        }
+    }
+
+    public function test_grade_entry_table_supports_paginated_search_sort_and_column_state(): void
+    {
+        $teacher = User::where('username', 'guru1')->firstOrFail();
+        $teaching = Pengajaran::where('guru_id', $teacher->guru->id)->firstOrFail();
+        $this->actingAs($teacher);
+
+        Livewire::test('pages::nilai')
+            ->set('pengajaranId', (string) $teaching->id)
+            ->set('perPage', 1)
+            ->set('search', '')
+            ->call('sortBy', 'nama_lengkap')
+            ->assertSet('sort', 'nama_lengkap')
+            ->call('toggleColumn', 'nis')
+            ->assertDontSee('Data tidak dapat dimuat.')
+            ->assertSee('Simpan Nilai');
+    }
 }
