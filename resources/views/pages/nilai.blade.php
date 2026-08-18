@@ -328,6 +328,7 @@ new class extends Component {
         @endcan
 
         <div class="table-shell w-full">
+            <x-data-table.mobile-hint />
             <div class="table-scroll w-full">
                 <table class="data-table w-full min-w-[820px]">
                     <thead><tr>

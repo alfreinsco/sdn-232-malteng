@@ -194,7 +194,8 @@ new class extends Component {
                 </div>
                 <a href="{{ route('jadwal.index') }}" wire:navigate class="btn-secondary shrink-0">Lihat Jadwal Lengkap</a>
             </div>
-            <div class="table-scroll max-h-[28rem]">
+            <x-data-table.mobile-hint />
+            <div class="table-scroll md:max-h-[28rem]">
                 <table class="data-table">
                     <thead><tr><th>Jam</th><th>Mata Pelajaran</th><th>Kelas</th><th>Status</th></tr></thead>
                     <tbody>

@@ -199,6 +199,7 @@ new class extends Component {
     </x-data-table.bulk-toolbar>
 
     <div class="table-shell">
+        <x-data-table.mobile-hint />
         <div class="table-scroll"><table class="data-table"><thead><tr>
             <th class="table-select-cell sticky left-0 z-20 w-14"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" wire:click="toggleSelectAllDataset" @checked($datasetTotal>0&&$this->selectedCount($datasetTotal)===$datasetTotal) x-data x-effect="$el.indeterminate={{ $this->selectedCount($datasetTotal)>0&&$this->selectedCount($datasetTotal)<$datasetTotal?'true':'false' }}" aria-label="Pilih seluruh siswa hasil pencarian"></th>
             @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<th><button type="button" wire:click="sortBy('{{ $column['sortable'] }}')" class="inline-flex min-h-11 items-center gap-1">{{ $column['label'] }} <span aria-hidden="true">{{ $sort===$column['sortable']?($direction==='asc'?'↑':'↓'):'↕' }}</span></button></th>@endforeach
@@ -206,7 +207,7 @@ new class extends Component {
         </tr></thead><tbody>
             @foreach($siswa as $student)@php $selected=$this->isRowSelected($student->id);@endphp<tr class="{{ $selected?'is-selected':($student->kelas_penempatan_id?'is-assigned':'') }}" wire:key="placement-row-{{$student->id}}" wire:loading.remove><td class="table-select-cell sticky left-0 z-10"><input type="checkbox" class="size-4 rounded border-slate-300 text-sky-600" @checked($selected) wire:click="toggleRowSelection({{$student->id}})" aria-label="Pilih {{$student->nama_lengkap}}"></td>
             @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<td>@if($column['id']==='status')<span class="badge-active">Aktif</span>@elseif($column['id']==='jenis_kelamin'){{ $student->jenis_kelamin?ucfirst($student->jenis_kelamin):'-' }}@elseif($column['id']==='kelas_nama')@if($student->kelas_nama)<span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800">{{ $student->kelas_nama }}</span>@else<span class="text-slate-400">Belum memiliki kelas</span>@endif @else{{ data_get($student,$column['id'])??'-' }}@endif</td>@endforeach
-            <td class="table-action-cell sticky right-0 z-10"><button type="button" wire:click="toggleRowSelection({{$student->id}})" class="btn-secondary">{{ $selected?'Batalkan':'Pilih' }}</button></td></tr>@endforeach
+            <td class="table-action-cell sticky right-0 z-10"><button type="button" wire:click="toggleRowSelection({{$student->id}})" class="btn-secondary table-action-button" aria-label="{{ $selected?'Batalkan pilihan':'Pilih' }} {{$student->nama_lengkap}}" title="{{ $selected?'Batalkan':'Pilih' }}"><svg viewBox="0 0 24 24" class="size-5 sm:hidden" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">@if($selected)<path d="M6 6l12 12M18 6 6 18"/>@else<path d="m5 12 4 4L19 6"/>@endif</svg><span class="hidden sm:inline">{{ $selected?'Batalkan':'Pilih' }}</span></button></td></tr>@endforeach
             <x-data-table.states :columns="count($visibleColumnIds)+2" :empty="$siswa->isEmpty()" :filtered="filled($search)||filled($statusKelas)" :error="$tableError" />
         </tbody></table></div>
         <x-data-table.pagination :paginator="$siswa" :per-page="$perPage" />

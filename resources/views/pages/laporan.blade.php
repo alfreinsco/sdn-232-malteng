@@ -279,6 +279,7 @@ new class extends Component {
                 @if($jenis === 'nilai' && $siswaId)<div><dt>Siswa</dt><dd>{{ $studentLabel }}</dd></div>@endif
             </dl>
         </header>
+        <x-data-table.mobile-hint />
         <div class="table-scroll report-table-scroll w-full"><table class="data-table report-table w-full min-w-full"><thead><tr>
             @foreach($tableColumns as $column)@continue(!in_array($column['id'],$visibleColumnIds,true))<th aria-sort="{{ $sort===$column['sortable']?($direction==='asc'?'ascending':'descending'):'none' }}"><button type="button" wire:click="sortBy('{{ $column['sortable'] }}')" class="print-hidden inline-flex min-h-11 items-center gap-1.5 text-left"><span>{{ $column['label'] }}</span><span class="text-sky-200" aria-hidden="true">{{ $sort===$column['sortable']?($direction==='asc'?'↑':'↓'):'↕' }}</span></button><span class="hidden print:inline">{{ $column['label'] }}</span></th>@endforeach
         </tr></thead><tbody>

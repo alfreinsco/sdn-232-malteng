@@ -112,6 +112,7 @@ new class extends Component {
 @endif
 
 <div class="table-shell">
+    <x-data-table.mobile-hint />
     <div class="table-scroll">
         <table class="data-table">
             <thead><tr>
@@ -197,7 +198,7 @@ new class extends Component {
                                 @else{{ filled($value)?$value:'-' }}@endif
                             </td>
                         @endforeach
-                        <td class="table-action-cell sticky right-0 z-10"><div class="flex gap-2">@if($resource==='kelas')<a href="{{ route('kelas.siswa.index',$item) }}" wire:navigate class="btn-secondary whitespace-nowrap">Lihat Siswa</a>@endif @can($definition['permission'])<button wire:click="edit({{ $item->id }})" class="btn-secondary">Ubah</button><button wire:click="toggleStatus({{ $item->id }})" wire:confirm="{{ $item->status==='aktif'?'Nonaktifkan data ini? Data tidak akan dihapus.':'Aktifkan kembali data ini?' }}" class="btn-secondary {{ $item->status==='aktif'?'text-rose-700':'text-emerald-700' }}">{{ $item->status==='aktif'?'Nonaktifkan':'Aktifkan' }}</button>@endcan</div></td>
+                        <td class="table-action-cell sticky right-0 z-10"><div class="flex gap-2">@if($resource==='kelas')<a href="{{ route('kelas.siswa.index',$item) }}" wire:navigate class="btn-secondary table-action-button whitespace-nowrap" aria-label="Lihat siswa kelas {{ $item->nama }}" title="Lihat Siswa"><svg viewBox="0 0 24 24" class="size-5 sm:hidden" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 4.6V20"/></svg><span class="hidden sm:inline">Lihat Siswa</span></a>@endif @can($definition['permission'])<button wire:click="edit({{ $item->id }})" class="btn-secondary table-action-button" aria-label="Ubah data" title="Ubah"><svg viewBox="0 0 24 24" class="size-5 sm:hidden" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20ZM13.5 7.5l3 3"/></svg><span class="hidden sm:inline">Ubah</span></button><button wire:click="toggleStatus({{ $item->id }})" wire:confirm="{{ $item->status==='aktif'?'Nonaktifkan data ini? Data tidak akan dihapus.':'Aktifkan kembali data ini?' }}" class="btn-secondary table-action-button {{ $item->status==='aktif'?'text-rose-700':'text-emerald-700' }}" aria-label="{{ $item->status==='aktif'?'Nonaktifkan':'Aktifkan' }} data" title="{{ $item->status==='aktif'?'Nonaktifkan':'Aktifkan' }}"><svg viewBox="0 0 24 24" class="size-5 sm:hidden" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v9M7.1 6.6a7 7 0 1 0 9.8 0"/></svg><span class="hidden sm:inline">{{ $item->status==='aktif'?'Nonaktifkan':'Aktifkan' }}</span></button>@endcan</div></td>
                     </tr>
                 @endforeach
                 <x-data-table.states :columns="count($visibleColumnIds)+2" :empty="$items->isEmpty()" :filtered="filled($search)||filled($status)||filled($tahunAjaranId)||filled($semesterId)||filled($kelasId)||filled($mataPelajaranId)||filled($tingkat)" :error="$tableError" />

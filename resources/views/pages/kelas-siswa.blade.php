@@ -212,6 +212,7 @@ new class extends Component {
     @endif
 
     <div class="table-shell">
+        <x-data-table.mobile-hint />
         <div class="table-scroll">
             <table class="data-table">
                 <thead><tr>
@@ -237,7 +238,7 @@ new class extends Component {
                                     @else{{ data_get($student,$column['id']) ?: '-' }}@endif
                                 </td>
                             @endforeach
-                            @if($canManage)<td class="table-action-cell sticky right-0 z-10"><button type="button" wire:click="removeStudent({{ $student->id }})" wire:confirm="Keluarkan {{ $student->nama_lengkap }} dari kelas ini? Data siswa tidak akan dihapus." class="btn-secondary whitespace-nowrap text-rose-700">Hapus dari Kelas</button></td>@endif
+                            @if($canManage)<td class="table-action-cell sticky right-0 z-10"><button type="button" wire:click="removeStudent({{ $student->id }})" wire:confirm="Keluarkan {{ $student->nama_lengkap }} dari kelas ini? Data siswa tidak akan dihapus." class="btn-secondary table-action-button whitespace-nowrap text-rose-700" aria-label="Hapus {{ $student->nama_lengkap }} dari kelas" title="Hapus dari Kelas"><svg viewBox="0 0 24 24" class="size-5 sm:hidden" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg><span class="hidden sm:inline">Hapus dari Kelas</span></button></td>@endif
                         </tr>
                     @endforeach
                     <x-data-table.states :columns="count($visibleColumnIds)+($canManage?2:0)" :empty="$students->isEmpty()" :filtered="filled($search)" :error="$tableError" />
