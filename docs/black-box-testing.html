@@ -37,7 +37,7 @@
             <p class="school">SD Negeri 232 Maluku Tengah</p>
             <p class="system">Sistem Informasi Jadwal Pelajaran dan Nilai Siswa</p>
         </div>
-        <div class="meta">Dokumen Pengujian<br>Dibuat: 18 Agustus 2026 02:58 WIT</div>
+        <div class="meta">Dokumen Pengujian<br>Dibuat: 18 Agustus 2026 09:26 WIT</div>
     </header>
     <h1>Black Box Testing</h1>
 <table>
@@ -226,6 +226,126 @@
 <td>Input nilai</td>
 <td>viewport 375px</td>
 <td>Tabel scroll, nama sticky</td>
+<td>Siap uji manual</td>
+</tr>
+<tr>
+<td align="right">23</td>
+<td>Jam Pelajaran</td>
+<td>Membuat jam tanpa mengisi urutan</td>
+<td>nama dan rentang jam valid</td>
+<td>Urutan berikutnya terisi otomatis</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">24</td>
+<td>Jam Pelajaran</td>
+<td>Menggeser urutan</td>
+<td>drag baris jam</td>
+<td>Urutan baru tersimpan tanpa duplicate key</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">25</td>
+<td>Status Master</td>
+<td>Nonaktifkan guru/siswa/master</td>
+<td>tombol Nonaktifkan</td>
+<td>Status berubah, record tidak terhapus</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">26</td>
+<td>Tabel</td>
+<td>Select All pada hasil filter lebih dari satu halaman</td>
+<td>filter + checkbox header</td>
+<td>Seluruh dataset hasil filter terpilih</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">27</td>
+<td>Tabel</td>
+<td>Kecualikan satu baris setelah Select All</td>
+<td>uncheck satu baris</td>
+<td>Jumlah terpilih berkurang satu lintas halaman</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">28</td>
+<td>Tabel</td>
+<td>Refresh URL berisi state tabel</td>
+<td>search/filter/sort/page/per_page/visible_columns</td>
+<td>State valid dipulihkan dan nilai tidak aman disanitasi</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">29</td>
+<td>Pagination</td>
+<td>Nomor halaman dan per-page di luar batas</td>
+<td>halaman 0 / per-page terlalu besar</td>
+<td>Nilai dibatasi ke rentang aman</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">30</td>
+<td>Nilai/Laporan</td>
+<td>Periksa checkbox dan Aksi</td>
+<td>halaman nilai dan laporan</td>
+<td>Checkbox/Aksi tidak ditampilkan</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">31</td>
+<td>Pengajaran</td>
+<td>Filter bertingkat</td>
+<td>tahun ajaran, semester, kelas, mapel</td>
+<td>Hasil sesuai filter dan state tersimpan di URL</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">32</td>
+<td>Jadwal</td>
+<td>Pilihan pengajaran bertingkat</td>
+<td>tahun ajaran → semester → kelas</td>
+<td>Hanya pengajaran yang sesuai yang tampil</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">33</td>
+<td>Kelas</td>
+<td>Lihat anggota kelas</td>
+<td>tombol Lihat Siswa</td>
+<td>Halaman roster kelas tampil</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">34</td>
+<td>Kelas</td>
+<td>Tambah dan keluarkan siswa</td>
+<td>siswa valid</td>
+<td>Keanggotaan berubah tanpa menghapus siswa</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">35</td>
+<td>Penempatan</td>
+<td>Filter siswa sudah/belum memiliki kelas</td>
+<td>status penempatan</td>
+<td>Warna, kelas aktif, dan hasil filter sesuai</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">36</td>
+<td>Dashboard</td>
+<td>Render dashboard seluruh role</td>
+<td>admin/guru/siswa/kepala</td>
+<td>Metrik dan akses cepat sesuai role tampil</td>
+<td>Lulus otomatis</td>
+</tr>
+<tr>
+<td align="right">37</td>
+<td>Mobile</td>
+<td>Geser tabel sampai kolom Aksi</td>
+<td>viewport 390px</td>
+<td>Data utama tidak tertutup; tombol aksi ikon tampil di ujung kanan</td>
 <td>Siap uji manual</td>
 </tr>
 </tbody>

@@ -25,15 +25,15 @@ Status implementasi internal telah mencapai kondisi siap demonstrasi akhir. Pene
 | Hak akses | Role Admin, Guru, Siswa, Kepala Sekolah dan permission tiap modul | Selesai |
 | Master akademik | Pengguna, guru, siswa, kelas, mata pelajaran, jam pelajaran | Selesai |
 | Periode akademik | Tahun ajaran, semester, periode aktif, histori periode | Selesai |
-| Penempatan siswa | Penempatan siswa ke kelas dan histori kelas per tahun ajaran | Selesai |
-| Pengajaran | Relasi guru, kelas, mata pelajaran, dan semester | Selesai |
+| Penempatan siswa | Penempatan massal, indikator sudah/belum memiliki kelas, halaman anggota kelas, dan histori kelas | Selesai |
+| Pengajaran | Relasi guru, kelas, mata pelajaran, semester, filter periode, dan form pilihan bertingkat | Selesai |
 | Jadwal | CRUD, filter, tampilan mingguan, validasi bentrok kelas/guru/duplikat | Selesai |
 | Nilai | Input massal, M1-M4, bulan, nilai 0-100/NULL, rata-rata nilai terisi | Selesai |
-| Dashboard | Dashboard berbeda sesuai role dan informasi periode aktif | Selesai |
+| Dashboard | Dashboard role-aware, metrik utama, status akademik, progres nilai, jadwal, dan akses cepat | Selesai |
 | Monitoring | Monitoring jadwal dan nilai untuk Admin/Kepala Sekolah | Selesai |
 | Laporan | Laporan jadwal dan nilai dengan filter, print, serta PDF | Selesai |
 | Pengaturan | Identitas sekolah, logo, kepala sekolah, dan profil pengguna | Selesai |
-| Antarmuka | Responsif desktop/mobile, sidebar mobile, loading dan empty state | Selesai |
+| Antarmuka | Responsif desktop/mobile, tabel reusable, URL state, bulk action, drag-and-drop jam, loading dan empty state | Selesai |
 | Dokumentasi | ERD, database, role, alur, deployment, pengujian, panduan, presentasi | Selesai |
 
 ## 4. Ketentuan Bisnis Penting
@@ -46,6 +46,10 @@ Status implementasi internal telah mencapai kondisi siap demonstrasi akhir. Pene
 - Nilai `0` merupakan nilai yang sah, sedangkan kolom kosong disimpan sebagai `NULL`.
 - Rata-rata dihitung hanya dari minggu yang telah memiliki nilai.
 - Riwayat kelas dan data akademik periode lama tetap dapat dibaca.
+- Urutan jam pelajaran diberikan otomatis dan dapat diubah melalui drag-and-drop tanpa input nomor manual.
+- Aksi Nonaktifkan hanya mengubah status dan tidak menghapus record.
+- Seluruh tabel operasional memiliki pencarian, filter searchable, sorting, pagination, column toggle, dan state URL.
+- Tabel nilai dan laporan bersifat read-only dari sisi struktur tabel: tidak memiliki checkbox atau kolom Aksi.
 
 ## 5. Teknologi dan Arsitektur
 
@@ -65,25 +69,25 @@ Verifikasi ulang dilakukan pada 18 Agustus 2026.
 
 | Pemeriksaan | Perintah | Hasil |
 |---|---|---|
-| Automated test | `php artisan test` | Lulus: 18 test, 76 assertion |
+| Automated test | `php artisan test` | Lulus: 51 test, 371 assertion |
 | Production build | `npm run build` | Berhasil tanpa error |
 | Pemeriksaan route | `php artisan route:list` | Route aplikasi terdaftar dan dilindungi middleware |
 | Dokumen Word skripsi | Pemeriksaan struktur dan render | Valid, 50 halaman |
 
-Automated test mencakup autentikasi, akun nonaktif, registrasi publik, authorization, aktivasi periode, pengajaran duplikat, bentrok jadwal, batas nilai, nilai kosong, siswa di luar kelas, akses nilai siswa, dan endpoint PDF. Pemeriksaan penerimaan pengguna tetap dilakukan bersama client pada demonstrasi akhir.
+Automated test mencakup autentikasi, akun nonaktif, registrasi publik, authorization, aktivasi periode, pengajaran duplikat, bentrok jadwal, batas nilai, nilai kosong, siswa di luar kelas, akses nilai siswa, endpoint PDF, aksi status tanpa penghapusan, tabel reusable, selection lintas halaman, URL state, pagination aman, urutan jam, pilihan bertingkat, anggota kelas, dan penempatan siswa. Pemeriksaan penerimaan pengguna tetap dilakukan bersama client pada demonstrasi akhir.
 
 ## 7. Materi Demonstrasi Akhir
 
 1. Login menggunakan empat role.
 2. Dashboard dan navigasi sesuai role.
 3. Pengelolaan master data dan periode akademik.
-4. Penempatan siswa dan pengajaran.
+4. Penempatan siswa, halaman anggota kelas, dan pengajaran bertingkat.
 5. Penyusunan jadwal serta simulasi penolakan bentrok.
 6. Input nilai massal M1-M4 dan perhitungan rata-rata.
 7. Akses jadwal/nilai dari akun Guru dan Siswa.
 8. Monitoring Kepala Sekolah.
 9. Filter laporan, print, dan download PDF.
-10. Pengaturan sekolah, profil, tampilan mobile, dan dokumentasi.
+10. Pengaturan sekolah, profil, tabel mobile, dan dokumentasi terbaru.
 
 ## 8. Dokumen dan Berkas Serah Terima
 
@@ -120,4 +124,3 @@ Secara teknis aplikasi telah siap untuk demonstrasi akhir. Status diterima/serah
 ..............................................................................................................................
 
 ..............................................................................................................................
-

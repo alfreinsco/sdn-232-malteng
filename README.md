@@ -57,6 +57,8 @@ php artisan route:list
 
 Test memakai SQLite in-memory agar cepat; development dan production tetap menggunakan MySQL.
 
+Suite saat dokumentasi terakhir diperbarui: **51 test, 371 assertion**.
+
 ## Production
 
 Setidaknya atur:
@@ -93,3 +95,11 @@ Kemudian jalankan `php artisan optimize`, arahkan document root web server ke `p
 - `docs/system-flow.md`
 - `docs/black-box-testing.md`
 - `docs/deployment.md`
+
+Untuk mengambil ulang screenshot dokumentasi setelah perubahan UI:
+
+```bash
+node scripts/capture-guide-screenshots.mjs desktop
+node scripts/capture-guide-screenshots.mjs extras
+node scripts/capture-guide-screenshots.mjs mobile
+```

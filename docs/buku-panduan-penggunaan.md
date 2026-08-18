@@ -2,9 +2,11 @@
 
 ## Sistem Informasi Jadwal Pelajaran dan Nilai Siswa
 
-**SD Negeri 232 Maluku Tengah**  
-Versi panduan: 1.0  
-Bahasa: Indonesia
+**SD Negeri 232 Maluku Tengah**
+
+- Versi panduan: 1.1
+- Pembaruan terakhir: 18 Agustus 2026
+- Bahasa: Indonesia
 
 ---
 
@@ -87,6 +89,22 @@ Bagian utama aplikasi terdiri dari:
 - **Tombol Nonaktifkan:** menghentikan penggunaan data tanpa merusak riwayat.
 - **Pagination:** berpindah halaman jika data sangat banyak.
 
+## Menggunakan tabel data
+
+Semua tabel utama memiliki pola penggunaan yang sama:
+
+1. Gunakan **Pencarian Utama** untuk mencari data dengan kata kunci.
+2. Gunakan blok **Filter** untuk mempersempit hasil. Pilihan filter dapat dicari dengan mengetik nama opsi.
+3. Tekan judul kolom untuk mengurutkan data naik, turun, lalu kembali ke urutan awal.
+4. Tekan ikon **Kolom** untuk memilih kolom yang ingin ditampilkan.
+5. Centang satu baris atau centang kotak paling kiri pada header untuk memilih seluruh data hasil pencarian dan filter.
+6. Saat data dipilih, toolbar aksi massal tampil di atas tabel.
+7. Gunakan **Reset Filter** untuk menghapus pencarian, filter, dan pengurutan.
+8. Gunakan kontrol halaman di bawah tabel untuk menuju halaman pertama, sebelumnya, berikutnya, terakhir, atau mengetik nomor halaman langsung.
+9. Jumlah data per halaman dapat dipilih dari 10, 25, 50, 100, atau angka khusus yang aman.
+
+Keadaan pencarian, filter, urutan, halaman, jumlah data per halaman, dan kolom yang terlihat disimpan pada alamat halaman. Saat halaman dimuat ulang atau tautan dibagikan, tampilan tabel tetap sama.
+
 ## Arti status
 
 - **Aktif:** data atau akun masih digunakan.
@@ -104,7 +122,7 @@ Kolom nilai kosong berarti **belum dinilai**. Nilai kosong tidak sama dengan nil
 
 ![Dashboard Admin](screenshots/admin-dashboard.png)
 
-Dashboard menampilkan jumlah guru, siswa, kelas, mata pelajaran, jadwal, nilai yang sudah diisi, periode aktif, dan jadwal hari ini. Gunakan tombol **Input Nilai** sebagai jalan cepat ke halaman nilai.
+Dashboard menampilkan ringkasan guru, siswa, kelas, mata pelajaran, pengajaran, dan jadwal hari ini. Bagian **Status Akademik** menunjukkan kelengkapan nilai bulan berjalan, status penempatan siswa, serta periode aktif. Bagian **Akses Cepat** membuka penempatan siswa, pengajaran, jadwal, dan monitoring nilai tanpa mencari menu di sidebar.
 
 ## 4.2 Mengelola Tahun Ajaran
 
@@ -143,6 +161,18 @@ Semester hanya dapat diaktifkan jika tahun ajarannya aktif.
 
 Nama kelas tidak boleh sama dalam tahun ajaran yang sama.
 
+Gunakan filter **Tahun Ajaran** dan **Tingkat** untuk menemukan kelas. Tingkat hanya menggunakan pilihan 1 sampai 6. Kolom **Jumlah Siswa** menunjukkan jumlah anggota aktif pada kelas tersebut.
+
+### Melihat dan mengatur anggota kelas
+
+![Anggota kelas](screenshots/admin-anggota-kelas.png)
+
+1. Pada tabel Kelas, tekan **Lihat Siswa** pada kelas yang dipilih.
+2. Halaman Anggota Kelas menampilkan seluruh siswa aktif di kelas tersebut.
+3. Tekan **Tambah Siswa** untuk memasukkan siswa baru ke kelas.
+4. Pilih siswa melalui pencarian, lalu simpan.
+5. Untuk mengeluarkan siswa, gunakan aksi **Hapus dari Kelas**. Data siswa tidak ikut terhapus.
+
 ## 4.5 Mengelola Mata Pelajaran
 
 ![Data mata pelajaran](screenshots/admin-mata-pelajaran.png)
@@ -159,11 +189,13 @@ Gunakan kotak pencarian untuk menemukan mata pelajaran berdasarkan kode atau nam
 ![Data jam pelajaran](screenshots/admin-jam-pelajaran.png)
 
 1. Buka **Master Data → Jam Pelajaran**.
-2. Isi nama, jam mulai, jam selesai, dan urutan.
+2. Isi nama, jam mulai, dan jam selesai.
 3. Pilih jenis **Pelajaran** atau **Istirahat**.
 4. Simpan.
 
 Jam selesai harus lebih besar daripada jam mulai.
+
+Urutan tidak diisi melalui formulir. Pada tabel, seret pegangan pada kolom **Urutan** ke atas atau bawah. Urutan tersimpan otomatis setelah dilepas. Pengguna keyboard dapat memfokuskan pegangan lalu memakai tombol panah atas/bawah.
 
 ## 4.7 Mengelola Guru
 
@@ -207,6 +239,8 @@ Siswa yang sudah memiliki nilai sebaiknya dinonaktifkan, bukan dihapus, agar riw
 
 Satu siswa tidak dapat memiliki dua kelas aktif dalam tahun ajaran yang sama. Ketika siswa naik kelas, buat penempatan pada tahun ajaran baru agar riwayat kelas lama tetap tersimpan.
 
+Siswa yang sudah memiliki kelas diberi warna berbeda dan kolom kelasnya ditampilkan. Gunakan filter **Sudah memiliki kelas** atau **Belum memiliki kelas** untuk memeriksa kelengkapan penempatan.
+
 ## 4.10 Mengatur Pengajaran
 
 ![Data pengajaran](screenshots/admin-pengajaran.png)
@@ -215,19 +249,24 @@ Pengajaran adalah hubungan antara semester, kelas, mata pelajaran, dan guru.
 
 1. Buka **Akademik → Pengajaran**.
 2. Tekan **Tambah Pengajaran**.
-3. Pilih semester, kelas, mata pelajaran, dan guru.
-4. Simpan.
+3. Pilih tahun ajaran terlebih dahulu.
+4. Pilih semester dan kelas yang berasal dari tahun ajaran tersebut.
+5. Cari lalu pilih mata pelajaran dan guru.
+6. Simpan.
 
 Pengajaran yang sama tidak dapat dibuat dua kali.
+
+Tabel dapat difilter berdasarkan tahun ajaran, semester, kelas, dan mata pelajaran. Kolom tabel menampilkan semester, kelas, mata pelajaran, dan guru secara langsung.
 
 ## 4.11 Mengatur Jadwal Pelajaran
 
 ![Jadwal pelajaran Admin](screenshots/admin-jadwal-pelajaran.png)
 
 1. Buka **Akademik → Jadwal Pelajaran**.
-2. Pilih pengajaran yang sudah dibuat.
-3. Pilih hari dan jam pelajaran.
-4. Simpan.
+2. Pilih tahun ajaran, semester, dan kelas secara berurutan.
+3. Pilih pengajaran yang sesuai dengan tiga pilihan tersebut.
+4. Pilih hari dan jam pelajaran.
+5. Simpan.
 
 Aplikasi otomatis menolak:
 
@@ -296,7 +335,7 @@ Pada halaman Profil, pengguna dapat memperbarui nama/email yang diizinkan serta 
 
 ![Dashboard Guru](screenshots/guru-dashboard.png)
 
-Dashboard Guru menampilkan periode aktif, jadwal hari ini, jumlah kelas dan mata pelajaran yang diajar, serta jalan cepat untuk mengisi nilai.
+Dashboard Guru menampilkan periode aktif, kelas dan mata pelajaran yang diajar, jumlah siswa yang dijangkau, jadwal hari ini, progres nilai bulan berjalan, serta akses cepat menuju input nilai, jadwal, dan laporan.
 
 ## 5.2 Melihat Jadwal Mengajar
 
@@ -344,7 +383,7 @@ Gunakan halaman Profil untuk memperbarui informasi akun dan mengganti password s
 
 ![Dashboard Siswa](screenshots/siswa-dashboard.png)
 
-Dashboard menampilkan nama siswa, kelas aktif, periode akademik, jadwal hari ini, dan ringkasan nilai.
+Dashboard menampilkan kelas aktif dan wali kelas, jumlah mata pelajaran, jadwal hari ini, rata-rata bulan berjalan, status ketersediaan nilai, periode akademik, dan akses cepat.
 
 ## 6.2 Melihat Jadwal Pelajaran
 
@@ -382,7 +421,7 @@ Siswa dapat memperbarui bagian profil yang diizinkan dan mengganti password deng
 
 ![Dashboard Kepala Sekolah](screenshots/kepala-dashboard.png)
 
-Dashboard memberikan ringkasan jumlah guru, siswa, kelas, mata pelajaran, jadwal, dan pengisian nilai.
+Dashboard memberikan ringkasan jumlah guru, siswa, kelas, mata pelajaran, pengajaran, jadwal hari ini, progres pengisian nilai, status penempatan siswa, dan periode akademik.
 
 ## 7.2 Monitoring Jadwal
 
@@ -448,6 +487,16 @@ Nama siswa tetap berada di sisi kiri. Geser tabel ke samping untuk membuka Mingg
 
 Gunakan telepon dalam posisi mendatar jika ingin melihat lebih banyak kolom sekaligus.
 
+## 8.4 Tabel Admin pada telepon genggam
+
+![Tabel siswa Admin mobile](screenshots/mobile-admin-siswa.png)
+
+Petunjuk berwarna biru muda di atas tabel menandakan bahwa tabel dapat digeser. Scroll vertikal mengikuti halaman sehingga pengguna tidak terjebak pada dua area scroll.
+
+![Aksi tabel siswa Admin mobile](screenshots/mobile-admin-siswa-aksi.png)
+
+Geser sampai ujung kanan untuk membuka kolom Aksi. Pada layar kecil, tombol Ubah dan Aktif/Nonaktif ditampilkan sebagai ikon agar tidak menutupi kolom data. Kotak centang tetap berada di sisi kiri untuk memudahkan pemilihan massal.
+
 ---
 
 # 9. Mencetak dan mengunduh PDF
@@ -485,6 +534,8 @@ Untuk laporan nilai yang lebar, PDF menggunakan posisi kertas mendatar agar tabe
 | Halaman kedaluwarsa / 419 | Sesi terlalu lama tidak digunakan. | Muat ulang halaman dan masuk kembali. |
 | Nilai harus 0–100 | Angka berada di luar batas. | Ganti dengan angka 0 sampai 100 atau kosongkan jika belum dinilai. |
 | Tombol tidak dapat ditekan | Pilihan wajib belum ditentukan atau proses sedang berjalan. | Lengkapi pilihan dan tunggu proses selesai. |
+| Data tabel tidak ditemukan | Pencarian atau filter terlalu sempit. | Tekan **Reset Filter** atau ubah kata pencarian. |
+| Nomor urutan jam sudah digunakan | Urutan lama atau halaman belum diperbarui. | Muat ulang halaman; urutan kini diatur melalui drag-and-drop pada tabel. |
 
 Jangan menekan tombol simpan berulang kali ketika tulisan **Menyimpan...** sedang tampil.
 
@@ -549,4 +600,3 @@ Jika masalah belum selesai, catat:
 5. screenshot jika memungkinkan.
 
 Sampaikan catatan tersebut kepada Admin atau pengelola teknis aplikasi.
-

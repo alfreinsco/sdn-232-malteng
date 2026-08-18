@@ -11,6 +11,9 @@ Database utama adalah MySQL. Semua konfigurasi berasal dari environment variable
 - Aktivasi tahun ajaran dan semester dijalankan dalam transaction.
 - Bulk nilai menggunakan transaction dan `upsert` pada unique key pengajaran+siswa+bulan+minggu.
 - Validasi bentrok jadwal memeriksa kelas dan guru dalam semester yang sama.
+- `jam_pelajaran.urutan` tetap unik di database; antarmuka mengelolanya otomatis melalui proses reorder transactional sehingga pengguna tidak mengetik urutan manual.
+- Jumlah siswa pada daftar kelas dihitung dari `siswa_kelas` berstatus aktif, bukan kolom duplikat pada tabel `kelas`.
+- Filter tahun ajaran pada kelas, pengajaran, jadwal, nilai, dan laporan memakai relasi periode yang sudah tersedia sehingga histori tetap dapat dibaca.
 
 ## Nilai
 

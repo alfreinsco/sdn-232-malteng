@@ -52,15 +52,15 @@
     <tr><td>Hak akses</td><td>Role Admin, Guru, Siswa, Kepala Sekolah dan permission tiap modul</td><td>Selesai</td></tr>
     <tr><td>Master akademik</td><td>Pengguna, guru, siswa, kelas, mata pelajaran, jam pelajaran</td><td>Selesai</td></tr>
     <tr><td>Periode akademik</td><td>Tahun ajaran, semester, periode aktif, histori periode</td><td>Selesai</td></tr>
-    <tr><td>Penempatan siswa</td><td>Penempatan siswa ke kelas dan histori per tahun ajaran</td><td>Selesai</td></tr>
-    <tr><td>Pengajaran</td><td>Relasi guru, kelas, mata pelajaran, dan semester</td><td>Selesai</td></tr>
+    <tr><td>Penempatan siswa</td><td>Penempatan massal, indikator status kelas, halaman anggota kelas, dan histori</td><td>Selesai</td></tr>
+    <tr><td>Pengajaran</td><td>Relasi akademik, filter periode, dan form pilihan bertingkat</td><td>Selesai</td></tr>
     <tr><td>Jadwal</td><td>CRUD, filter, tampilan mingguan, validasi bentrok kelas/guru/duplikat</td><td>Selesai</td></tr>
     <tr><td>Nilai</td><td>Input massal, M1-M4, bulan, 0-100/NULL, rata-rata nilai terisi</td><td>Selesai</td></tr>
-    <tr><td>Dashboard</td><td>Dashboard berbeda sesuai role dan informasi periode aktif</td><td>Selesai</td></tr>
+    <tr><td>Dashboard</td><td>Metrik role-aware, status akademik, progres nilai, jadwal, dan akses cepat</td><td>Selesai</td></tr>
     <tr><td>Monitoring</td><td>Monitoring jadwal dan nilai untuk Admin/Kepala Sekolah</td><td>Selesai</td></tr>
     <tr><td>Laporan</td><td>Laporan jadwal dan nilai dengan filter, print, serta PDF</td><td>Selesai</td></tr>
     <tr><td>Pengaturan</td><td>Identitas sekolah, logo, kepala sekolah, dan profil pengguna</td><td>Selesai</td></tr>
-    <tr><td>Antarmuka</td><td>Responsif desktop/mobile, sidebar mobile, loading dan empty state</td><td>Selesai</td></tr>
+    <tr><td>Antarmuka</td><td>Tabel reusable, URL state, bulk action, drag-and-drop, serta responsif desktop/mobile</td><td>Selesai</td></tr>
     <tr><td>Dokumentasi</td><td>ERD, database, role, alur, deployment, test, panduan, presentasi</td><td>Selesai</td></tr>
   </tbody></table>
 
@@ -70,6 +70,9 @@
     <li>Guru hanya mengelola nilai pada pengajarannya, sedangkan siswa hanya memperoleh data miliknya.</li>
     <li>Nilai 0 sah, kolom kosong disimpan sebagai NULL, dan rata-rata hanya menghitung nilai yang tersedia.</li>
     <li>Riwayat kelas dan data akademik periode lama tetap dapat dibaca.</li>
+    <li>Urutan jam diberikan otomatis dan dapat diubah melalui drag-and-drop.</li>
+    <li>Aksi Nonaktifkan mengubah status tanpa menghapus record.</li>
+    <li>Tabel nilai dan laporan tidak menampilkan checkbox maupun kolom Aksi.</li>
   </ul>
 
   <h2>5. Teknologi dan Arsitektur</h2>
@@ -84,21 +87,21 @@
   <h2>6. Verifikasi Teknis Terakhir</h2>
   <p>Verifikasi ulang dilakukan pada 18 Agustus 2026.</p>
   <table><thead><tr><th>Pemeriksaan</th><th>Perintah</th><th>Hasil</th></tr></thead><tbody>
-    <tr><td>Automated test</td><td><code>php artisan test</code></td><td>Lulus: 18 test, 76 assertion</td></tr>
+    <tr><td>Automated test</td><td><code>php artisan test</code></td><td>Lulus: 51 test, 371 assertion</td></tr>
     <tr><td>Production build</td><td><code>npm run build</code></td><td>Berhasil tanpa error</td></tr>
     <tr><td>Pemeriksaan route</td><td><code>php artisan route:list</code></td><td>Route terdaftar dan dilindungi middleware</td></tr>
     <tr><td>Dokumen skripsi</td><td>Pemeriksaan struktur dan render</td><td>Valid, 50 halaman</td></tr>
   </tbody></table>
-  <p>Automated test mencakup autentikasi, akun nonaktif, registrasi publik, authorization, aktivasi periode, pengajaran duplikat, bentrok jadwal, batas nilai, nilai kosong, siswa di luar kelas, akses nilai siswa, dan endpoint PDF. Pemeriksaan penerimaan pengguna tetap dilakukan bersama client pada demonstrasi akhir.</p>
+  <p>Automated test mencakup autentikasi, authorization, periode akademik, bentrok jadwal, nilai, endpoint PDF, aksi status tanpa penghapusan, tabel reusable, selection lintas halaman, URL state, pagination, urutan jam, pilihan bertingkat, anggota kelas, dan penempatan siswa. Pemeriksaan penerimaan pengguna tetap dilakukan bersama client pada demonstrasi akhir.</p>
 
   <h2>7. Materi Demonstrasi Akhir</h2>
   <ol>
     <li>Login menggunakan empat role serta dashboard masing-masing.</li>
-    <li>Master data, periode akademik, penempatan siswa, dan pengajaran.</li>
+    <li>Master data, urutan jam drag-and-drop, anggota kelas, penempatan siswa, dan pengajaran bertingkat.</li>
     <li>Jadwal dan simulasi penolakan bentrok.</li>
     <li>Input nilai massal M1-M4 serta perhitungan rata-rata.</li>
     <li>Akses Guru, Siswa, dan monitoring Kepala Sekolah.</li>
-    <li>Filter laporan, print, PDF, pengaturan sekolah, dan tampilan mobile.</li>
+    <li>Filter laporan, print, PDF, pengaturan sekolah, tabel mobile, dan dokumentasi terbaru.</li>
   </ol>
 
   <h2>8. Dokumen dan Berkas Serah Terima</h2>

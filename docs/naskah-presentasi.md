@@ -24,11 +24,11 @@ Dokumen ini membantu penyaji menjelaskan setiap slide dengan bahasa sederhana. D
 
 ## Slide 6 - Dashboard Admin
 
-"Dashboard memberikan gambaran cepat mengenai jumlah guru, siswa, kelas, mata pelajaran, jadwal, nilai terisi, dan kegiatan hari ini."
+"Dashboard memberikan gambaran cepat mengenai guru, siswa, kelas, mata pelajaran, pengajaran, dan jadwal hari ini. Status Akademik memperlihatkan progres nilai, penempatan siswa, dan periode aktif. Akses Cepat membantu pengguna membuka pekerjaan utama."
 
 ## Slide 7 - Master data
 
-"Admin mengisi data dasar seperti tahun ajaran, semester, guru, siswa, kelas, mata pelajaran, jam pelajaran, dan pengguna. Data lama tetap dijaga sebagai riwayat."
+"Admin mengisi data dasar seperti tahun ajaran, semester, guru, siswa, kelas, mata pelajaran, jam pelajaran, dan pengguna. Tabel dapat dicari, difilter, diurutkan, dan dipilih massal. Urutan jam pelajaran diatur dengan drag-and-drop. Data lama tetap dijaga sebagai riwayat."
 
 ## Slide 8 - Jadwal
 
@@ -54,7 +54,7 @@ Tekankan bahwa nilai kosong berarti belum dinilai, sedangkan nol adalah nilai ya
 
 ## Slide 13 - Mobile
 
-"Aplikasi dapat digunakan melalui komputer, tablet, maupun telepon genggam. Menu menjadi drawer dan tabel yang lebar dapat digeser dengan jari."
+"Aplikasi dapat digunakan melalui komputer, tablet, maupun telepon genggam. Menu menjadi drawer, tabel yang lebar dapat digeser dengan jari, dan tombol aksi berubah menjadi ikon ringkas agar tidak menutupi data."
 
 ## Slide 14 - Keamanan
 
@@ -66,10 +66,12 @@ Gunakan urutan berikut:
 
 1. Login sebagai Admin.
 2. Jelaskan Dashboard.
-3. Buka Jadwal Pelajaran dan tunjukkan filter.
-4. Login sebagai Guru dan buka Input Nilai.
-5. Login sebagai Siswa untuk menunjukkan Nilai Saya.
-6. Kembali ke Admin/Kepala Sekolah dan unduh laporan PDF.
+3. Buka Kelas, tunjukkan jumlah siswa, lalu buka halaman Anggota Kelas.
+4. Buka Jam Pelajaran dan tunjukkan pengaturan urutan drag-and-drop.
+5. Buka Jadwal Pelajaran dan tunjukkan pilihan tahun ajaran, semester, dan kelas.
+6. Login sebagai Guru dan buka Input Nilai.
+7. Login sebagai Siswa untuk menunjukkan Nilai Saya.
+8. Kembali ke Admin/Kepala Sekolah dan unduh laporan PDF.
 
 ## Slide 16 - Penutup
 

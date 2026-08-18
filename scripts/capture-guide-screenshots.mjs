@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 const baseUrl = 'http://127.0.0.1:8010';
 const outputDir = new URL('../docs/screenshots/', import.meta.url);
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const mode = process.argv[2] ?? 'all';
 
 const targets = await fetch('http://127.0.0.1:9223/json/list').then((response) => response.json());
 const target = targets.find((item) => item.type === 'page');
@@ -59,7 +60,7 @@ async function navigate(path) {
     await delay(900);
     await evaluate(`(() => {
         const style = document.createElement('style');
-        style.textContent = '*,*::before,*::after{animation:none!important;transition:none!important}';
+        style.textContent = '*,*::before,*::after{animation:none!important;transition:none!important}@media (min-width:1024px){body>div.min-h-dvh{height:auto!important;min-height:100vh!important;overflow:visible!important}body>div.min-h-dvh>div:last-child{height:auto!important;min-height:100vh!important;overflow:visible!important}main#main-content{height:auto!important;min-height:calc(100vh - 4.5rem)!important;overflow:visible!important}.table-scroll,.report-table-scroll{max-height:none!important}}';
         document.head.appendChild(style);
         window.scrollTo(0, 0);
     })()`);
@@ -77,7 +78,23 @@ async function setViewport(width, height, mobile = false) {
     });
 }
 
-async function screenshot(name) {
+async function screenshot(name, fullPage = true) {
+    if (!fullPage) {
+        const metrics = await command('Page.getLayoutMetrics');
+        const width = Math.max(1, Math.ceil(metrics.cssVisualViewport?.clientWidth ?? 390));
+        const height = Math.max(1, Math.ceil(metrics.cssVisualViewport?.clientHeight ?? 844));
+        const result = await command('Page.captureScreenshot', {
+            format: 'png',
+            fromSurface: true,
+            captureBeyondViewport: false,
+            clip: { x: 0, y: 0, width, height, scale: 1 },
+        });
+
+        await fs.writeFile(new URL(`${name}.png`, outputDir), Buffer.from(result.data, 'base64'));
+        process.stdout.write(`${name}.png (${width}x${height})\n`);
+        return;
+    }
+
     const { contentSize } = await command('Page.getLayoutMetrics');
     const width = Math.max(1, Math.ceil(contentSize.width));
     const height = Math.max(1, Math.ceil(contentSize.height));
@@ -122,6 +139,7 @@ const rolePages = {
             ['guru', '/guru'],
             ['siswa', '/siswa'],
             ['kelas', '/kelas'],
+            ['anggota-kelas', '/kelas/1/siswa'],
             ['mata-pelajaran', '/mata-pelajaran'],
             ['jam-pelajaran', '/jam-pelajaran'],
             ['pengajaran', '/pengajaran'],
@@ -172,72 +190,95 @@ await fs.mkdir(outputDir, { recursive: true });
 await command('Page.enable');
 await command('Runtime.enable');
 await command('Network.enable');
-await setViewport(1440, 1000);
-await command('Network.clearBrowserCookies');
-await navigate('/login');
-await screenshot('00-login');
+if (['all', 'desktop'].includes(mode)) {
+    await setViewport(1440, 1000);
+    await command('Network.clearBrowserCookies');
+    await navigate('/login');
+    await screenshot('00-login');
 
-for (const [role, config] of Object.entries(rolePages)) {
-    await login(config.username);
+    for (const [role, config] of Object.entries(rolePages)) {
+        await login(config.username);
 
-    for (const [name, path] of config.pages) {
-        await navigate(path);
-        await screenshot(`${role}-${name}`);
+        for (const [name, path] of config.pages) {
+            await navigate(path);
+            await screenshot(`${role}-${name}`);
+        }
     }
 }
 
-await setViewport(1440, 1000);
-await login('guru1');
-await navigate('/nilai-siswa');
-await evaluate(`(() => {
-    const select = document.querySelectorAll('select')[0];
-    select.value = select.options[1]?.value ?? '';
-    select.dispatchEvent(new Event('input', { bubbles: true }));
-    select.dispatchEvent(new Event('change', { bubbles: true }));
-})()`);
-await delay(1200);
-await screenshot('guru-input-nilai-terisi');
+if (['all', 'extras'].includes(mode)) {
+    await setViewport(1440, 1000);
+    await login('guru1');
+    await navigate('/nilai-siswa');
+    await evaluate(`(() => {
+        const trigger = document.querySelector('.filters button[aria-haspopup="listbox"]');
+        trigger?.click();
+    })()`);
+    await delay(150);
+    await evaluate(`(() => {
+        const options = document.querySelectorAll('.filters [role="listbox"] button');
+        options[1]?.click();
+    })()`);
+    await delay(1200);
+    await screenshot('guru-input-nilai-terisi');
 
-await login('admin');
-await navigate('/guru');
-await evaluate(`(() => {
-    const button = [...document.querySelectorAll('button')].find((item) => item.textContent.trim().startsWith('Tambah Guru'));
-    button?.click();
-})()`);
-await delay(500);
-await screenshot('admin-form-tambah-guru');
+    await login('admin');
+    await navigate('/guru');
+    await evaluate(`(() => {
+        const button = [...document.querySelectorAll('button')].find((item) => item.textContent.trim().startsWith('Tambah Guru'));
+        button?.click();
+    })()`);
+    await delay(500);
+    await screenshot('admin-form-tambah-guru');
+}
 
-for (const role of ['guru', 'siswa']) {
-    const config = rolePages[role];
+if (['all', 'mobile'].includes(mode)) {
+    for (const role of ['guru', 'siswa']) {
+        const config = rolePages[role];
+        await setViewport(390, 844, true);
+        await login(config.username);
+
+        for (const [name, path] of config.pages.slice(0, 3)) {
+            await navigate(path);
+            await screenshot(`mobile-${role}-${name}`, false);
+        }
+    }
+
     await setViewport(390, 844, true);
-    await login(config.username);
+    await login('guru1');
+    await navigate('/nilai-siswa');
+    await evaluate(`(() => {
+        const trigger = document.querySelector('.filters button[aria-haspopup="listbox"]');
+        trigger?.click();
+    })()`);
+    await delay(150);
+    await evaluate(`(() => {
+        const options = document.querySelectorAll('.filters [role="listbox"] button');
+        options[1]?.click();
+    })()`);
+    await delay(1200);
+    await screenshot('mobile-guru-input-nilai-terisi', false);
 
-    for (const [name, path] of config.pages.slice(0, 3)) {
-        await navigate(path);
-        await screenshot(`mobile-${role}-${name}`);
-    }
+    await setViewport(390, 844, true);
+    await login('admin');
+    await navigate('/siswa');
+    await screenshot('mobile-admin-siswa', false);
+    await evaluate(`(() => {
+        const table = document.querySelector('.table-scroll');
+        if (table) table.scrollLeft = table.scrollWidth;
+    })()`);
+    await delay(200);
+    await screenshot('mobile-admin-siswa-aksi', false);
+
+    await setViewport(390, 844, true);
+    await login('admin');
+    await navigate('/dashboard');
+    await evaluate(`(() => {
+        const button = document.querySelector('button[aria-label="Buka menu"]');
+        button?.click();
+    })()`);
+    await delay(300);
+    await screenshot('mobile-admin-menu', false);
 }
-
-await setViewport(390, 844, true);
-await login('guru1');
-await navigate('/nilai-siswa');
-await evaluate(`(() => {
-    const select = document.querySelectorAll('select')[0];
-    select.value = select.options[1]?.value ?? '';
-    select.dispatchEvent(new Event('input', { bubbles: true }));
-    select.dispatchEvent(new Event('change', { bubbles: true }));
-})()`);
-await delay(1200);
-await screenshot('mobile-guru-input-nilai-terisi');
-
-await setViewport(390, 844, true);
-await login('admin');
-await navigate('/dashboard');
-await evaluate(`(() => {
-    const button = document.querySelector('button[aria-label="Buka menu"]');
-    button?.click();
-})()`);
-await delay(300);
-await screenshot('mobile-admin-menu');
 
 socket.close();

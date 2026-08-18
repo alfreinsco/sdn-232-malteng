@@ -265,9 +265,9 @@ add_header(slide, "Admin", "Dashboard dan kendali utama", "Admin melihat ringkas
 add_card(slide, 0.7, 1.9, 8.0, 4.82)
 add_picture_contain(slide, SCREENSHOTS / "admin-dashboard.png", 0.9, 2.1, 7.6, 4.42)
 add_rich_lines(slide, [
-    ("Ringkasan - ", "guru, siswa, kelas, mata pelajaran, jadwal, dan nilai."),
+    ("Ringkasan - ", "guru, siswa, kelas, mata pelajaran, pengajaran, dan jadwal."),
     ("Periode aktif - ", "tahun ajaran dan semester yang sedang berjalan."),
-    ("Jadwal hari ini - ", "informasi kegiatan akademik terbaru."),
+    ("Status akademik - ", "progres nilai, penempatan siswa, dan kegiatan hari ini."),
 ], 9.05, 2.2, 3.35, 2.75, 16, 10)
 add_text(slide, "Semua informasi penting terlihat tanpa membuka banyak halaman.", 9.05, 5.25, 3.25, 0.95, 17, SKY_DARK, True)
 add_footer(slide, 6)
@@ -286,8 +286,8 @@ add_card(slide, 0.75, 4.65, 5.92, 1.45, SKY_LIGHT, SKY_LIGHT)
 add_text(slide, "Riwayat tetap aman", 1.05, 4.94, 2.5, 0.35, 18, SKY_DARK, True)
 add_text(slide, "Data yang sudah dipakai dinonaktifkan, bukan sembarang dihapus.", 1.05, 5.37, 5.2, 0.42, 14, SLATE)
 add_card(slide, 6.95, 4.65, 5.65, 1.45, WHITE)
-add_text(slide, "Pencarian dan filter", 7.25, 4.94, 2.8, 0.35, 18, NAVY, True)
-add_text(slide, "Tabel dapat dicari, diurutkan, disaring, dan dibagi per halaman.", 7.25, 5.37, 4.95, 0.42, 14, SLATE)
+add_text(slide, "Tabel modern", 7.25, 4.94, 2.8, 0.35, 18, NAVY, True)
+add_text(slide, "Search, filter, sorting, bulk action, URL state, dan urutan jam drag-and-drop.", 7.25, 5.37, 4.95, 0.5, 14, SLATE)
 add_footer(slide, 7)
 
 # Slide 8 - Schedule
@@ -361,7 +361,7 @@ slide = new_slide()
 add_header(slide, "Responsif", "Nyaman digunakan dari telepon genggam", "Menu berubah menjadi drawer dan tabel tetap dapat digeser secara horizontal.")
 phones = [
     ("Guru", SCREENSHOTS / "mobile-guru-dashboard.png"),
-    ("Input Nilai", SCREENSHOTS / "mobile-guru-input-nilai-terisi.png"),
+    ("Tabel Admin", SCREENSHOTS / "mobile-admin-siswa.png"),
     ("Siswa", SCREENSHOTS / "mobile-siswa-nilai-saya.png"),
 ]
 for index, (label, path) in enumerate(phones):
@@ -380,7 +380,7 @@ security = [
     ("Validasi server", "Jadwal, nilai, akun, dan upload diperiksa sebelum disimpan."),
     ("Password aman", "Password di-hash dan tidak pernah ditampilkan sebagai teks biasa."),
     ("Riwayat akademik", "Foreign key dan status nonaktif menjaga data historis."),
-    ("Pengujian otomatis", "18 test dan 76 assertion memastikan aturan penting berjalan."),
+    ("Pengujian otomatis", "51 test dan 371 assertion memastikan aturan penting berjalan."),
 ]
 for index, (title, detail) in enumerate(security):
     x = 0.7 + (index % 2) * 6.15
@@ -396,22 +396,23 @@ add_header(slide, "Demo", "Urutan demonstrasi yang disarankan", "Alur ini dapat 
 steps = [
     ("Login", "Masuk sebagai Admin."),
     ("Dashboard", "Jelaskan ringkasan sekolah."),
-    ("Jadwal", "Tunjukkan filter dan validasi bentrok."),
+    ("Data", "Tunjukkan anggota kelas dan urutan jam."),
+    ("Jadwal", "Tunjukkan pilihan bertingkat dan bentrok."),
     ("Nilai", "Masuk sebagai Guru dan isi nilai massal."),
-    ("Hasil", "Masuk sebagai Siswa, lalu buka laporan PDF."),
+    ("Hasil", "Buka Nilai Saya dan laporan PDF."),
 ]
 for index, (title, detail) in enumerate(steps):
-    x = 0.75 + index * 2.48
-    add_card(slide, x, 2.35, 2.15, 2.65)
-    circle = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x + 0.68), Inches(2.68), Inches(0.78), Inches(0.78))
+    x = 0.55 + index * 2.12
+    add_card(slide, x, 2.35, 1.82, 2.65)
+    circle = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x + 0.52), Inches(2.68), Inches(0.78), Inches(0.78))
     circle.fill.solid()
     circle.fill.fore_color.rgb = SKY
     circle.line.fill.background()
-    add_text(slide, str(index + 1), x + 0.68, 2.87, 0.78, 0.28, 18, WHITE, True, PP_ALIGN.CENTER)
-    add_text(slide, title, x + 0.18, 3.7, 1.8, 0.35, 16, NAVY, True, PP_ALIGN.CENTER)
-    add_text(slide, detail, x + 0.18, 4.18, 1.8, 0.58, 11, SLATE, align=PP_ALIGN.CENTER)
+    add_text(slide, str(index + 1), x + 0.52, 2.87, 0.78, 0.28, 18, WHITE, True, PP_ALIGN.CENTER)
+    add_text(slide, title, x + 0.11, 3.7, 1.6, 0.35, 15, NAVY, True, PP_ALIGN.CENTER)
+    add_text(slide, detail, x + 0.11, 4.18, 1.6, 0.58, 10, SLATE, align=PP_ALIGN.CENTER)
     if index < len(steps) - 1:
-        line = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(x + 2.17), Inches(3.23), Inches(0.3), Inches(0.35))
+        line = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(x + 1.84), Inches(3.23), Inches(0.25), Inches(0.35))
         line.fill.solid()
         line.fill.fore_color.rgb = RGBColor(186, 230, 253)
         line.line.fill.background()

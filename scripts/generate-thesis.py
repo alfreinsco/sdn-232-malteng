@@ -456,7 +456,7 @@ add_center(f"NIM {STUDENT_ID}", 12)
 doc.add_page_break()
 add_center("ABSTRAK", 14, True, 16)
 abstract_id = (
-    "SD Negeri 232 Maluku Tengah memerlukan pengelolaan jadwal pelajaran dan nilai siswa yang terintegrasi untuk menggantikan proses manual yang berisiko menimbulkan keterlambatan pencarian data, kesalahan pencatatan, serta bentrok jadwal. Penelitian ini bertujuan merancang dan membangun sistem informasi berbasis web yang mendukung pengelolaan tahun ajaran, semester, guru, siswa, kelas, mata pelajaran, jam pelajaran, pengajaran, jadwal, nilai tugas mingguan, dan laporan. Metode pengembangan menggunakan Waterfall yang terdiri atas analisis kebutuhan, perancangan, implementasi, pengujian, dan pemeliharaan. Sistem dibangun menggunakan PHP 8.4, Laravel 13, Livewire 4, MySQL, Blade, Tailwind CSS, Spatie Laravel Permission, dan DomPDF. Empat jenis pengguna diterapkan, yaitu admin, guru, siswa, dan kepala sekolah. Validasi jadwal menolak bentrok kelas, bentrok guru, dan data duplikat. Nilai tugas disimpan untuk Minggu 1 sampai Minggu 4 setiap bulan dengan rentang 0-100, sedangkan nilai kosong dipertahankan sebagai NULL. Pengujian otomatis menghasilkan 18 pengujian lulus dengan 76 assertion, mencakup autentikasi, otorisasi, periode akademik, jadwal, nilai, laporan, dan pembatasan akses data. Hasil penelitian berupa aplikasi responsif yang menyediakan input nilai massal, monitoring, pencetakan, dan unduhan PDF. Sistem yang dibangun memenuhi kebutuhan fungsional utama dan menjaga integritas data akademik melalui foreign key, unique index, transaksi, validasi server, serta pembatasan akses berbasis role dan permission."
+    "SD Negeri 232 Maluku Tengah memerlukan pengelolaan jadwal pelajaran dan nilai siswa yang terintegrasi untuk menggantikan proses manual yang berisiko menimbulkan keterlambatan pencarian data, kesalahan pencatatan, serta bentrok jadwal. Penelitian ini bertujuan merancang dan membangun sistem informasi berbasis web yang mendukung pengelolaan tahun ajaran, semester, guru, siswa, kelas, mata pelajaran, jam pelajaran, pengajaran, jadwal, nilai tugas mingguan, dan laporan. Metode pengembangan menggunakan Waterfall yang terdiri atas analisis kebutuhan, perancangan, implementasi, pengujian, dan pemeliharaan. Sistem dibangun menggunakan PHP 8.4, Laravel 13, Livewire 4, MySQL, Blade, Tailwind CSS, Spatie Laravel Permission, dan DomPDF. Empat jenis pengguna diterapkan, yaitu admin, guru, siswa, dan kepala sekolah. Validasi jadwal menolak bentrok kelas, bentrok guru, dan data duplikat. Nilai tugas disimpan untuk Minggu 1 sampai Minggu 4 setiap bulan dengan rentang 0-100, sedangkan nilai kosong dipertahankan sebagai NULL. Pengujian otomatis menghasilkan 51 pengujian lulus dengan 371 assertion, mencakup autentikasi, otorisasi, periode akademik, jadwal, nilai, laporan, tabel data, penempatan siswa, dan pembatasan akses data. Hasil penelitian berupa aplikasi responsif yang menyediakan input nilai massal, monitoring, pencetakan, unduhan PDF, tabel dengan state URL, serta pengelolaan anggota kelas. Sistem yang dibangun memenuhi kebutuhan fungsional utama dan menjaga integritas data akademik melalui foreign key, unique index, transaksi, validasi server, serta pembatasan akses berbasis role dan permission."
 )
 add_body(abstract_id)
 p = doc.add_paragraph()
@@ -468,7 +468,7 @@ apply_run_font(run2)
 doc.add_page_break()
 add_center("ABSTRACT", 14, True, 16)
 abstract_en = (
-    "SD Negeri 232 Maluku Tengah requires an integrated management system for lesson schedules and student grades to replace manual processes that may cause slow data retrieval, recording errors, and schedule conflicts. This study aims to design and develop a web-based information system for managing academic years, semesters, teachers, students, classes, subjects, lesson periods, teaching assignments, schedules, weekly assignment grades, and reports. The Waterfall method was employed through requirements analysis, system design, implementation, testing, and maintenance. The system was developed using PHP 8.4, Laravel 13, Livewire 4, MySQL, Blade, Tailwind CSS, Spatie Laravel Permission, and DomPDF. Four user roles were implemented: administrator, teacher, student, and principal. Schedule validation prevents class conflicts, teacher conflicts, and duplicate records. Assignment grades are stored for Week 1 to Week 4 of each month within a 0-100 range, while unassessed values remain NULL. Automated testing produced 18 passing tests with 76 assertions covering authentication, authorization, academic periods, schedules, grades, reports, and data access restrictions. The result is a responsive application that supports bulk grade entry, monitoring, printing, and PDF downloads. The system fulfills the main functional requirements and maintains academic data integrity through foreign keys, unique indexes, transactions, server-side validation, and role-based permissions."
+    "SD Negeri 232 Maluku Tengah requires an integrated management system for lesson schedules and student grades to replace manual processes that may cause slow data retrieval, recording errors, and schedule conflicts. This study aims to design and develop a web-based information system for managing academic years, semesters, teachers, students, classes, subjects, lesson periods, teaching assignments, schedules, weekly assignment grades, and reports. The Waterfall method was employed through requirements analysis, system design, implementation, testing, and maintenance. The system was developed using PHP 8.4, Laravel 13, Livewire 4, MySQL, Blade, Tailwind CSS, Spatie Laravel Permission, and DomPDF. Four user roles were implemented: administrator, teacher, student, and principal. Schedule validation prevents class conflicts, teacher conflicts, and duplicate records. Assignment grades are stored for Week 1 to Week 4 of each month within a 0-100 range, while unassessed values remain NULL. Automated testing produced 51 passing tests with 371 assertions covering authentication, authorization, academic periods, schedules, grades, reports, data tables, class placement, and data access restrictions. The result is a responsive application that supports bulk grade entry, monitoring, printing, PDF downloads, URL-persisted table state, and class roster management. The system fulfills the main functional requirements and maintains academic data integrity through foreign keys, unique indexes, transactions, server-side validation, and role-based permissions."
 )
 add_body(abstract_en)
 p = doc.add_paragraph()
@@ -826,11 +826,11 @@ add_body("Halaman login menerima username atau email. Login diberi rate limiting
 add_figure(SCREENSHOTS / "00-login.png", "Gambar 4.1 Halaman login", 5.9)
 
 add_heading("4.4 Dashboard Role-Aware", 2)
-add_body("Dashboard Admin dan Kepala Sekolah menampilkan ringkasan jumlah guru, siswa, kelas, mata pelajaran, jadwal, dan nilai. Dashboard Guru memprioritaskan jadwal hari ini dan jalan cepat input nilai. Dashboard Siswa menampilkan kelas, jadwal, dan ringkasan nilai sendiri.")
+add_body("Dashboard Admin dan Kepala Sekolah menampilkan metrik guru, siswa, kelas, mata pelajaran, pengajaran, jadwal, progres nilai, penempatan siswa, dan periode aktif. Dashboard Guru memprioritaskan kelas diajar, siswa terjangkau, jadwal hari ini, progres nilai, dan akses cepat. Dashboard Siswa menampilkan kelas, wali kelas, jadwal, mata pelajaran, rata-rata, dan status ketersediaan nilai.")
 add_figure(SCREENSHOTS / "admin-dashboard.png", "Gambar 4.2 Dashboard Admin", 5.9)
 
 add_heading("4.5 Implementasi Master Data dan Pengajaran", 2)
-add_body("Halaman master data menggunakan pola tabel yang konsisten dengan pencarian, filter status, sorting, pilihan jumlah data, pagination, empty state, modal form, validasi, loading, dan konfirmasi tindakan. Pengajaran menyimpan hubungan semester, kelas, mata pelajaran, dan guru tanpa menduplikasi atribut tersebut pada jadwal dan nilai.")
+add_body("Halaman master data menggunakan pola tabel reusable dengan pencarian, filter searchable, sorting tiga keadaan, pagination ikon, input nomor halaman, pilihan per-page, column toggle, selection lintas halaman, bulk action, URL state, empty/loading/error state, serta konfirmasi tindakan. Pengajaran menyimpan hubungan semester, kelas, mata pelajaran, dan guru tanpa menduplikasi atribut tersebut pada jadwal dan nilai. Urutan jam pelajaran diatur melalui drag-and-drop, sedangkan anggota kelas dikelola pada halaman terpisah.")
 add_figure(SCREENSHOTS / "admin-pengajaran.png", "Gambar 4.3 Halaman pengajaran", 5.9)
 
 add_heading("4.6 Implementasi Jadwal Pelajaran", 2)
@@ -851,7 +851,7 @@ add_body("Laporan jadwal dan nilai menyediakan filter periode dan data akademik.
 add_figure(SCREENSHOTS / "admin-laporan-nilai.png", "Gambar 4.7 Laporan nilai", 5.9)
 
 add_heading("4.10 Implementasi Responsif", 2)
-add_body("Pada perangkat mobile, sidebar berubah menjadi drawer. Form menyesuaikan satu kolom dan tabel lebar menggunakan horizontal scroll. Halaman nilai mempertahankan nama siswa sebagai kolom sticky sehingga guru tetap mengetahui baris yang sedang diisi.")
+add_body("Pada perangkat mobile, sidebar berubah menjadi drawer. Form menyesuaikan satu kolom dan tabel lebar menggunakan horizontal scroll dengan petunjuk geser. Kolom Aksi tidak menutupi data dan tombolnya berubah menjadi ikon ringkas. Halaman nilai tetap dapat digeser untuk mengisi Minggu 1 sampai Minggu 4 tanpa memperkecil input secara berlebihan.")
 add_figure(SCREENSHOTS / "mobile-guru-input-nilai-terisi.png", "Gambar 4.8 Tampilan aplikasi pada perangkat mobile", 2.7)
 
 add_heading("4.11 Implementasi Role dan Permission", 2)
@@ -876,7 +876,7 @@ for item in security_paragraphs:
     add_body(item)
 
 add_heading("4.13 Hasil Automated Test", 2)
-add_body("Test suite dijalankan setelah migration dan seeder. Hasil akhir menunjukkan 18 test lulus dengan 76 assertion. Pengujian mencakup autentikasi, role, konflik jadwal, nilai, periode, duplikasi, PDF, rendering halaman, dan validasi Livewire.")
+add_body("Test suite dijalankan setelah migration dan seeder. Hasil akhir menunjukkan 51 test lulus dengan 371 assertion. Pengujian mencakup autentikasi, role, konflik jadwal, nilai, periode, duplikasi, PDF, tabel reusable, selection lintas halaman, URL state, urutan jam, anggota kelas, penempatan siswa, rendering halaman, dan validasi Livewire.")
 add_caption("Tabel 4.3 Hasil automated test")
 add_table(["Kelompok", "Skenario Utama", "Hasil"], [
     ["Autentikasi", "Login, logout, password salah, user nonaktif, register 404", "Lulus"],
@@ -901,7 +901,7 @@ add_table(["Status", "Jumlah", "Keterangan"], [
 add_heading("4.15 Quality Gate", 2)
 add_bullets([
     "Migration fresh dan seeder berhasil pada database pengujian terisolasi.",
-    "PHPUnit: 18 test lulus dan 76 assertion.",
+    "PHPUnit: 51 test lulus dan 371 assertion.",
     "Blade view compilation berhasil.",
     "Laravel Pint berhasil tanpa pelanggaran format.",
     "npm run build berhasil menghasilkan aset production.",
@@ -949,7 +949,7 @@ conclusions = [
     "Aturan jadwal dapat menolak bentrok kelas, bentrok guru, dan jadwal duplikat. Nilai menerima rentang 0-100 dan NULL, sedangkan rata-rata hanya menghitung nilai yang tersedia.",
     "Role dan permission membatasi akses Admin, Guru, Siswa, dan Kepala Sekolah. Guru dibatasi pada pengajarannya dan siswa dibatasi pada data sendiri melalui query server-side.",
     "Aplikasi menyediakan dashboard, input nilai massal, monitoring, print, PDF, tampilan responsif, serta dokumentasi penggunaan dan deployment.",
-    "Hasil quality gate menunjukkan 18 automated test dengan 76 assertion lulus dan build production berhasil. Dengan demikian, kebutuhan fungsional kritis telah diimplementasikan dan diverifikasi pada lingkungan pengembangan/pengujian.",
+    "Hasil quality gate menunjukkan 51 automated test dengan 371 assertion lulus dan build production berhasil. Dengan demikian, kebutuhan fungsional kritis telah diimplementasikan dan diverifikasi pada lingkungan pengembangan/pengujian.",
 ]
 add_bullets(conclusions, numbered=True)
 
@@ -1016,6 +1016,14 @@ black_box_rows = [
     ["20", "PDF", "Unduh jadwal/nilai", "PDF A4", "Lulus otomatis"],
     ["21", "Print", "Cetak laporan", "Navigasi tersembunyi", "Siap uji manual"],
     ["22", "Mobile", "Input nilai 375px", "Scroll dan sticky", "Siap uji manual"],
+    ["23", "Jam Pelajaran", "Urutan otomatis dan drag-and-drop", "Urutan unik tersimpan", "Lulus otomatis"],
+    ["24", "Status Master", "Nonaktifkan data", "Status berubah, record tetap ada", "Lulus otomatis"],
+    ["25", "Tabel", "Select All lintas halaman", "Seluruh hasil filter terpilih", "Lulus otomatis"],
+    ["26", "Tabel", "Refresh state URL", "State valid dipulihkan", "Lulus otomatis"],
+    ["27", "Pengajaran", "Filter dan form bertingkat", "Opsi sesuai periode", "Lulus otomatis"],
+    ["28", "Kelas", "Tambah/keluarkan anggota", "Keanggotaan berubah tanpa hapus siswa", "Lulus otomatis"],
+    ["29", "Penempatan", "Filter status kelas", "Indikator dan hasil sesuai", "Lulus otomatis"],
+    ["30", "Mobile", "Kolom Aksi pada 390px", "Data tidak tertutup", "Siap uji manual"],
 ]
 add_table(["No", "Fitur", "Skenario", "Hasil Diharapkan", "Status"], black_box_rows, 7.5)
 
