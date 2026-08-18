@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         $siswaRole->syncPermissions(['dashboard.view', 'jadwal.view', 'nilai.view', 'laporan.view', 'laporan.print', 'laporan.pdf']);
         $kepalaRole->syncPermissions(['dashboard.view', 'guru.view', 'siswa.view', 'kelas.view', 'mata-pelajaran.view', 'pengajaran.view', 'jadwal.view', 'nilai.view', 'laporan.view', 'laporan.print', 'laporan.pdf']);
 
-        $password = 'Sekolah232!';
+        $password = '123';
         $admin = User::create(['name' => 'Administrator', 'username' => 'admin', 'email' => 'admin@sisd232.test', 'password' => $password, 'status' => 'aktif']);
         $admin->assignRole('admin');
         $kepala = User::create(['name' => 'Kepala Sekolah', 'username' => 'kepala', 'email' => 'kepala@sisd232.test', 'password' => $password, 'status' => 'aktif']);
