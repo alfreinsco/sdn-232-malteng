@@ -68,6 +68,6 @@
         @endif
         </tbody>
     </table>
-    <p class="footer">SISD 232 - Halaman laporan resmi sekolah</p>
+    <p class="footer">SD Negeri 232 Maluku Tengah - Halaman laporan resmi sekolah</p>
 </body>
 </html>

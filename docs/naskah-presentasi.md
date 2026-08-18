@@ -1,4 +1,4 @@
-# Naskah Presentasi Aplikasi SISD 232
+# Naskah Presentasi Aplikasi SD Negeri 232 Maluku Tengah
 
 Dokumen ini membantu penyaji menjelaskan setiap slide dengan bahasa sederhana. Durasi yang disarankan adalah 10-15 menit, ditambah demonstrasi 7-10 menit.
 

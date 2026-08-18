@@ -430,12 +430,12 @@ add_card(slide, 8.55, 1.5, 3.9, 4.3, WHITE, WHITE)
 add_text(slide, "Terima Kasih", 8.95, 2.18, 3.1, 0.55, 27, NAVY, True, PP_ALIGN.CENTER)
 add_text(slide, "Pertanyaan dan diskusi", 8.95, 2.95, 3.1, 0.42, 16, SKY_DARK, True, PP_ALIGN.CENTER)
 add_text(slide, "Aplikasi siap digunakan untuk mendukung pengelolaan akademik sekolah.", 9.1, 3.75, 2.8, 1.15, 15, SLATE, align=PP_ALIGN.CENTER)
-add_text(slide, "SISD 232", 9.45, 5.05, 2.1, 0.38, 14, MUTED, True, PP_ALIGN.CENTER)
+add_text(slide, "SD Negeri 232 Maluku Tengah", 9.45, 5.05, 2.1, 0.38, 14, MUTED, True, PP_ALIGN.CENTER)
 
-prs.core_properties.title = "Presentasi Aplikasi SISD 232"
+prs.core_properties.title = "Presentasi Aplikasi SD Negeri 232 Maluku Tengah"
 prs.core_properties.subject = "Sistem Informasi Jadwal Pelajaran dan Nilai Siswa"
 prs.core_properties.author = "SD Negeri 232 Maluku Tengah"
-prs.core_properties.keywords = "sekolah, jadwal, nilai, Laravel, SISD 232"
+prs.core_properties.keywords = "sekolah, jadwal, nilai, Laravel, SD Negeri 232 Maluku Tengah"
 prs.save(OUTPUT)
 
 print(f"Presentasi dibuat: {OUTPUT}")

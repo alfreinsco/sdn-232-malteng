@@ -1,6 +1,6 @@
 # Ringkasan Requirement
 
-SISD 232 mengelola pengguna, guru, siswa, kelas dan histori penempatan, mata pelajaran, jam pelajaran, tahun ajaran, semester, pengajaran, jadwal, nilai tugas mingguan, pengaturan sekolah, serta laporan.
+SD Negeri 232 Maluku Tengah mengelola pengguna, guru, siswa, kelas dan histori penempatan, mata pelajaran, jam pelajaran, tahun ajaran, semester, pengajaran, jadwal, nilai tugas mingguan, pengaturan sekolah, serta laporan.
 
 ## Aturan Utama
 

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use League\CommonMark\GithubFlavoredMarkdownConverter;
 use Carbon\Carbon;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 require dirname(__DIR__).'/vendor/autoload.php';
 
@@ -31,7 +31,7 @@ $html = <<<HTML
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Black Box Testing - SISD 232</title>
+    <title>Black Box Testing - SD Negeri 232 Maluku Tengah</title>
     <style>
         @page { size: A4 landscape; margin: 8mm 9mm 9mm; }
         * { box-sizing: border-box; }

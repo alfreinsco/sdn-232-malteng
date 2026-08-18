@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#0284c7">
-    <title>{{ $title ?? 'SDN 232 MALTENG' }} — {{ config('app.name') }}</title>
+    <title>{{ $title ?? 'SD Negeri 232 Maluku Tengah' }} — {{ config('app.name') }}</title>
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon-192x192.png') }}">

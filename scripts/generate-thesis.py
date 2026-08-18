@@ -171,7 +171,7 @@ def create_diagrams():
 
     architecture = Image.new("RGB", (1900, 850), "white")
     draw = ImageDraw.Draw(architecture)
-    draw.text((65, 45), "Arsitektur Sistem SISD 232", font=title_font, fill="#0f172a")
+    draw.text((65, 45), "Arsitektur Sistem SD Negeri 232 Maluku Tengah", font=title_font, fill="#0f172a")
     roles = ["Admin", "Guru", "Siswa", "Kepala Sekolah"]
     for index, role in enumerate(roles):
         y = 150 + index * 155
@@ -805,7 +805,7 @@ add_table(["Kegiatan", "Mei Minggu 1", "Mei Minggu 2", "Mei Minggu 3", "Mei Ming
 
 add_chapter("IV", "HASIL DAN PEMBAHASAN")
 add_heading("4.1 Hasil Implementasi", 2)
-add_body("Hasil penelitian adalah aplikasi SISD 232 yang dapat dijalankan sebagai aplikasi web dengan empat role. Implementasi mengikuti kebutuhan pada proposal dan diperluas dengan integritas basis data, histori kelas, validasi jadwal, input nilai massal, monitoring, laporan, dokumentasi, dan automated test.")
+add_body("Hasil penelitian adalah aplikasi SD Negeri 232 Maluku Tengah yang dapat dijalankan sebagai aplikasi web dengan empat role. Implementasi mengikuti kebutuhan pada proposal dan diperluas dengan integritas basis data, histori kelas, validasi jadwal, input nilai massal, monitoring, laporan, dokumentasi, dan automated test.")
 
 add_heading("4.2 Lingkungan Implementasi", 2)
 add_caption("Tabel 4.1 Lingkungan implementasi")
