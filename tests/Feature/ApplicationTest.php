@@ -656,7 +656,7 @@ class ApplicationTest extends TestCase
 
     public function test_teaching_table_displays_semester_class_subject_and_teacher_columns(): void
     {
-        $teaching = Pengajaran::with(['semester.tahunAjaran', 'kelas', 'mataPelajaran', 'guru'])->firstOrFail();
+        $teaching = Pengajaran::with(['semester.tahunAjaran', 'kelas', 'mataPelajaran', 'guru'])->latest('id')->firstOrFail();
 
         $this->actingAs(User::where('username', 'admin')->firstOrFail())
             ->get('/pengajaran')
