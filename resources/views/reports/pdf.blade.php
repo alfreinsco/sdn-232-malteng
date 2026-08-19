@@ -27,6 +27,7 @@
         .report-table th, .report-table td { padding: 6px 6px; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; text-align: left; vertical-align: middle; }
         .report-table th { background: #075985; color: #fff; font-size: 8px; text-transform: uppercase; }
         .report-table tbody tr:nth-child(even) td { background: #f8fafc; }
+        .report-table tfoot td { background: #e0f2fe; font-weight: bold; }
         .report-table tr { page-break-inside: avoid; }
         .num { text-align: center !important; font-variant-numeric: tabular-nums; }
         .average { background: #e0f2fe !important; color: #075985; font-weight: bold; }
@@ -42,6 +43,18 @@
         $kelasText = $filterLabels['kelas']?->nama ?? 'Semua kelas';
         $thirdText = $jenis === 'jadwal' ? ($filterLabels['guru']?->nama_lengkap ?? 'Semua guru') : ($filterLabels['mapel']?->nama ?? 'Semua mata pelajaran');
         $periodText = $jenis === 'jadwal' ? (isset($filter['hari']) && $filter['hari'] ? ucfirst($filter['hari']) : 'Semua hari') : \Carbon\Carbon::create()->month((int)($filter['bulan'] ?? now()->month))->translatedFormat('F');
+        $gradeSummary = null;
+        if ($jenis === 'nilai' && $rows->isNotEmpty()) {
+            $weekAverages = collect(range(1, 4))->mapWithKeys(function ($week) use ($rows) {
+                $values = $rows->map(fn ($group) => $group->firstWhere('minggu', $week)?->nilai)->filter(fn ($value) => $value !== null);
+                return [$week => $values->isEmpty() ? null : $values->avg()];
+            });
+            $rowAverages = $rows->map(fn ($group) => $group->whereNotNull('nilai')->avg('nilai'))->filter(fn ($value) => $value !== null);
+            $gradeSummary = (object) [
+                'weeks' => $weekAverages,
+                'avg_rata_rata' => $rowAverages->isEmpty() ? null : $rowAverages->avg(),
+            ];
+        }
     @endphp
     <table class="school-header"><tr><td class="logo-cell"><img class="logo" src="{{ $sekolah?->logo && is_file(public_path('storage/'.$sekolah->logo)) ? public_path('storage/'.$sekolah->logo) : public_path('logo-malteng.png') }}" alt="Logo sekolah"></td><td><p class="eyebrow">Dokumen Akademik Sekolah</p><h1>{{ strtoupper($sekolah?->nama_sekolah ?? 'SD Negeri 232 Maluku Tengah') }}</h1><p class="address">{{ $sekolah?->alamat }}</p></td></tr></table>
     <div class="title-band"><table><tr><td><h2>LAPORAN {{ strtoupper($jenis) }} {{ $jenis === 'nilai' ? 'TUGAS SISWA' : '' }}</h2></td><td class="printed">Dicetak {{ now()->translatedFormat('d F Y, H:i') }} WIT</td></tr></table></div>
@@ -67,6 +80,17 @@
             @endforeach
         @endif
         </tbody>
+        @if($jenis === 'nilai' && $gradeSummary)
+            <tfoot>
+                <tr>
+                    <td colspan="4">Rata-rata</td>
+                    @foreach(range(1, 4) as $week)
+                        <td class="num">{{ $gradeSummary->weeks[$week] === null ? '-' : number_format($gradeSummary->weeks[$week], 2) }}</td>
+                    @endforeach
+                    <td class="num average">{{ $gradeSummary->avg_rata_rata === null ? '-' : number_format($gradeSummary->avg_rata_rata, 2) }}</td>
+                </tr>
+            </tfoot>
+        @endif
     </table>
     <p class="footer">SD Negeri 232 Maluku Tengah - Halaman laporan resmi sekolah</p>
 </body>

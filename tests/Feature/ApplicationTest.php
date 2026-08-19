@@ -7,8 +7,9 @@ use App\Models\JadwalPelajaran;
 use App\Models\JamPelajaran;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
-use App\Models\PengaturanSekolah;
+use App\Models\NilaiTugas;
 use App\Models\Pengajaran;
+use App\Models\PengaturanSekolah;
 use App\Models\Semester;
 use App\Models\Siswa;
 use App\Models\TahunAjaran;
@@ -642,6 +643,42 @@ class ApplicationTest extends TestCase
         }
     }
 
+    public function test_grade_report_shows_average_in_the_table_footer(): void
+    {
+        $admin = User::where('username', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->get('/laporan/nilai?bulan=8')
+            ->assertOk()
+            ->assertSee('report-summary-row', false)
+            ->assertSee('Rata-rata')
+            ->assertDontSee('Total rata-rata');
+
+        $this->actingAs($admin)->get('/laporan/jadwal')
+            ->assertOk()
+            ->assertDontSee('report-summary-row', false);
+
+        $html = view('reports.pdf', [
+            'jenis' => 'nilai',
+            'rows' => NilaiTugas::with(['siswa', 'pengajaran.mataPelajaran'])
+                ->where('bulan', 8)
+                ->get()
+                ->groupBy(fn ($nilai) => $nilai->pengajaran_id.'-'.$nilai->siswa_id),
+            'sekolah' => PengaturanSekolah::first(),
+            'filter' => ['bulan' => 8],
+            'filterLabels' => [
+                'semester' => null,
+                'kelas' => null,
+                'guru' => null,
+                'mapel' => null,
+                'siswa' => null,
+            ],
+        ])->render();
+
+        $this->assertStringContainsString('Rata-rata', $html);
+        $this->assertStringNotContainsString('Total rata-rata', $html);
+        $this->assertStringContainsString('<tfoot>', $html);
+    }
+
     public function test_grade_tables_do_not_render_selection_or_action_columns(): void
     {
         foreach (['admin', 'siswa'] as $username) {
@@ -688,12 +725,12 @@ class ApplicationTest extends TestCase
             ->set('pengajaranTahunAjaranId', (string) $otherYear->id);
 
         $component->set('form', [
-                'semester_id' => (string) $teaching->semester_id,
-                'kelas_id' => (string) $teaching->kelas_id,
-                'mata_pelajaran_id' => (string) $teaching->mata_pelajaran_id,
-                'guru_id' => (string) $teaching->guru_id,
-                'status' => 'aktif',
-            ])
+            'semester_id' => (string) $teaching->semester_id,
+            'kelas_id' => (string) $teaching->kelas_id,
+            'mata_pelajaran_id' => (string) $teaching->mata_pelajaran_id,
+            'guru_id' => (string) $teaching->guru_id,
+            'status' => 'aktif',
+        ])
             ->call('save')
             ->assertHasErrors(['form.semester_id']);
     }

@@ -3,6 +3,7 @@
 use App\Livewire\Concerns\WithDataTable;
 use App\Models\{Guru, JadwalPelajaran, Kelas, MataPelajaran, NilaiTugas, PengaturanSekolah, Semester, Siswa};
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -196,9 +197,26 @@ new class extends Component {
             : $query->orderBy('nama_siswa')->orderBy('mata_pelajaran');
     }
 
+    private function gradeSummary(): ?object
+    {
+        if ($this->jenis !== 'nilai') {
+            return null;
+        }
+
+        return DB::query()
+            ->fromSub($this->gradesQuery(), 'laporan_nilai')
+            ->selectRaw('AVG(m1) as avg_m1')
+            ->selectRaw('AVG(m2) as avg_m2')
+            ->selectRaw('AVG(m3) as avg_m3')
+            ->selectRaw('AVG(m4) as avg_m4')
+            ->selectRaw('AVG(rata_rata) as avg_rata_rata')
+            ->first();
+    }
+
     public function with(): array
     {
         $error = null;
+        $gradeSummary = null;
 
         try {
             $query = $this->tableQuery();
@@ -211,9 +229,18 @@ new class extends Component {
             $rows = ($this->jenis === 'jadwal' ? JadwalPelajaran::query() : NilaiTugas::query())->whereRaw('1 = 0')->paginate($this->perPage);
         }
 
+        if ($this->jenis === 'nilai' && $total > 0 && $error === null) {
+            try {
+                $gradeSummary = $this->gradeSummary();
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
+
         return [
             'rows' => $rows,
             'datasetTotal' => $total,
+            'gradeSummary' => $gradeSummary,
             'tableError' => $error,
             'tableColumns' => $this->tableColumns(),
             'visibleColumnIds' => $this->validatedVisibleColumns(),
@@ -298,7 +325,30 @@ new class extends Component {
                 </tr>
             @endforeach
             <x-data-table.states :columns="count($visibleColumnIds)" :empty="$rows->isEmpty()" :filtered="filled($search)||filled($semesterId)||filled($kelasId)||filled($guruId)||filled($mapelId)||filled($hari)||filled($siswaId)" :error="$tableError" />
-        </tbody></table></div>
+        </tbody>
+            @if($jenis === 'nilai' && $gradeSummary && ! $rows->isEmpty())
+                @php
+                    $summaryLabelColumnId = collect(['identitas', 'nama_siswa', 'mata_pelajaran', 'guru'])->first(fn ($id) => in_array($id, $visibleColumnIds, true)) ?? $visibleColumnIds[0];
+                @endphp
+                <tfoot>
+                    <tr class="report-summary-row">
+                        @foreach($tableColumns as $column)
+                            @continue(!in_array($column['id'], $visibleColumnIds, true))
+                            <td>
+                                @if($column['id']===$summaryLabelColumnId)<span class="font-bold text-slate-900">Rata-rata</span>@endif
+                                @if(in_array($column['id'], ['m1', 'm2', 'm3', 'm4'], true))
+                                    <span class="report-score">{{ $gradeSummary->{'avg_'.$column['id']}===null ? '-' : number_format((float) $gradeSummary->{'avg_'.$column['id']}, 2) }}</span>
+                                @elseif($column['id']==='rata_rata')
+                                    <span class="report-average">{{ $gradeSummary->avg_rata_rata===null ? '-' : number_format((float) $gradeSummary->avg_rata_rata, 2) }}</span>
+                                @elseif($column['id']!==$summaryLabelColumnId)
+                                    <span class="text-slate-400">—</span>
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                </tfoot>
+            @endif
+        </table></div>
         <div class="print-hidden"><x-data-table.pagination :paginator="$rows" :per-page="$perPage" /></div>
     </section>
 </div>
