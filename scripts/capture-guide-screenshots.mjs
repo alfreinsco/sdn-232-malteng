@@ -4,6 +4,7 @@ const baseUrl = 'http://127.0.0.1:8010';
 const outputDir = new URL('../docs/screenshots/', import.meta.url);
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const mode = process.argv[2] ?? 'all';
+const demoPassword = process.env.SISDAR_DEMO_PASSWORD ?? '123';
 
 const targets = await fetch('http://127.0.0.1:9223/json/list').then((response) => response.json());
 const target = targets.find((item) => item.type === 'page');
@@ -116,7 +117,7 @@ async function login(username) {
         const login = document.querySelector('[name="login"]');
         const password = document.querySelector('[name="password"]');
         login.value = ${JSON.stringify(username)};
-        password.value = 'Sekolah232!';
+        password.value = ${JSON.stringify(demoPassword)};
         login.dispatchEvent(new Event('input', { bubbles: true }));
         password.dispatchEvent(new Event('input', { bubbles: true }));
         document.querySelector('form').requestSubmit();
@@ -150,6 +151,7 @@ const rolePages = {
             ['laporan-nilai', '/laporan/nilai'],
             ['pengguna', '/pengguna'],
             ['pengaturan-sekolah', '/pengaturan-sekolah'],
+            ['aktivitas', '/aktivitas'],
             ['profil', '/profil'],
         ],
     },
@@ -160,6 +162,7 @@ const rolePages = {
             ['jadwal-mengajar', '/jadwal-pelajaran'],
             ['input-nilai', '/nilai-siswa'],
             ['laporan-nilai', '/laporan/nilai'],
+            ['aktivitas', '/aktivitas'],
             ['profil', '/profil'],
         ],
     },
@@ -170,6 +173,7 @@ const rolePages = {
             ['jadwal-pelajaran', '/jadwal-pelajaran'],
             ['nilai-saya', '/nilai-siswa'],
             ['laporan-nilai', '/laporan/nilai'],
+            ['aktivitas', '/aktivitas'],
             ['profil', '/profil'],
         ],
     },
@@ -181,6 +185,7 @@ const rolePages = {
             ['monitoring-nilai', '/nilai-siswa'],
             ['laporan-jadwal', '/laporan/jadwal'],
             ['laporan-nilai', '/laporan/nilai'],
+            ['aktivitas', '/aktivitas'],
             ['profil', '/profil'],
         ],
     },
@@ -193,6 +198,8 @@ await command('Network.enable');
 if (['all', 'desktop'].includes(mode)) {
     await setViewport(1440, 1000);
     await command('Network.clearBrowserCookies');
+    await navigate('/');
+    await screenshot('00-landing');
     await navigate('/login');
     await screenshot('00-login');
 
@@ -221,6 +228,14 @@ if (['all', 'extras'].includes(mode)) {
     })()`);
     await delay(1200);
     await screenshot('guru-input-nilai-terisi');
+
+    await login('admin');
+    await navigate('/dashboard');
+    await evaluate(`(() => {
+        document.querySelector('.header-profile')?.click();
+    })()`);
+    await delay(300);
+    await screenshot('admin-menu-akun', false);
 
     await login('admin');
     await navigate('/guru');

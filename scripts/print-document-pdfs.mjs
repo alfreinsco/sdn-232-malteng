@@ -3,11 +3,19 @@ import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const documents = [
-    ['docs/buku-panduan-penggunaan.html', 'docs/buku-panduan-penggunaan.pdf'],
-    ['docs/black-box-testing.html', 'docs/black-box-testing.pdf'],
-    ['docs/laporan-pengerjaan-akhir.html', 'docs/laporan-pengerjaan-akhir.pdf'],
-];
+const documentCatalog = {
+    guide: ['docs/buku-panduan-penggunaan.html', 'docs/buku-panduan-penggunaan.pdf'],
+    testing: ['docs/black-box-testing.html', 'docs/black-box-testing.pdf'],
+    report: ['docs/laporan-pengerjaan-akhir.html', 'docs/laporan-pengerjaan-akhir.pdf'],
+};
+const requestedDocument = process.argv[2];
+const documents = requestedDocument
+    ? [documentCatalog[requestedDocument]].filter(Boolean)
+    : Object.values(documentCatalog);
+
+if (requestedDocument && documents.length === 0) {
+    throw new Error(`Dokumen tidak dikenal: ${requestedDocument}`);
+}
 const delay = (ms) => new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
 const targets = await fetch('http://127.0.0.1:9223/json/list').then((response) => response.json());
 const target = targets.find((item) => item.type === 'page');

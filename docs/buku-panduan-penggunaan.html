@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Buku Panduan Penggunaan - SD Negeri 232 Maluku Tengah</title>
+    <title>Buku Panduan Penggunaan SISDAR - SD Negeri 232 Maluku Tengah</title>
     <style>
         @page { size: A4; margin: 16mm 15mm 18mm; }
         :root { color-scheme: light; --ink: #172033; --muted: #52647f; --line: #d9e2ec; --sky: #0284c7; --soft: #f0f9ff; }
@@ -37,11 +37,11 @@
     </style>
 </head>
 <body><h1>Buku Panduan Penggunaan Aplikasi</h1>
-<h2>Sistem Informasi Jadwal Pelajaran dan Nilai Siswa</h2>
+<h2>SISDAR — Sistem Informasi Sekolah Dasar</h2>
 <p><strong>SD Negeri 232 Maluku Tengah</strong></p>
 <ul>
-<li>Versi panduan: 1.1</li>
-<li>Pembaruan terakhir: 18 Agustus 2026</li>
+<li>Versi panduan: 1.2</li>
+<li>Pembaruan terakhir: 22 Agustus 2026</li>
 <li>Bahasa: Indonesia</li>
 </ul>
 <hr />
@@ -53,7 +53,7 @@
 <h2>Daftar isi</h2>
 <ol>
 <li>Mengenal jenis pengguna</li>
-<li>Masuk dan keluar aplikasi</li>
+<li>Halaman awal, masuk, dan keluar aplikasi</li>
 <li>Mengenal tampilan aplikasi</li>
 <li>Panduan Admin</li>
 <li>Panduan Guru</li>
@@ -96,8 +96,11 @@
 </table>
 <p>Jika suatu menu tidak terlihat, kemungkinan akun memang tidak memiliki izin untuk menu tersebut. Hubungi Admin jika peran akun tidak sesuai.</p>
 <hr />
-<h1>2. Masuk dan keluar aplikasi</h1>
-<h2>2.1 Masuk</h2>
+<h1>2. Halaman awal, masuk, dan keluar aplikasi</h1>
+<h2>2.1 Halaman Awal</h2>
+<p><img src="screenshots/00-landing.png" alt="Halaman awal SISDAR" /></p>
+<p>Halaman Awal memperkenalkan <strong>SISDAR — Sistem Informasi Sekolah Dasar</strong> dan menyediakan akses menuju halaman masuk. Tekan <strong>Masuk ke Sistem</strong> atau tombol masuk pada navigasi untuk menggunakan aplikasi.</p>
+<h2>2.2 Masuk</h2>
 <p><img src="screenshots/00-login.png" alt="Halaman masuk" /></p>
 <ol>
 <li>Buka alamat aplikasi yang diberikan sekolah.</li>
@@ -106,6 +109,7 @@
 <li>Tekan tombol <strong>Masuk</strong>.</li>
 <li>Setelah berhasil, aplikasi membuka Dashboard sesuai jenis akun.</li>
 </ol>
+<p>Tekan <strong>Kembali ke Halaman Awal</strong> jika ingin kembali ke halaman depan tanpa masuk.</p>
 <p>Jika gagal masuk:</p>
 <ul>
 <li>periksa huruf besar dan kecil pada password;</li>
@@ -113,10 +117,10 @@
 <li>pastikan akun masih aktif;</li>
 <li>hubungi Admin untuk mengatur ulang password.</li>
 </ul>
-<h2>2.2 Keluar</h2>
+<h2>2.3 Keluar</h2>
 <ol>
-<li>Lihat bagian bawah menu sebelah kiri.</li>
-<li>Tekan <strong>Keluar</strong>.</li>
+<li>Tekan nama akun di kanan atas.</li>
+<li>Tekan <strong>Keluar</strong> pada menu akun.</li>
 <li>Pastikan halaman kembali ke halaman masuk.</li>
 </ol>
 <p>Selalu keluar jika menggunakan komputer bersama.</p>
@@ -126,11 +130,25 @@
 <ul>
 <li><strong>Menu samping:</strong> berpindah ke halaman lain.</li>
 <li><strong>Bagian isi:</strong> menampilkan dashboard, tabel, formulir, atau laporan.</li>
+<li><strong>Halaman Awal:</strong> kembali ke halaman depan SISDAR.</li>
+<li><strong>Menu akun:</strong> membuka Profil Saya, Bantuan, dan Keluar.</li>
 <li><strong>Pencarian:</strong> mencari data berdasarkan nama atau nomor identitas.</li>
 <li><strong>Filter:</strong> membatasi data berdasarkan status, kelas, periode, guru, atau bulan.</li>
 <li><strong>Tombol Tambah/Ubah:</strong> membuka formulir data.</li>
 <li><strong>Tombol Nonaktifkan:</strong> menghentikan penggunaan data tanpa merusak riwayat.</li>
 <li><strong>Pagination:</strong> berpindah halaman jika data sangat banyak.</li>
+</ul>
+<h2>Header dan menu akun</h2>
+<p><img src="screenshots/admin-menu-akun.png" alt="Menu akun pengguna" /></p>
+<p>Header tidak menampilkan pencarian global maupun notifikasi. Gunakan tombol <strong>Halaman Awal</strong> untuk kembali ke halaman depan. Tekan nama akun untuk membuka menu <strong>Profil Saya</strong>, <strong>Bantuan</strong>, dan <strong>Keluar</strong>. Menu <strong>Bantuan</strong> membuka buku panduan ini dalam tab baru.</p>
+<h2>Aktivitas terbaru</h2>
+<p>Dashboard menampilkan ringkasan <strong>Aktivitas Terbaru</strong>. Halaman <strong>Aktivitas</strong> menyediakan pencarian dan filter jenis kegiatan.</p>
+<ul>
+<li>Admin dan Kepala Sekolah dapat melihat aktivitas seluruh pengguna.</li>
+<li>Guru dan Siswa hanya dapat melihat aktivitas miliknya sendiri.</li>
+<li>Aktivitas penting yang dicatat meliputi login berhasil, logout, tambah/ubah/hapus data, aksi massal, penempatan siswa, penyimpanan nilai, perubahan profil atau password, dan ekspor PDF.</li>
+<li>Pembukaan halaman biasa dan percobaan login gagal tidak disimpan agar aplikasi tetap ringan dan data tidak cepat membesar.</li>
+<li>Riwayat yang berumur lebih dari 180 hari dibersihkan sesuai kebijakan retensi sistem.</li>
 </ul>
 <h2>Menggunakan tabel data</h2>
 <p>Semua tabel utama memiliki pola penggunaan yang sama:</p>
@@ -318,6 +336,9 @@
 <h2>4.17 Profil Admin</h2>
 <p><img src="screenshots/admin-profil.png" alt="Profil Admin" /></p>
 <p>Pada halaman Profil, pengguna dapat memperbarui nama/email yang diizinkan serta mengganti password. Penggantian password meminta password saat ini untuk mencegah penyalahgunaan.</p>
+<h2>4.18 Memantau Aktivitas</h2>
+<p><img src="screenshots/admin-aktivitas.png" alt="Aktivitas Admin" /></p>
+<p>Buka <strong>Manajemen → Aktivitas</strong> untuk melihat kegiatan seluruh pengguna. Gunakan pencarian atau filter jenis aktivitas untuk membantu pemeriksaan perubahan data dan penggunaan aplikasi.</p>
 <hr />
 <h1>5. Panduan Guru</h1>
 <h2>5.1 Dashboard Guru</h2>
@@ -350,6 +371,9 @@
 <h2>5.5 Profil Guru</h2>
 <p><img src="screenshots/guru-profil.png" alt="Profil Guru" /></p>
 <p>Gunakan halaman Profil untuk memperbarui informasi akun dan mengganti password sendiri.</p>
+<h2>5.6 Melihat Aktivitas Saya</h2>
+<p><img src="screenshots/guru-aktivitas.png" alt="Aktivitas Guru" /></p>
+<p>Buka <strong>Aktivitas Saya</strong> untuk melihat riwayat login, logout, pengisian nilai, perubahan profil, dan aksi penting lain yang dilakukan oleh akun Guru tersebut.</p>
 <hr />
 <h1>6. Panduan Siswa</h1>
 <h2>6.1 Dashboard Siswa</h2>
@@ -372,6 +396,9 @@
 <h2>6.5 Profil Siswa</h2>
 <p><img src="screenshots/siswa-profil.png" alt="Profil Siswa" /></p>
 <p>Siswa dapat memperbarui bagian profil yang diizinkan dan mengganti password dengan memasukkan password saat ini.</p>
+<h2>6.6 Melihat Aktivitas Saya</h2>
+<p><img src="screenshots/siswa-aktivitas.png" alt="Aktivitas Siswa" /></p>
+<p>Buka <strong>Aktivitas Saya</strong> untuk melihat riwayat login, logout, perubahan profil, penggantian password, dan aksi penting milik akun Siswa tersebut.</p>
 <hr />
 <h1>7. Panduan Kepala Sekolah</h1>
 <h2>7.1 Dashboard Monitoring</h2>
@@ -392,6 +419,9 @@
 <h2>7.6 Profil Kepala Sekolah</h2>
 <p><img src="screenshots/kepala-profil.png" alt="Profil Kepala Sekolah" /></p>
 <p>Gunakan halaman Profil untuk memperbarui akun dan mengganti password.</p>
+<h2>7.7 Memantau Aktivitas</h2>
+<p><img src="screenshots/kepala-aktivitas.png" alt="Aktivitas Kepala Sekolah" /></p>
+<p>Buka <strong>Aktivitas</strong> untuk memantau kegiatan seluruh pengguna. Halaman ini bersifat baca saja dan dapat difilter berdasarkan kata kunci maupun jenis aktivitas.</p>
 <hr />
 <h1>8. Menggunakan aplikasi di telepon genggam</h1>
 <h2>8.1 Membuka menu</h2>
@@ -528,6 +558,7 @@
 <p>Admin dan Kepala Sekolah dapat melakukan monitoring. Guru hanya melihat kelas yang diajar, sedangkan siswa hanya melihat nilai sendiri.</p>
 <hr />
 <h2>Bantuan</h2>
+<p>Tekan nama akun di kanan atas, lalu pilih <strong>Bantuan</strong> untuk membuka buku panduan SISDAR versi terbaru.</p>
 <p>Jika masalah belum selesai, catat:</p>
 <ol>
 <li>nama halaman;</li>

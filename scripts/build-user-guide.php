@@ -27,7 +27,7 @@ $html = <<<'HTML'
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Buku Panduan Penggunaan - SD Negeri 232 Maluku Tengah</title>
+    <title>Buku Panduan Penggunaan SISDAR - SD Negeri 232 Maluku Tengah</title>
     <style>
         @page { size: A4; margin: 16mm 15mm 18mm; }
         :root { color-scheme: light; --ink: #172033; --muted: #52647f; --line: #d9e2ec; --sky: #0284c7; --soft: #f0f9ff; }
