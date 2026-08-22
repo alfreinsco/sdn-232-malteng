@@ -4,13 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/awal', 'landing')->name('landing');
-
 Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('dashboard');
-    }
-
     return view('landing');
 })->name('home');
 
