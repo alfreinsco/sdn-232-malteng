@@ -20,6 +20,7 @@ use App\Services\PenempatanSiswaKelas;
 use App\Services\PenyimpananNilaiMassal;
 use App\Services\ValidasiJadwal;
 use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\Support\DemoCatalog;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -41,7 +42,7 @@ class ApplicationTest extends TestCase
 
     public function test_login_logout_and_public_registration_is_disabled(): void
     {
-        $response = $this->post('/login', ['login' => 'admin', 'password' => 'Sekolah232!']);
+        $response = $this->post('/login', ['login' => 'admin', 'password' => DemoCatalog::PASSWORD]);
         $response->assertStatus(302);
         $this->assertSame('/dashboard', parse_url($response->baseResponse->getTargetUrl(), PHP_URL_PATH));
         $this->assertAuthenticated();
@@ -54,7 +55,7 @@ class ApplicationTest extends TestCase
     {
         $this->post('/login', ['login' => 'admin', 'password' => 'salah'])->assertSessionHasErrors('login');
         User::where('username', 'admin')->update(['status' => 'nonaktif']);
-        $this->post('/login', ['login' => 'admin', 'password' => 'Sekolah232!'])->assertSessionHasErrors('login');
+        $this->post('/login', ['login' => 'admin', 'password' => DemoCatalog::PASSWORD])->assertSessionHasErrors('login');
         $this->assertGuest();
     }
 
@@ -165,7 +166,7 @@ class ApplicationTest extends TestCase
             ->set('email', 'administrator@sd232.test')
             ->call('saveProfile')
             ->assertHasNoErrors()
-            ->set('current_password', 'Sekolah232!')
+            ->set('current_password', DemoCatalog::PASSWORD)
             ->set('password', 'PasswordBaru232!')
             ->set('password_confirmation', 'PasswordBaru232!')
             ->call('savePassword')

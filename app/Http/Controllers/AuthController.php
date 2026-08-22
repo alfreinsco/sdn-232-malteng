@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AktivitasLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +13,8 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    public function __construct(private readonly AktivitasLogger $activity) {}
+
     public function create(): View
     {
         return view('auth.login');
@@ -35,13 +38,15 @@ class AuthController extends Controller
 
         RateLimiter::resetAttempts($key);
         $request->session()->regenerate();
-        User::whereKey($user->id)->update(['last_login_at' => now()]);
+        $user->forceFill(['last_login_at' => now()])->saveQuietly();
+        $this->activity->record('login', 'Masuk ke dalam SISDAR', user: $user);
 
         return redirect()->intended(route('dashboard'));
     }
 
     public function destroy(Request $request): RedirectResponse
     {
+        $this->activity->record('logout', 'Keluar dari SISDAR', user: $request->user());
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

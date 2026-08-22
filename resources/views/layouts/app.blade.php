@@ -30,6 +30,7 @@
         request()->routeIs('siswa-kelas.*') => 'Penempatan Siswa', request()->routeIs('siswa.*') => 'Siswa',
         request()->routeIs('pengajaran.*') => 'Pengajaran', request()->routeIs('jadwal.*') => 'Jadwal Pelajaran',
         request()->routeIs('nilai.*') => 'Nilai Siswa', request()->routeIs('users.*') => 'Pengguna',
+        request()->routeIs('aktivitas.*') => 'Aktivitas',
         request()->routeIs('pengaturan.*') => 'Pengaturan Sekolah', request()->routeIs('laporan.jadwal') => 'Laporan Jadwal',
         request()->routeIs('laporan.nilai') => 'Laporan Nilai', request()->routeIs('profile.*') => 'Profil', default => 'SISDAR',
     };
@@ -66,13 +67,14 @@
                     <x-nav-group label="Administrasi">
                         <x-nav-link route="laporan.jadwal" label="Laporan" icon="report" />
                         <x-nav-link route="pengaturan.index" label="Pengaturan Sekolah" icon="settings" />
+                        <x-nav-link route="aktivitas.index" label="Aktivitas" icon="schedule" />
                         <x-nav-link route="profile.edit" label="Profil" icon="profile" />
                     </x-nav-group>
                 @endrole
                 @role('guru')<x-nav-group label="Proses Belajar"><x-nav-link route="jadwal.index" label="Jadwal Mengajar" icon="schedule" /><x-nav-link route="nilai.index" label="Input & Riwayat Nilai" icon="grade" /></x-nav-group>@endrole
                 @role('siswa')<x-nav-group label="Akademik"><x-nav-link route="jadwal.index" label="Jadwal Pelajaran" icon="schedule" /><x-nav-link route="nilai.index" label="Nilai Saya" icon="grade" /></x-nav-group>@endrole
-                @role('kepala_sekolah')<x-nav-group label="Monitoring"><x-nav-link route="jadwal.index" label="Jadwal Pelajaran" icon="schedule" /><x-nav-link route="nilai.index" label="Nilai Siswa" icon="grade" /><x-nav-link route="laporan.jadwal" label="Laporan" icon="report" /></x-nav-group>@endrole
-                @unlessrole('admin')<x-nav-group label="Akun"><x-nav-link route="profile.edit" label="Profil" icon="profile" /></x-nav-group>@endunlessrole
+                @role('kepala_sekolah')<x-nav-group label="Monitoring"><x-nav-link route="jadwal.index" label="Jadwal Pelajaran" icon="schedule" /><x-nav-link route="nilai.index" label="Nilai Siswa" icon="grade" /><x-nav-link route="laporan.jadwal" label="Laporan" icon="report" /><x-nav-link route="aktivitas.index" label="Aktivitas" icon="schedule" /></x-nav-group>@endrole
+                @unlessrole('admin')<x-nav-group label="Akun">@unlessrole('kepala_sekolah')<x-nav-link route="aktivitas.index" label="Aktivitas Saya" icon="schedule" />@endunlessrole<x-nav-link route="profile.edit" label="Profil" icon="profile" /></x-nav-group>@endunlessrole
             </nav>
             <div class="sidebar-help"><a href="{{ route('bantuan') }}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.5 2.5 0 1 1 3.4 2.34c-.72.33-1.1.77-1.1 1.66M12 17h.01"/></svg>Bantuan</a></div>
         </aside>

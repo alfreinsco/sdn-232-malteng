@@ -9,6 +9,8 @@ use Illuminate\Validation\ValidationException;
 
 class KeluarkanSiswaKelas
 {
+    public function __construct(private readonly AktivitasLogger $activity) {}
+
     public function handle(Siswa $siswa, Kelas $kelas): void
     {
         $updated = SiswaKelas::query()
@@ -22,5 +24,8 @@ class KeluarkanSiswaKelas
                 'siswa' => 'Siswa tidak tercatat aktif di kelas ini.',
             ]);
         }
+
+        $this->activity->record('ubah', 'Mengeluarkan siswa “'.$siswa->nama_lengkap.'” dari kelas “'.$kelas->nama.'”', $siswa,
+            ['kelas_id' => $kelas->id]);
     }
 }

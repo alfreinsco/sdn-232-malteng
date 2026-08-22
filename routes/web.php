@@ -33,6 +33,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
     Route::livewire('/dashboard', 'pages::dashboard')->middleware('permission:dashboard.view')->name('dashboard');
+    Route::livewire('/aktivitas', 'pages::aktivitas')->name('aktivitas.index');
 
     Route::livewire('/tahun-ajaran', 'pages::resource')->defaults('resource', 'tahun-ajaran')->middleware('permission:tahun-ajaran.view')->name('tahun-ajaran.index');
     Route::livewire('/semester', 'pages::resource')->defaults('resource', 'semester')->middleware('permission:semester.view')->name('semester.index');

@@ -10,11 +10,14 @@ use App\Models\PengaturanSekolah;
 use App\Models\Semester;
 use App\Models\Siswa;
 use App\Services\GenerateLaporan;
+use App\Services\AktivitasLogger;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+    public function __construct(private readonly AktivitasLogger $activity) {}
+
     public function pdf(Request $request, string $jenis)
     {
         $user = $request->user();
@@ -37,6 +40,8 @@ class ReportController extends Controller
                 ->when($filter['mapel_id'] ?? null, fn ($q, $v) => $q->whereHas('pengajaran', fn ($x) => $x->where('mata_pelajaran_id', $v)))
                 ->when($filter['siswa_id'] ?? null, fn ($q, $v) => $q->where('siswa_id', $v))
                 ->get()->groupBy(fn ($nilai) => $nilai->pengajaran_id.'-'.$nilai->siswa_id);
+
+        $this->activity->record('ekspor', 'Mengunduh laporan '.$jenis.' dalam format PDF', properties: ['jenis' => $jenis, 'filter' => $filter], user: $user);
 
         return Pdf::loadView('reports.pdf', [
             'jenis' => $jenis,

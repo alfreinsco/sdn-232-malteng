@@ -10,6 +10,8 @@ use Illuminate\Validation\ValidationException;
 
 class PenyimpananNilaiMassal
 {
+    public function __construct(private readonly AktivitasLogger $activity) {}
+
     public function handle(User $user, Pengajaran $pengajaran, int $bulan, array $nilai): void
     {
         Validator::make(['bulan' => $bulan, 'nilai' => $nilai], [
@@ -34,5 +36,7 @@ class PenyimpananNilaiMassal
         }
         DB::transaction(fn () => DB::table('nilai_tugas')->upsert($rows,
             ['pengajaran_id', 'siswa_id', 'bulan', 'minggu'], ['nilai', 'dibuat_oleh', 'updated_at']));
+        $this->activity->record('ubah', 'Menyimpan nilai bulanan untuk '.$pengajaran->mataPelajaran?->nama.' kelas '.$pengajaran->kelas?->nama,
+            $pengajaran, ['bulan' => $bulan, 'jumlah_baris' => count($rows)], $user);
     }
 }

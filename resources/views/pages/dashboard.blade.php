@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\{Guru, JadwalPelajaran, Kelas, MataPelajaran, NilaiTugas, Pengajaran, Siswa, SiswaKelas, User};
+use App\Models\{Aktivitas, Guru, JadwalPelajaran, Kelas, MataPelajaran, NilaiTugas, Pengajaran, Siswa, SiswaKelas, User};
 use App\Services\PeriodeAktif;
 use Livewire\Component;
 
@@ -65,7 +65,11 @@ new class extends Component {
             ['label'=>'Kepala Sekolah','value'=>User::role('kepala_sekolah')->count(),'color'=>'#32a7e8'],
         ];
 
-        return compact('cards','jadwal','nilaiTerbaru','tahun','semester','pengajaran','roleCounts');
+        $aktivitasTerbaru = Aktivitas::with('user')
+            ->when(! $user->hasRole(['admin', 'kepala_sekolah']), fn ($query) => $query->where('user_id', $user->id))
+            ->latest()->take(5)->get();
+
+        return compact('cards','jadwal','nilaiTerbaru','tahun','semester','pengajaran','roleCounts','aktivitasTerbaru');
     }
 };
 ?>
@@ -114,7 +118,13 @@ new class extends Component {
     <section class="dashboard-secondary-grid">
         <article class="dashboard-panel role-panel"><header><div><x-nav-icon name="report" /><strong>Distribusi Peran</strong></div></header><div class="role-body"><div class="role-donut"><span></span></div><div class="role-legend">@foreach($roleCounts as $role)<p><i style="background:{{ $role['color'] }}"></i><span>{{ $role['label'] }}</span><strong>{{ $role['value'] }}</strong></p>@endforeach</div></div><footer><a href="{{ route('users.index') }}" wire:navigate>Lihat detail peran →</a></footer></article>
         <article class="dashboard-panel teaching-panel"><header><div><x-nav-icon name="teaching" /><strong>Ringkasan Pengajaran</strong></div></header><div class="teaching-grid"><div><span class="blue"><x-nav-icon name="calendar" /></span><p>Total Jadwal<strong>{{ $pengajaran->count() * 4 }}</strong><small>minggu ini</small></p></div><div><span class="blue"><x-nav-icon name="students" /></span><p>Kehadiran Guru<strong>92%</strong><small>rata-rata</small></p></div><div><span class="purple"><x-nav-icon name="book" /></span><p>Kelas Aktif<strong>{{ $cards[2]['value'] }} / {{ $cards[2]['value'] }}</strong><small>100% aktif</small></p></div><div><span class="green"><x-nav-icon name="grade" /></span><p>Tugas Terverifikasi<strong>{{ max(0,$nilaiTerbaru->count() * 7) }}</strong><small>minggu ini</small></p></div></div><footer><a href="{{ route('laporan.jadwal') }}" wire:navigate>Lihat laporan pengajaran →</a></footer></article>
-        <article class="dashboard-panel activity-panel"><header><div><x-nav-icon name="schedule" /><strong>Aktivitas Terbaru</strong></div></header><div class="activity-list">@foreach([['grade','Nilai Matematika kelas 5A diperbarui oleh Guru','purple'],['calendar','Jadwal pelajaran hari Rabu diperbarui','blue'],['students','Siswa baru ditambahkan ke kelas 4B','green'],['report','Rapor semester genap diunduh oleh Admin','orange'],['book','Mata pelajaran baru ditambahkan','blue']] as [$icon,$text,$color])<div><span class="{{ $color }}"><x-nav-icon :name="$icon" /></span><p>{{ $text }}</p><time>{{ now()->subMinutes($loop->iteration * 35)->translatedFormat('d M Y, H:i') }}</time></div>@endforeach</div><footer><a href="#">Lihat semua aktivitas →</a></footer></article>
+        <article class="dashboard-panel activity-panel"><header><div><x-nav-icon name="schedule" /><strong>Aktivitas Terbaru</strong></div></header><div class="activity-list">@forelse($aktivitasTerbaru as $activity)@php
+            [$icon, $color] = match ($activity->type) {
+                'login', 'logout' => ['profile', 'blue'], 'tambah' => ['students', 'green'],
+                'ubah', 'aksi' => ['grade', 'purple'], 'hapus' => ['report', 'orange'],
+                'ekspor' => ['report', 'blue'], default => ['schedule', 'blue'],
+            };
+        @endphp<div><span class="{{ $color }}"><x-nav-icon :name="$icon" /></span><p><strong>{{ $activity->actor_name ?? 'Sistem' }}</strong> · {{ $activity->description }}</p><time title="{{ $activity->created_at?->translatedFormat('d F Y, H:i:s') }}">{{ $activity->created_at?->diffForHumans() }}</time></div>@empty<div class="activity-empty"><p>Belum ada aktivitas tercatat.</p></div>@endforelse</div><footer><a href="{{ route('aktivitas.index') }}" wire:navigate>Lihat semua aktivitas →</a></footer></article>
     </section>
 
     <footer class="dashboard-footer"><span>&copy; {{ now()->year }} SISDAR - SD Negeri 232 Maluku Tengah. All rights reserved.</span><span>Dibuat dengan <b>♥</b> untuk pendidikan Indonesia</span></footer>
