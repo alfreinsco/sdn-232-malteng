@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
+Route::view('/awal', 'landing')->name('landing');
+
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('dashboard');
@@ -11,6 +13,17 @@ Route::get('/', function () {
 
     return view('landing');
 })->name('home');
+
+Route::get('/bantuan', function () {
+    $guide = base_path('docs/buku-panduan-penggunaan.pdf');
+
+    abort_unless(is_file($guide), 404);
+
+    return response()->file($guide, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="buku-panduan-penggunaan-sisdar.pdf"',
+    ]);
+})->name('bantuan');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');

@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#0369a1">
     <title>Masuk — SD Negeri 232 Maluku Tengah</title>
-    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="icon" href="{{ asset('images/favicon-logo-pendidikan/favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon-logo-pendidikan/favicon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/favicon-logo-pendidikan/apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -20,7 +20,7 @@
             <div class="absolute inset-0 opacity-20 pattern-grid"></div>
             <div class="relative flex items-center gap-3">
                 <div class="grid size-14 place-items-center">
-                    <img src="{{ asset('logo-malteng.png') }}" alt="Logo Kabupaten Maluku Tengah"
+                    <img src="{{ asset('images/favicon-logo-pendidikan/favicon.svg') }}" alt="Logo Tut Wuri Handayani"
                         width="42" height="52" class="h-full w-full object-contain">
                 </div>
                 <div>
@@ -38,11 +38,15 @@
             </div>
             <p class="relative text-sm text-sky-200">Waktu Indonesia Timur · Asia/Jayapura</p>
         </section>
-        <section class="flex items-center justify-center bg-slate-50 p-5 sm:p-10">
+        <section class="relative flex items-center justify-center bg-slate-50 p-5 sm:p-10">
+            <a href="{{ route('landing') }}" class="login-home-link" aria-label="Kembali ke halaman awal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></svg>
+                <span>Kembali ke Halaman Awal</span>
+            </a>
             <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-9">
                 <div class="mb-8 lg:hidden">
                     <div class="mb-4 grid size-16 place-items-center">
-                        <img src="{{ asset('logo-malteng.png') }}" alt="Logo Kabupaten Maluku Tengah"
+                        <img src="{{ asset('images/favicon-logo-pendidikan/favicon.svg') }}" alt="Logo Tut Wuri Handayani"
                             width="48" height="58" class="h-full w-full object-contain">
                     </div>
                 </div>

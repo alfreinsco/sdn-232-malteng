@@ -56,7 +56,7 @@
             ];
         }
     @endphp
-    <table class="school-header"><tr><td class="logo-cell"><img class="logo" src="{{ $sekolah?->logo && is_file(public_path('storage/'.$sekolah->logo)) ? public_path('storage/'.$sekolah->logo) : public_path('logo-malteng.png') }}" alt="Logo sekolah"></td><td><p class="eyebrow">Dokumen Akademik Sekolah</p><h1>{{ strtoupper($sekolah?->nama_sekolah ?? 'SD Negeri 232 Maluku Tengah') }}</h1><p class="address">{{ $sekolah?->alamat }}</p></td></tr></table>
+    <table class="school-header"><tr><td class="logo-cell"><img class="logo" src="{{ public_path('images/favicon-logo-pendidikan/web-app-manifest-512x512.png') }}" alt="Logo Tut Wuri Handayani"></td><td><p class="eyebrow">Dokumen Akademik Sekolah</p><h1>{{ strtoupper($sekolah?->nama_sekolah ?? 'SD Negeri 232 Maluku Tengah') }}</h1><p class="address">{{ $sekolah?->alamat }}</p></td></tr></table>
     <div class="title-band"><table><tr><td><h2>LAPORAN {{ strtoupper($jenis) }} {{ $jenis === 'nilai' ? 'TUGAS SISWA' : '' }}</h2></td><td class="printed">Dicetak {{ now()->translatedFormat('d F Y, H:i') }} WIT</td></tr></table></div>
     <table class="filter-grid"><tr><td><span class="filter-label">Semester</span><span class="filter-value">{{ $semesterText }}</span></td><td><span class="filter-label">Kelas</span><span class="filter-value">{{ $kelasText }}</span></td><td><span class="filter-label">{{ $jenis === 'jadwal' ? 'Guru' : 'Mata Pelajaran' }}</span><span class="filter-value">{{ $thirdText }}</span></td><td><span class="filter-label">{{ $jenis === 'jadwal' ? 'Hari' : 'Bulan' }}</span><span class="filter-value">{{ $periodText }}</span></td></tr></table>
     <table class="report-table">

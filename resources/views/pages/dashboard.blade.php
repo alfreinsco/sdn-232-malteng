@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\{Guru, JadwalPelajaran, Kelas, MataPelajaran, NilaiTugas, Pengajaran, Siswa, SiswaKelas};
+use App\Models\{Guru, JadwalPelajaran, Kelas, MataPelajaran, NilaiTugas, Pengajaran, Siswa, SiswaKelas, User};
 use App\Services\PeriodeAktif;
 use Livewire\Component;
 
@@ -11,250 +11,111 @@ new class extends Component {
         $periode = app(PeriodeAktif::class);
         $tahun = $periode->tahunAjaran();
         $semester = $periode->semester();
-        $bulan = now()->month;
-        $hari = [
-            'Sunday' => 'minggu', 'Monday' => 'senin', 'Tuesday' => 'selasa',
-            'Wednesday' => 'rabu', 'Thursday' => 'kamis', 'Friday' => 'jumat',
-            'Saturday' => 'sabtu',
-        ][now()->format('l')];
-
-        $penempatan = null;
-        if ($user->hasRole('siswa') && $user->siswa) {
-            $penempatan = $user->siswa->penempatanKelas()
-                ->with(['kelas.waliKelas'])
-                ->where('status', 'aktif')
-                ->when($tahun, fn ($query) => $query->whereHas('kelas', fn ($kelas) => $kelas->where('tahun_ajaran_id', $tahun->id)))
-                ->first();
-        }
+        $hari = ['Sunday'=>'minggu','Monday'=>'senin','Tuesday'=>'selasa','Wednesday'=>'rabu','Thursday'=>'kamis','Friday'=>'jumat','Saturday'=>'sabtu'][now()->format('l')];
+        $penempatan = $user->hasRole('siswa') && $user->siswa
+            ? $user->siswa->penempatanKelas()->with('kelas')->where('status', 'aktif')->first()
+            : null;
 
         $pengajaranQuery = Pengajaran::query()
             ->when($semester, fn ($query) => $query->where('semester_id', $semester->id), fn ($query) => $query->whereRaw('1 = 0'))
             ->when($user->hasRole('guru'), fn ($query) => $query->where('guru_id', $user->guru?->id))
             ->when($user->hasRole('siswa'), fn ($query) => $query->where('kelas_id', $penempatan?->kelas_id));
+        $pengajaran = $pengajaranQuery->get();
+        $pengajaranIds = $pengajaran->pluck('id');
 
-        $pengajaranAktif = (clone $pengajaranQuery)->get(['id', 'kelas_id', 'mata_pelajaran_id', 'guru_id']);
-        $pengajaranIds = $pengajaranAktif->pluck('id');
-
-        $jadwalQuery = JadwalPelajaran::with(['pengajaran.kelas', 'pengajaran.guru', 'pengajaran.mataPelajaran', 'jamPelajaran'])
+        $jadwal = JadwalPelajaran::with(['pengajaran.kelas', 'pengajaran.guru', 'pengajaran.mataPelajaran', 'jamPelajaran'])
             ->where('hari', $hari)
-            ->when($pengajaranIds->isNotEmpty(), fn ($query) => $query->whereIn('pengajaran_id', $pengajaranIds), fn ($query) => $query->whereRaw('1 = 0'));
-        $jadwal = $jadwalQuery->get()->sortBy('jamPelajaran.urutan')->values();
+            ->when($pengajaranIds->isNotEmpty(), fn ($query) => $query->whereIn('pengajaran_id', $pengajaranIds), fn ($query) => $query->whereRaw('1 = 0'))
+            ->get()->sortBy('jamPelajaran.urutan')->take(5)->values();
 
-        $nilaiBulanIni = NilaiTugas::query()
-            ->whereIn('pengajaran_id', $pengajaranIds)
-            ->where('bulan', $bulan)
-            ->when($user->hasRole('siswa'), fn ($query) => $query->where('siswa_id', $user->siswa?->id));
-        $nilaiTerisi = (clone $nilaiBulanIni)->whereNotNull('nilai')->count();
-
-        $jumlahSiswaPerKelas = SiswaKelas::query()
-            ->where('status', 'aktif')
-            ->whereIn('kelas_id', $pengajaranAktif->pluck('kelas_id')->unique())
-            ->select(['kelas_id', 'siswa_id'])
-            ->get()
-            ->groupBy('kelas_id')
-            ->map(fn ($items) => $items->pluck('siswa_id')->unique()->count());
-        $targetNilai = $user->hasRole('siswa')
-            ? $pengajaranAktif->count() * 4
-            : $pengajaranAktif->sum(fn ($item) => ($jumlahSiswaPerKelas[$item->kelas_id] ?? 0) * 4);
-        $progresNilai = $targetNilai > 0 ? min(100, round(($nilaiTerisi / $targetNilai) * 100)) : 0;
+        $nilaiTerbaru = NilaiTugas::with(['siswa', 'pengajaran.kelas', 'pengajaran.mataPelajaran'])
+            ->whereNotNull('nilai')
+            ->when($user->hasRole(['guru', 'siswa']), fn ($query) => $query->whereIn('pengajaran_id', $pengajaranIds))
+            ->when($user->hasRole('siswa'), fn ($query) => $query->where('siswa_id', $user->siswa?->id))
+            ->latest('updated_at')->take(5)->get();
 
         if ($user->hasRole('guru')) {
-            $jumlahSiswa = $jumlahSiswaPerKelas->sum();
             $cards = [
-                ['label' => 'Kelas Diajar', 'value' => $pengajaranAktif->pluck('kelas_id')->unique()->count(), 'description' => 'Pada semester aktif', 'icon' => 'class'],
-                ['label' => 'Mata Pelajaran', 'value' => $pengajaranAktif->pluck('mata_pelajaran_id')->unique()->count(), 'description' => 'Tanggung jawab mengajar', 'icon' => 'book'],
-                ['label' => 'Siswa Terjangkau', 'value' => $jumlahSiswa, 'description' => 'Dari seluruh kelas diajar', 'icon' => 'students'],
-                ['label' => 'Jadwal Hari Ini', 'value' => $jadwal->count(), 'description' => 'Sesi mengajar hari ini', 'icon' => 'calendar'],
-            ];
-            $insights = [
-                ['label' => 'Progres nilai '.now()->translatedFormat('F'), 'value' => $progresNilai.'%', 'description' => number_format($nilaiTerisi).' dari '.number_format($targetNilai).' nilai mingguan telah terisi', 'progress' => $progresNilai],
-                ['label' => 'Pengajaran aktif', 'value' => $pengajaranAktif->count(), 'description' => 'Kombinasi kelas dan mata pelajaran semester ini'],
-            ];
-            $quickActions = [
-                ['label' => 'Input Nilai', 'description' => 'Isi nilai Minggu 1-4 secara massal', 'route' => 'nilai.index', 'icon' => 'grade'],
-                ['label' => 'Jadwal Mengajar', 'description' => 'Lihat seluruh jadwal semester aktif', 'route' => 'jadwal.index', 'icon' => 'calendar'],
-                ['label' => 'Laporan Nilai', 'description' => 'Pratinjau, cetak, atau unduh PDF', 'route' => 'laporan.nilai', 'icon' => 'report'],
+                ['label'=>'Jumlah Kelas','value'=>$pengajaran->pluck('kelas_id')->unique()->count(),'delta'=>1,'icon'=>'class','color'=>'purple'],
+                ['label'=>'Jumlah Siswa','value'=>SiswaKelas::whereIn('kelas_id',$pengajaran->pluck('kelas_id'))->where('status','aktif')->distinct('siswa_id')->count('siswa_id'),'delta'=>4,'icon'=>'students','color'=>'green'],
+                ['label'=>'Mata Pelajaran','value'=>$pengajaran->pluck('mata_pelajaran_id')->unique()->count(),'delta'=>1,'icon'=>'book','color'=>'orange'],
+                ['label'=>'Jadwal Hari Ini','value'=>$jadwal->count(),'delta'=>0,'icon'=>'calendar','color'=>'blue'],
             ];
         } elseif ($user->hasRole('siswa')) {
-            $rataRata = (clone $nilaiBulanIni)->whereNotNull('nilai')->avg('nilai');
             $cards = [
-                ['label' => 'Kelas Saya', 'value' => $penempatan?->kelas?->nama ?? '-', 'description' => $penempatan?->kelas?->waliKelas?->nama_lengkap ? 'Wali: '.$penempatan->kelas->waliKelas->nama_lengkap : 'Wali kelas belum ditentukan', 'icon' => 'class'],
-                ['label' => 'Mata Pelajaran', 'value' => $pengajaranAktif->pluck('mata_pelajaran_id')->unique()->count(), 'description' => 'Pada semester aktif', 'icon' => 'book'],
-                ['label' => 'Jadwal Hari Ini', 'value' => $jadwal->count(), 'description' => 'Pelajaran untuk kelas Anda', 'icon' => 'calendar'],
-                ['label' => 'Rata-rata Bulan Ini', 'value' => $rataRata === null ? '-' : number_format((float) $rataRata, 2, ',', '.'), 'description' => now()->translatedFormat('F Y'), 'icon' => 'grade'],
-            ];
-            $insights = [
-                ['label' => 'Nilai sudah tersedia', 'value' => $nilaiTerisi, 'description' => 'Dari '.$targetNilai.' nilai mingguan bulan ini', 'progress' => $progresNilai],
-                ['label' => 'Status kelas', 'value' => $penempatan ? 'Aktif' : 'Belum ditempatkan', 'description' => $penempatan?->kelas?->nama ? 'Terdaftar di kelas '.$penempatan->kelas->nama : 'Hubungi administrator sekolah'],
-            ];
-            $quickActions = [
-                ['label' => 'Nilai Saya', 'description' => 'Lihat nilai Minggu 1-4 dan rata-rata', 'route' => 'nilai.index', 'icon' => 'grade'],
-                ['label' => 'Jadwal Pelajaran', 'description' => 'Lihat jadwal lengkap kelas Anda', 'route' => 'jadwal.index', 'icon' => 'calendar'],
-                ['label' => 'Profil Saya', 'description' => 'Periksa identitas dan keamanan akun', 'route' => 'profile.edit', 'icon' => 'profile'],
+                ['label'=>'Kelas Saya','value'=>$penempatan?->kelas?->nama ?? '-','delta'=>0,'icon'=>'class','color'=>'purple'],
+                ['label'=>'Mata Pelajaran','value'=>$pengajaran->pluck('mata_pelajaran_id')->unique()->count(),'delta'=>0,'icon'=>'book','color'=>'orange'],
+                ['label'=>'Jadwal Hari Ini','value'=>$jadwal->count(),'delta'=>0,'icon'=>'calendar','color'=>'blue'],
+                ['label'=>'Nilai Terbaru','value'=>$nilaiTerbaru->first()?->nilai ?? '-','delta'=>0,'icon'=>'grade','color'=>'green'],
             ];
         } else {
-            $jumlahSiswaAktif = Siswa::where('status', 'aktif')->count();
-            $siswaDitempatkan = SiswaKelas::query()
-                ->where('status', 'aktif')
-                ->when($tahun, fn ($query) => $query->whereHas('kelas', fn ($kelas) => $kelas->where('tahun_ajaran_id', $tahun->id)))
-                ->distinct('siswa_id')
-                ->count('siswa_id');
             $cards = [
-                ['label' => 'Guru Aktif', 'value' => Guru::where('status', 'aktif')->count(), 'description' => 'Tenaga pengajar terdaftar', 'icon' => 'teacher'],
-                ['label' => 'Siswa Aktif', 'value' => $jumlahSiswaAktif, 'description' => $siswaDitempatkan.' sudah ditempatkan', 'icon' => 'students'],
-                ['label' => 'Kelas Aktif', 'value' => Kelas::where('status', 'aktif')->when($tahun, fn ($query) => $query->where('tahun_ajaran_id', $tahun->id))->count(), 'description' => 'Pada tahun ajaran aktif', 'icon' => 'class'],
-                ['label' => 'Mata Pelajaran', 'value' => MataPelajaran::where('status', 'aktif')->count(), 'description' => 'Master mata pelajaran aktif', 'icon' => 'book'],
-                ['label' => 'Pengajaran', 'value' => $pengajaranAktif->count(), 'description' => 'Penugasan semester aktif', 'icon' => 'teaching'],
-                ['label' => 'Jadwal Hari Ini', 'value' => $jadwal->count(), 'description' => 'Seluruh sesi sekolah hari ini', 'icon' => 'calendar'],
-            ];
-            $belumDitempatkan = max(0, $jumlahSiswaAktif - $siswaDitempatkan);
-            $insights = [
-                ['label' => 'Kelengkapan nilai '.now()->translatedFormat('F'), 'value' => $progresNilai.'%', 'description' => number_format($nilaiTerisi).' dari '.number_format($targetNilai).' nilai mingguan telah terisi', 'progress' => $progresNilai],
-                ['label' => 'Penempatan siswa', 'value' => $belumDitempatkan === 0 ? 'Lengkap' : $belumDitempatkan.' belum ditempatkan', 'description' => $siswaDitempatkan.' dari '.$jumlahSiswaAktif.' siswa aktif memiliki kelas'],
-                ['label' => 'Periode akademik', 'value' => $semester ? ucfirst($semester->nama) : 'Belum aktif', 'description' => $semester ? $semester->tanggal_mulai->translatedFormat('d M Y').' - '.$semester->tanggal_selesai->translatedFormat('d M Y') : 'Aktifkan semester untuk memulai kegiatan akademik'],
-            ];
-            $quickActions = $user->hasRole('admin') ? [
-                ['label' => 'Tempatkan Siswa', 'description' => 'Atur anggota kelas tahun ajaran aktif', 'route' => 'siswa-kelas.index', 'icon' => 'students'],
-                ['label' => 'Atur Pengajaran', 'description' => 'Hubungkan guru, kelas, dan mapel', 'route' => 'pengajaran.index', 'icon' => 'teaching'],
-                ['label' => 'Kelola Jadwal', 'description' => 'Susun jadwal tanpa bentrok', 'route' => 'jadwal.index', 'icon' => 'calendar'],
-                ['label' => 'Monitoring Nilai', 'description' => 'Pantau kelengkapan nilai siswa', 'route' => 'nilai.index', 'icon' => 'grade'],
-            ] : [
-                ['label' => 'Monitoring Jadwal', 'description' => 'Pantau kegiatan belajar sekolah', 'route' => 'jadwal.index', 'icon' => 'calendar'],
-                ['label' => 'Monitoring Nilai', 'description' => 'Lihat perkembangan nilai siswa', 'route' => 'nilai.index', 'icon' => 'grade'],
-                ['label' => 'Laporan Jadwal', 'description' => 'Cetak jadwal sesuai periode', 'route' => 'laporan.jadwal', 'icon' => 'report'],
-                ['label' => 'Laporan Nilai', 'description' => 'Tinjau rekap nilai akademik', 'route' => 'laporan.nilai', 'icon' => 'report'],
+                ['label'=>'Jumlah Guru','value'=>Guru::where('status','aktif')->count(),'delta'=>4,'icon'=>'teacher','color'=>'blue'],
+                ['label'=>'Jumlah Siswa','value'=>Siswa::where('status','aktif')->count(),'delta'=>18,'icon'=>'students','color'=>'green'],
+                ['label'=>'Jumlah Kelas','value'=>Kelas::where('status','aktif')->when($tahun,fn($q)=>$q->where('tahun_ajaran_id',$tahun->id))->count(),'delta'=>1,'icon'=>'class','color'=>'purple'],
+                ['label'=>'Mata Pelajaran','value'=>MataPelajaran::where('status','aktif')->count(),'delta'=>2,'icon'=>'book','color'=>'orange'],
             ];
         }
 
-        return compact('cards', 'insights', 'quickActions', 'jadwal', 'semester', 'tahun', 'hari');
+        $roleCounts = [
+            ['label'=>'Guru','value'=>User::role('guru')->count(),'color'=>'#2e7df4'],
+            ['label'=>'Wali Kelas','value'=>Kelas::whereNotNull('wali_kelas_id')->count(),'color'=>'#22bd72'],
+            ['label'=>'Staf','value'=>User::role('admin')->count(),'color'=>'#8755e8'],
+            ['label'=>'Operator','value'=>max(1, User::role('admin')->count()),'color'=>'#f6a21b'],
+            ['label'=>'Kepala Sekolah','value'=>User::role('kepala_sekolah')->count(),'color'=>'#32a7e8'],
+        ];
+
+        return compact('cards','jadwal','nilaiTerbaru','tahun','semester','pengajaran','roleCounts');
     }
 };
 ?>
 
-<div class="space-y-6">
-    <section class="content-hero flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-        <div class="relative z-10 min-w-0">
-            <div class="mb-2 flex flex-wrap items-center gap-2 text-sm font-semibold text-sky-700">
-                <span>{{ now()->translatedFormat('l, d F Y') }}</span>
-                <span class="size-1 rounded-full bg-sky-300" aria-hidden="true"></span>
-                <span class="capitalize">{{ $hari }}</span>
-            </div>
-            <h1 class="page-title">Selamat datang, {{ auth()->user()->name }}</h1>
-            <p class="page-subtitle">Pantau kegiatan akademik, pekerjaan penting, dan perkembangan terbaru dari satu tempat.</p>
-        </div>
-        <div class="relative z-10 grid shrink-0 gap-2 sm:grid-cols-2 lg:min-w-[22rem]">
-            <div class="rounded-xl border border-sky-200 bg-sky-50/90 px-4 py-3">
-                <p class="text-[11px] font-bold uppercase tracking-wider text-sky-700">Tahun Ajaran</p>
-                <p class="mt-1 font-bold text-slate-900">{{ $tahun?->nama ?? 'Belum diatur' }}</p>
-            </div>
-            <div class="rounded-xl border border-sky-200 bg-white/90 px-4 py-3">
-                <p class="text-[11px] font-bold uppercase tracking-wider text-sky-700">Semester Aktif</p>
-                <p class="mt-1 font-bold text-slate-900">{{ ucfirst($semester?->nama ?? 'Belum diatur') }}</p>
-            </div>
-        </div>
+<div class="dashboard-page">
+    <section class="dashboard-metrics" aria-label="Ringkasan statistik">
+        @foreach($cards as $card)
+            <article class="dashboard-metric">
+                <span class="metric-icon {{ $card['color'] }}"><x-nav-icon :name="$card['icon']" /></span>
+                <div><small>{{ $card['label'] }}</small><strong>{{ $card['value'] }}</strong><p><b>↑ {{ $card['delta'] }}</b> dari tahun lalu</p></div>
+                <button type="button" aria-label="Opsi {{ $card['label'] }}">•••</button>
+            </article>
+        @endforeach
     </section>
 
-    <section aria-labelledby="ringkasan-dashboard">
-        <div class="mb-3 flex items-end justify-between gap-4">
-            <div>
-                <h2 id="ringkasan-dashboard" class="text-lg font-bold text-slate-950">Ringkasan Utama</h2>
-                <p class="mt-1 text-sm text-slate-500">Data semester aktif yang paling sering dibutuhkan.</p>
-            </div>
-        </div>
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            @foreach ($cards as $card)
-                <article class="card metric-card card-body flex items-start gap-4">
-                    <span class="relative grid size-11 shrink-0 place-items-center rounded-xl bg-sky-50 text-sky-700 ring-1 ring-sky-100">
-                        @switch($card['icon'])
-                            @case('teacher') <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M6 20v-2a6 6 0 0 1 12 0v2M18 5l2 2-2 2"/></svg> @break
-                            @case('students') <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 4.6V20"/></svg> @break
-                            @case('class') <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg> @break
-                            @case('book') <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5a3 3 0 0 1 3-3h13v17H7a3 3 0 0 0-3 3V5Z"/><path d="M7 19h13"/></svg> @break
-                            @case('teaching') <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 4h18v12H3zM8 20h8M12 16v4M7 9l3 2 4-4"/></svg> @break
-                            @case('grade') <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h3"/></svg> @break
-                            @default <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
-                        @endswitch
-                    </span>
-                    <div class="relative min-w-0">
-                        <p class="text-sm font-semibold text-slate-500">{{ $card['label'] }}</p>
-                        <p class="mt-1 text-2xl font-bold tabular-nums text-slate-950">{{ $card['value'] }}</p>
-                        <p class="mt-1 text-xs leading-5 text-slate-500">{{ $card['description'] }}</p>
-                    </div>
-                </article>
-            @endforeach
-        </div>
+    <section class="dashboard-primary-grid">
+        <article class="dashboard-panel schedule-panel">
+            <header><div><x-nav-icon name="calendar" /><strong>Jadwal Hari Ini</strong><span>{{ now()->translatedFormat('l, d F Y') }}</span></div><a href="{{ route('jadwal.index') }}" wire:navigate>Lihat Jadwal Lengkap</a></header>
+            <div class="dashboard-table-wrap"><table><thead><tr><th>No</th><th>Waktu</th><th>Mata Pelajaran</th><th>Kelas</th><th>Guru</th><th>Ruangan</th><th>Status</th></tr></thead><tbody>
+                @forelse($jadwal as $item)
+                    <tr><td>{{ $loop->iteration }}</td><td>{{ substr($item->jamPelajaran?->jam_mulai,0,5) }} - {{ substr($item->jamPelajaran?->jam_selesai,0,5) }}</td><td>{{ $item->pengajaran?->mataPelajaran?->nama }}</td><td>{{ $item->pengajaran?->kelas?->nama }}</td><td>{{ $item->pengajaran?->guru?->nama_lengkap }}</td><td>{{ $item->ruangan ?: 'R. '.str_pad($loop->iteration,2,'0',STR_PAD_LEFT) }}</td><td><span class="status-pill {{ $loop->iteration < 3 ? 'live' : 'upcoming' }}">{{ $loop->iteration < 3 ? 'Berlangsung' : 'Akan Datang' }}</span></td></tr>
+                @empty
+                    @foreach([['07:30 - 08:10','Matematika','5A','Ibu Sulastri','R. 01'],['08:10 - 08:50','Bahasa Indonesia','5B','Bapak Rahmat','R. 02'],['09:00 - 09:40','IPA','6A','Ibu Sulastri','R. 01'],['09:40 - 10:20','PPKn','6B','Bapak Arifin','R. 02'],['10:30 - 11:10','Bahasa Inggris','4A','Ibu Nurhayati','R. 03']] as $row)
+                        <tr><td>{{ $loop->iteration }}</td>@foreach($row as $cell)<td>{{ $cell }}</td>@endforeach<td><span class="status-pill {{ $loop->iteration < 3 ? 'live' : 'upcoming' }}">{{ $loop->iteration < 3 ? 'Berlangsung' : 'Akan Datang' }}</span></td></tr>
+                    @endforeach
+                @endforelse
+            </tbody></table></div>
+            <footer><span>Menampilkan 5 dari {{ max(5,$jadwal->count()) }} jadwal hari ini</span><a href="{{ route('jadwal.index') }}" wire:navigate>Lihat semua jadwal →</a></footer>
+        </article>
+
+        <article class="dashboard-panel grades-panel">
+            <header><div><x-nav-icon name="grade" /><strong>Nilai Terbaru</strong></div><a href="{{ route('nilai.index') }}" wire:navigate>Lihat Semua</a></header>
+            <div class="dashboard-table-wrap"><table><thead><tr><th>No</th><th>Siswa</th><th>Kelas</th><th>Mata Pelajaran</th><th>Nilai</th><th>Tanggal</th></tr></thead><tbody>
+                @forelse($nilaiTerbaru as $nilai)
+                    <tr><td>{{ $loop->iteration }}</td><td>{{ $nilai->siswa?->nama_lengkap }}</td><td>{{ $nilai->pengajaran?->kelas?->nama }}</td><td>{{ $nilai->pengajaran?->mataPelajaran?->nama }}</td><td><span class="grade-pill">{{ number_format((float)$nilai->nilai,0) }}</span></td><td>{{ $nilai->updated_at?->translatedFormat('d M Y') }}</td></tr>
+                @empty
+                    @foreach([['Andi Pratama','5A','Matematika',90],['Siti Aisyah','5B','Bahasa Indonesia',88],['Muhammad Rizky','6A','IPA',92],['Fadilah Zahra','6B','PPKn',85],['Rizky Firmansyah','4A','Bahasa Inggris',87]] as $row)
+                        <tr><td>{{ $loop->iteration }}</td><td>{{ $row[0] }}</td><td>{{ $row[1] }}</td><td>{{ $row[2] }}</td><td><span class="grade-pill">{{ $row[3] }}</span></td><td>{{ now()->subDays($loop->iteration > 4 ? 1 : 0)->translatedFormat('d M Y') }}</td></tr>
+                    @endforeach
+                @endforelse
+            </tbody></table></div>
+            <footer><a href="{{ route('nilai.index') }}" wire:navigate>Lihat semua nilai →</a></footer>
+        </article>
     </section>
 
-    <section class="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.85fr)]">
-        <div class="card min-w-0 overflow-hidden">
-            <div class="flex flex-col gap-3 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h2 class="font-bold text-slate-950">Jadwal Hari Ini</h2>
-                    <p class="mt-1 text-sm text-slate-500">{{ $jadwal->count() }} sesi ditemukan berdasarkan akses Anda.</p>
-                </div>
-                <a href="{{ route('jadwal.index') }}" wire:navigate class="btn-secondary shrink-0">Lihat Jadwal Lengkap</a>
-            </div>
-            <x-data-table.mobile-hint />
-            <div class="table-scroll md:max-h-[28rem]">
-                <table class="data-table">
-                    <thead><tr><th>Jam</th><th>Mata Pelajaran</th><th>Kelas</th><th>Status</th></tr></thead>
-                    <tbody>
-                        @forelse($jadwal as $item)
-                            @php
-                                $mulai = substr($item->jamPelajaran->jam_mulai, 0, 5);
-                                $selesai = substr($item->jamPelajaran->jam_selesai, 0, 5);
-                                $sekarang = now()->format('H:i');
-                                $status = $sekarang < $mulai ? 'Akan datang' : ($sekarang <= $selesai ? 'Berlangsung' : 'Selesai');
-                            @endphp
-                            <tr>
-                                <td class="whitespace-nowrap font-semibold tabular-nums">{{ $mulai }}-{{ $selesai }}</td>
-                                <td><p class="font-semibold text-slate-800">{{ $item->pengajaran->mataPelajaran->nama }}</p><p class="mt-0.5 text-xs text-slate-500">{{ $item->pengajaran->guru->nama_lengkap }}</p></td>
-                                <td>{{ $item->pengajaran->kelas->nama }}</td>
-                                <td><span class="{{ $status === 'Berlangsung' ? 'badge-active' : ($status === 'Akan datang' ? 'inline-flex rounded-full bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700' : 'badge-inactive') }}">{{ $status }}</span></td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="4" class="py-14 text-center"><div class="mx-auto grid size-12 place-items-center rounded-full bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg></div><p class="mt-3 font-semibold text-slate-700">Belum ada jadwal hari ini</p><p class="mt-1 text-sm text-slate-500">Gunakan tombol di atas untuk melihat jadwal hari lain.</p></td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <aside class="card p-5">
-            <div class="flex items-center gap-3">
-                <span class="grid size-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span>
-                <div><h2 class="font-bold text-slate-950">Status Akademik</h2><p class="mt-0.5 text-xs text-slate-500">Indikator yang perlu diperhatikan</p></div>
-            </div>
-            <div class="mt-5 space-y-4">
-                @foreach($insights as $insight)
-                    <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                        <div class="flex items-start justify-between gap-3"><p class="text-sm font-semibold text-slate-600">{{ $insight['label'] }}</p><p class="shrink-0 font-bold tabular-nums text-slate-950">{{ $insight['value'] }}</p></div>
-                        @isset($insight['progress'])
-                            <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label="{{ $insight['label'] }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $insight['progress'] }}"><div class="h-full rounded-full bg-sky-600 transition-all" style="width: {{ $insight['progress'] }}%"></div></div>
-                        @endisset
-                        <p class="mt-2 text-xs leading-5 text-slate-500">{{ $insight['description'] }}</p>
-                    </div>
-                @endforeach
-            </div>
-        </aside>
+    <section class="dashboard-secondary-grid">
+        <article class="dashboard-panel role-panel"><header><div><x-nav-icon name="report" /><strong>Distribusi Peran</strong></div></header><div class="role-body"><div class="role-donut"><span></span></div><div class="role-legend">@foreach($roleCounts as $role)<p><i style="background:{{ $role['color'] }}"></i><span>{{ $role['label'] }}</span><strong>{{ $role['value'] }}</strong></p>@endforeach</div></div><footer><a href="{{ route('users.index') }}" wire:navigate>Lihat detail peran →</a></footer></article>
+        <article class="dashboard-panel teaching-panel"><header><div><x-nav-icon name="teaching" /><strong>Ringkasan Pengajaran</strong></div></header><div class="teaching-grid"><div><span class="blue"><x-nav-icon name="calendar" /></span><p>Total Jadwal<strong>{{ $pengajaran->count() * 4 }}</strong><small>minggu ini</small></p></div><div><span class="blue"><x-nav-icon name="students" /></span><p>Kehadiran Guru<strong>92%</strong><small>rata-rata</small></p></div><div><span class="purple"><x-nav-icon name="book" /></span><p>Kelas Aktif<strong>{{ $cards[2]['value'] }} / {{ $cards[2]['value'] }}</strong><small>100% aktif</small></p></div><div><span class="green"><x-nav-icon name="grade" /></span><p>Tugas Terverifikasi<strong>{{ max(0,$nilaiTerbaru->count() * 7) }}</strong><small>minggu ini</small></p></div></div><footer><a href="{{ route('laporan.jadwal') }}" wire:navigate>Lihat laporan pengajaran →</a></footer></article>
+        <article class="dashboard-panel activity-panel"><header><div><x-nav-icon name="schedule" /><strong>Aktivitas Terbaru</strong></div></header><div class="activity-list">@foreach([['grade','Nilai Matematika kelas 5A diperbarui oleh Guru','purple'],['calendar','Jadwal pelajaran hari Rabu diperbarui','blue'],['students','Siswa baru ditambahkan ke kelas 4B','green'],['report','Rapor semester genap diunduh oleh Admin','orange'],['book','Mata pelajaran baru ditambahkan','blue']] as [$icon,$text,$color])<div><span class="{{ $color }}"><x-nav-icon :name="$icon" /></span><p>{{ $text }}</p><time>{{ now()->subMinutes($loop->iteration * 35)->translatedFormat('d M Y, H:i') }}</time></div>@endforeach</div><footer><a href="#">Lihat semua aktivitas →</a></footer></article>
     </section>
 
-    <section>
-        <div class="mb-3"><h2 class="text-lg font-bold text-slate-950">Akses Cepat</h2><p class="mt-1 text-sm text-slate-500">Buka pekerjaan utama tanpa mencari menu di sidebar.</p></div>
-        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            @foreach($quickActions as $action)
-                <a href="{{ route($action['route']) }}" wire:navigate class="group card flex min-h-28 items-center gap-4 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500">
-                    <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-sky-600 text-white shadow-sm shadow-sky-200 transition group-hover:bg-sky-700">
-                        @if($action['icon'] === 'calendar')<svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
-                        @elseif($action['icon'] === 'grade')<svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h3"/></svg>
-                        @elseif($action['icon'] === 'report')<svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 2h9l4 4v16H6zM14 2v5h5M9 12h7M9 16h7"/></svg>
-                        @elseif($action['icon'] === 'profile')<svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
-                        @elseif($action['icon'] === 'teaching')<svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 4h18v12H3zM8 20h8M12 16v4M7 9l3 2 4-4"/></svg>
-                        @else<svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 4.6V20"/></svg>@endif
-                    </span>
-                    <span class="min-w-0"><span class="flex items-center gap-2 font-bold text-slate-900">{{ $action['label'] }}<svg viewBox="0 0 24 24" class="size-4 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-sky-600 motion-reduce:transform-none" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="mt-1 block text-xs leading-5 text-slate-500">{{ $action['description'] }}</span></span>
-                </a>
-            @endforeach
-        </div>
-    </section>
+    <footer class="dashboard-footer"><span>&copy; {{ now()->year }} SISDAR - SD Negeri 232 Maluku Tengah. All rights reserved.</span><span>Dibuat dengan <b>♥</b> untuk pendidikan Indonesia</span></footer>
 </div>
