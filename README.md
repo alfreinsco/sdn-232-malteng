@@ -1,6 +1,6 @@
 # SD Negeri 232 Maluku Tengah
 
-Sistem Informasi Jadwal Pelajaran dan Nilai Siswa berbasis web untuk SD Negeri 232 Maluku Tengah. Aplikasi menyediakan pengelolaan master akademik, jadwal bebas bentrok, nilai tugas Minggu 1–4, monitoring, laporan print/PDF, serta akses terpisah bagi Admin, Guru, Siswa, dan Kepala Sekolah.
+SISDAR adalah Sistem Informasi Sekolah Dasar berbasis web untuk SD Negeri 232 Maluku Tengah. Aplikasi menyediakan pengelolaan master akademik, jadwal bebas bentrok, nilai tugas Minggu 1–4, monitoring, laporan print/PDF, serta akses terpisah bagi Admin, Guru, Siswa, dan Kepala Sekolah.
 
 ## Stack
 

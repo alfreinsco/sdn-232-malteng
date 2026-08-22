@@ -25,6 +25,7 @@ class LandingPageTest extends TestCase
             ->assertSee('Kelola Jadwal Pelajaran')
             ->assertSee('Nilai Siswa dengan')
             ->assertSee('Masuk Sistem')
+            ->assertSee('Sistem Informasi Sekolah Dasar')
             ->assertSee('Fitur Unggulan SISDAR')
             ->assertSee('Akses Sesuai Peran')
             ->assertSee('SD Negeri 232 Maluku Tengah')

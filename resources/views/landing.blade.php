@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff">
-    <meta name="description" content="SISDAR, Sistem Informasi Jadwal Pelajaran dan Nilai Siswa.">
-    <title>SISDAR — Sistem Informasi Akademik</title>
+    <meta name="description" content="SISDAR, Sistem Informasi Sekolah Dasar untuk pengelolaan akademik sekolah.">
+    <title>SISDAR — Sistem Informasi Sekolah Dasar</title>
     <link rel="icon" href="{{ asset('images/favicon-logo-pendidikan/favicon.ico') }}" sizes="any">
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon-logo-pendidikan/favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/favicon-logo-pendidikan/apple-touch-icon.png') }}">
@@ -44,7 +44,7 @@
             <div class="hero-orb" aria-hidden="true"></div><div class="hero-dots" aria-hidden="true"></div>
             <div class="landing-container hero-grid">
                 <div class="hero-copy">
-                    <div class="hero-eyebrow"><span></span><strong>SISDAR</strong><i></i>Sistem Informasi Jadwal Pelajaran dan Nilai Siswa</div>
+                    <div class="hero-eyebrow"><span></span><strong>SISDAR</strong><i></i>Sistem Informasi Sekolah Dasar</div>
                     <h1>Kelola Jadwal Pelajaran dan<br>Nilai Siswa dengan <em>Lebih Mudah</em></h1>
                     <p>SISDAR membantu Admin, Guru, Siswa, dan Kepala Sekolah mengelola informasi akademik secara terintegrasi, akurat, dan efisien dalam satu platform.</p>
                     <div class="hero-actions">
@@ -99,7 +99,7 @@
     <footer id="kontak" class="landing-footer">
         <div class="landing-container footer-main">
             <div class="footer-brand"><img src="{{ $schoolLogo }}" alt="" width="46" height="56"><div><strong>SISDAR</strong><small>{{ $schoolName }}</small></div></div>
-            <p>SISDAR adalah sistem informasi terpadu untuk pengelolaan jadwal pelajaran dan nilai siswa secara efektif dan efisien.</p>
+            <p>SISDAR adalah Sistem Informasi Sekolah Dasar terpadu untuk pengelolaan jadwal pelajaran dan nilai siswa secara efektif dan efisien.</p>
             <div><h3>Tautan Cepat</h3><a href="#beranda">Beranda</a><a href="#fitur">Fitur</a><a href="#tentang">Tentang</a><a href="#kontak">Kontak</a></div>
             <div><h3>Bantuan</h3><a href="{{ route('bantuan') }}" target="_blank" rel="noopener">Panduan Penggunaan</a><a href="#kontak">FAQ</a><a href="#kontak">Hubungi Kami</a></div>
             <div><h3>Kontak</h3><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2"/></svg>{{ $schoolName }}<br>{{ $schoolAddress }}</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>info@sisdar.sch.id</span></div>

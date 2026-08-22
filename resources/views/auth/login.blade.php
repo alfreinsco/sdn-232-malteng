@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#0369a1">
-    <title>Masuk — SD Negeri 232 Maluku Tengah</title>
+    <title>Masuk — SISDAR</title>
     <link rel="icon" href="{{ asset('images/favicon-logo-pendidikan/favicon.ico') }}" sizes="any">
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon-logo-pendidikan/favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/favicon-logo-pendidikan/apple-touch-icon.png') }}">
@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="relative max-w-xl">
-                <p class="mb-5 text-sm font-semibold uppercase tracking-[.2em] text-sky-200">Sistem Informasi Akademik
+                <p class="mb-5 text-sm font-semibold uppercase tracking-[.2em] text-sky-200">Sistem Informasi Sekolah Dasar
                 </p>
                 <h1 class="text-5xl font-semibold leading-tight">Jadwal dan nilai siswa, tersusun dalam satu ruang
                     kerja.</h1>

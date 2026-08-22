@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
-    "description": "Sistem Informasi Jadwal Pelajaran dan Nilai Siswa SD Negeri 232 Maluku Tengah.",
+    "description": "SISDAR, Sistem Informasi Sekolah Dasar untuk SD Negeri 232 Maluku Tengah.",
     "keywords": ["laravel", "livewire", "sekolah", "jadwal", "nilai"],
     "license": "MIT",
     "require": {

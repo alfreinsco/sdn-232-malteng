@@ -43,7 +43,7 @@
         <aside id="sidebar" class="app-sidebar" :class="sidebarOpen && 'open'" aria-label="Navigasi utama">
             <div class="sidebar-brand">
                 <img src="{{ $schoolLogo }}" alt="Logo {{ $schoolName }}" width="61" height="72">
-                <div><strong>SISDAR</strong><span>{{ $schoolName }}</span></div>
+                <div><strong>SISDAR</strong><span>Sistem Informasi Sekolah Dasar</span></div>
                 <button type="button" @click="sidebarOpen=false" aria-label="Tutup menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
             </div>
             <nav class="sidebar-nav">

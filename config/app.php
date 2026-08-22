@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'SD Negeri 232 Maluku Tengah'),
+    'name' => env('APP_NAME', 'SISDAR'),
 
     /*
     |--------------------------------------------------------------------------
