@@ -1,0 +1,11 @@
+DOKUMEN PAKET COMPLETE SISDAR
+
+1. ENTITY RELATIONSHIP DIAGRAM — 01-ERD-SISDAR.pdf / .docx
+2. USE CASE DAN FLOW SISTEM — 02-Use-Case-dan-Flow-Sistem-SISDAR.pdf / .docx
+3. BLACK BOX TESTING — 03-Black-Box-Testing-SISDAR.pdf / .docx
+4. DOKUMENTASI SISTEM — 04-Dokumentasi-Sistem-SISDAR.pdf / .docx
+5. PERSIAPAN DEMONSTRASI — 05-Persiapan-Demonstrasi-SISDAR.pdf / .docx
+6. PENDAMPINGAN TEKNIS — 06-Pendampingan-Teknis-SISDAR.pdf / .docx
+
+Tanggal penyusunan: 29 Agustus 2026
+Instansi: SD Negeri 232 Maluku Tengah
