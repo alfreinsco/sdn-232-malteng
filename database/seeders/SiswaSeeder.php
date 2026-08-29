@@ -22,9 +22,12 @@ class SiswaSeeder extends Seeder
 
             for ($n = 1; $n <= DemoCatalog::studentsPerClass(); $n++, $sequence++) {
                 $isDemo = $kelas->nama === $demo['kelas'] && $n === 1;
-                $siswa = Siswa::factory()->create([
+                $siswa = Siswa::create([
                     'nis' => '26'.str_pad((string) $sequence, 4, '0', STR_PAD_LEFT),
-                    'nama_lengkap' => $isDemo ? $demo['nama_lengkap'] : fake()->name(),
+                    'nisn' => '60'.str_pad((string) $sequence, 8, '0', STR_PAD_LEFT),
+                    'nama_lengkap' => $isDemo
+                        ? $demo['nama_lengkap']
+                        : 'Siswa '.$kelas->nama.' '.str_pad((string) $n, 2, '0', STR_PAD_LEFT),
                     'jenis_kelamin' => $isDemo ? $demo['jenis_kelamin'] : ($n % 2 === 1 ? 'laki-laki' : 'perempuan'),
                     'tempat_lahir' => $isDemo ? $demo['tempat_lahir'] : 'Masohi',
                     'tanggal_lahir' => sprintf('%d-%02d-%02d', $birthYear, min(12, $n * 2), min(28, 3 + $n * 4)),
